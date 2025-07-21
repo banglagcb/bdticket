@@ -3,7 +3,7 @@ import {
   SystemSettingsRepository,
   ActivityLogRepository,
 } from "../database/models";
-import { authenticate, requirePermission } from "../middleware/auth";
+import { authenticate, requirePermission, hasPermission } from "../middleware/auth";
 import { z } from "zod";
 
 const router = Router();
