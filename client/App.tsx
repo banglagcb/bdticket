@@ -12,6 +12,7 @@ import { AuthProvider } from "./context/AuthContext";
 
 // Components and Pages
 import Layout from "./components/Layout";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Countries from "./pages/Countries";
