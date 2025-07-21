@@ -1,5 +1,7 @@
 {
-  "name": "fusion-starter",
+  "name": "bd-ticketpro",
+  "version": "1.0.0",
+  "description": "Complete Travel Agency Management System for Bangladeshi Agencies - International Flight Ticket Management",
   "private": true,
   "type": "module",
   "pkg": {
