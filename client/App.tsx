@@ -94,6 +94,12 @@ const App = () => (
               }
             />
 
+            {/* Redirect old URL to new one */}
+            <Route
+              path="/admin-buying"
+              element={<Navigate to="/admin/buying" replace />}
+            />
+
             <Route
               path="/bookings"
               element={
