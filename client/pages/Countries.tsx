@@ -25,15 +25,15 @@ function CountryCard({ country, index }: CountryCardProps) {
       transition={{ delay: index * 0.1, duration: 0.5 }}
     >
       <Link to={`/tickets/${country.code.toLowerCase()}`}>
-        <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group">
+        <Card className="h-full luxury-card hover:shadow-2xl transition-all duration-300 cursor-pointer group border-0 overflow-hidden relative">
           <CardHeader className="text-center pb-2">
             <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
               {country.flag}
             </div>
-            <CardTitle className="font-heading text-lg group-hover:text-teal-primary transition-colors">
+            <CardTitle className="font-heading text-lg velvet-text group-hover:text-primary transition-colors">
               {country.name}
             </CardTitle>
-            <CardDescription className="font-body text-sm text-gray-600">
+            <CardDescription className="font-body text-sm text-foreground/60">
               {country.code}
             </CardDescription>
           </CardHeader>
@@ -43,40 +43,40 @@ function CountryCard({ country, index }: CountryCardProps) {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="font-body text-sm text-gray-600">Available</span>
-                <span className="font-heading font-semibold text-teal-primary">
+                <span className="font-heading font-semibold text-primary">
                   {country.availableTickets}
                 </span>
               </div>
               
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gradient-to-r from-cream-200 to-cream-300 rounded-full h-2">
                 <div
-                  className="bg-teal-primary h-2 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-luxury-gold to-luxury-bronze h-2 rounded-full transition-all duration-300 animate-glow"
                   style={{ width: `${availabilityPercentage}%` }}
                 ></div>
               </div>
               
-              <div className="flex justify-between items-center text-xs font-body text-gray-500">
+              <div className="flex justify-between items-center text-xs font-body text-foreground/50">
                 <span>Total: {country.totalTickets}</span>
                 <span>{availabilityPercentage.toFixed(0)}% available</span>
               </div>
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3 pt-2 border-t">
+            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border/30">
               <div className="flex items-center space-x-2">
-                <div className="p-1 bg-blue-100 rounded">
+                <div className="p-1 bg-gradient-to-br from-blue-100 to-blue-200 rounded animate-float">
                   <Plane className="h-3 w-3 text-blue-600" />
                 </div>
-                <span className="font-body text-xs text-gray-600">
+                <span className="font-body text-xs text-foreground/70">
                   {Math.floor(Math.random() * 5) + 2} Airlines
                 </span>
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <div className="p-1 bg-green-100 rounded">
+                <div className="p-1 bg-gradient-to-br from-green-100 to-green-200 rounded animate-float" style={{animationDelay: '0.5s'}}>
                   <Ticket className="h-3 w-3 text-green-600" />
                 </div>
-                <span className="font-body text-xs text-gray-600">
+                <span className="font-body text-xs text-foreground/70">
                   View Tickets
                 </span>
               </div>
@@ -162,38 +162,38 @@ export default function Countries() {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="p-3 bg-teal-primary rounded-full">
+            <div className="p-3 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-full animate-glow animate-float">
               <MapPin className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-bold text-gray-900">
+              <h1 className="text-3xl font-heading font-bold velvet-text">
                 Countries
               </h1>
-              <p className="text-gray-600 font-body">
+              <p className="text-foreground/70 font-body">
                 Browse tickets by destination country
               </p>
             </div>
           </div>
           
           {/* Summary Stats */}
-          <div className="hidden md:flex items-center space-x-6 bg-white p-4 rounded-lg shadow-sm border">
+          <div className="hidden md:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0 backdrop-blur-md">
             <div className="text-center">
-              <p className="text-2xl font-heading font-bold text-teal-primary">
+              <p className="text-2xl font-heading font-bold text-primary velvet-text">
                 {totalAvailable}
               </p>
-              <p className="text-xs font-body text-gray-600">Available</p>
+              <p className="text-xs font-body text-foreground/60">Available</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-heading font-bold text-gray-700">
+              <p className="text-2xl font-heading font-bold text-foreground velvet-text">
                 {totalTickets}
               </p>
-              <p className="text-xs font-body text-gray-600">Total</p>
+              <p className="text-xs font-body text-foreground/60">Total</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-heading font-bold text-blue-600">
+              <p className="text-2xl font-heading font-bold text-blue-600 velvet-text">
                 {countries.length}
               </p>
-              <p className="text-xs font-body text-gray-600">Countries</p>
+              <p className="text-xs font-body text-foreground/60">Countries</p>
             </div>
           </div>
         </div>
@@ -206,23 +206,23 @@ export default function Countries() {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="md:hidden grid grid-cols-3 gap-4"
       >
-        <Card className="text-center p-4">
-          <div className="text-xl font-heading font-bold text-teal-primary">
+        <Card className="text-center p-4 luxury-card border-0">
+          <div className="text-xl font-heading font-bold text-primary velvet-text">
             {totalAvailable}
           </div>
-          <div className="text-xs font-body text-gray-600">Available</div>
+          <div className="text-xs font-body text-foreground/60">Available</div>
         </Card>
-        <Card className="text-center p-4">
-          <div className="text-xl font-heading font-bold text-gray-700">
+        <Card className="text-center p-4 luxury-card border-0">
+          <div className="text-xl font-heading font-bold text-foreground velvet-text">
             {totalTickets}
           </div>
-          <div className="text-xs font-body text-gray-600">Total</div>
+          <div className="text-xs font-body text-foreground/60">Total</div>
         </Card>
-        <Card className="text-center p-4">
-          <div className="text-xl font-heading font-bold text-blue-600">
+        <Card className="text-center p-4 luxury-card border-0">
+          <div className="text-xl font-heading font-bold text-blue-600 velvet-text">
             {countries.length}
           </div>
-          <div className="text-xs font-body text-gray-600">Countries</div>
+          <div className="text-xs font-body text-foreground/60">Countries</div>
         </Card>
       </motion.div>
 
@@ -244,7 +244,7 @@ export default function Countries() {
         transition={{ delay: 0.8, duration: 0.5 }}
         className="text-center py-8"
       >
-        <p className="font-body text-sm text-gray-500">
+        <p className="font-body text-sm text-foreground/50">
           Click on any country to view available tickets and make bookings
         </p>
       </motion.div>
