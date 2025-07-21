@@ -15,6 +15,7 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Countries from "./pages/Countries";
+import Tickets from "./pages/Tickets";
 import NotFound from "./pages/NotFound";
 
 // Placeholder components for routes not yet implemented
