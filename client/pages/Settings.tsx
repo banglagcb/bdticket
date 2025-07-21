@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import {
@@ -60,6 +60,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
+import { apiClient } from "../services/api";
 
 interface UserData {
   id: string;
@@ -87,44 +88,73 @@ interface SystemSettings {
 }
 
 export default function Settings() {
-  const { user, hasPermission } = useAuth();
+  const { user, hasPermission, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState("profile");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [settingsLoading, setSettingsLoading] = useState(true);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [activityLogs, setActivityLogs] = useState<any[]>([]);
 
-  // Mock user data
-  const [users] = useState<UserData[]>([
-    {
-      id: "1",
-      name: "Admin User",
-      email: "admin@bdticketpro.com",
-      phone: "+8801234567890",
-      role: "admin",
-      status: "active",
-      lastLogin: "2024-12-23 10:30 AM",
-      createdAt: "2024-01-15",
-    },
-    {
-      id: "2",
-      name: "Manager User",
-      email: "manager@bdticketpro.com",
-      phone: "+8801234567891",
-      role: "manager",
-      status: "active",
-      lastLogin: "2024-12-23 09:15 AM",
-      createdAt: "2024-02-01",
-    },
-    {
-      id: "3",
-      name: "Staff User",
-      email: "staff@bdticketpro.com",
-      phone: "+8801234567892",
-      role: "staff",
-      status: "active",
-      lastLogin: "2024-12-22 04:45 PM",
-      createdAt: "2024-03-10",
-    },
-  ]);
+  // Load data on component mount
+  useEffect(() => {
+    loadSettings();
+    if (hasPermission("manage_users")) {
+      loadUsers();
+    }
+    if (hasPermission("system_settings")) {
+      loadActivityLogs();
+    }
+  }, [user, hasPermission]);
+
+  const loadSettings = async () => {
+    try {
+      setSettingsLoading(true);
+      const data = await apiClient.getSettings();
+      if (data && data.settings) {
+        const settingsMap = data.settings.reduce((acc: any, setting: any) => {
+          acc[setting.key] = setting.value;
+          return acc;
+        }, {});
+
+        setSystemSettings({
+          companyName: settingsMap.company_name || "BD TicketPro",
+          companyEmail: settingsMap.company_email || "info@bdticketpro.com",
+          companyPhone: settingsMap.company_phone || "+880-123-456-7890",
+          companyAddress: settingsMap.company_address || "Dhanmondi, Dhaka, Bangladesh",
+          defaultCurrency: settingsMap.default_currency || "BDT",
+          timezone: settingsMap.timezone || "Asia/Dhaka",
+          language: settingsMap.language || "en",
+          autoBackup: settingsMap.auto_backup === "true",
+          emailNotifications: settingsMap.email_notifications === "true",
+          smsNotifications: settingsMap.sms_notifications === "true",
+          bookingTimeout: parseInt(settingsMap.booking_timeout) || 24,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load settings:", error);
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
+  const loadUsers = async () => {
+    try {
+      const data = await apiClient.getUsers();
+      setUsers(data || []);
+    } catch (error) {
+      console.error("Failed to load users:", error);
+    }
+  };
+
+  const loadActivityLogs = async () => {
+    try {
+      const data = await apiClient.getActivityLogs({ limit: 20 });
+      setActivityLogs(data?.logs || []);
+    } catch (error) {
+      console.error("Failed to load activity logs:", error);
+    }
+  };
 
   const [userProfile, setUserProfile] = useState({
     name: user?.name || "",
@@ -152,10 +182,44 @@ export default function Settings() {
   const handleProfileUpdate = async () => {
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Validate passwords match if changing password
+      if (userProfile.newPassword && userProfile.newPassword !== userProfile.confirmPassword) {
+        alert("New passwords do not match!");
+        return;
+      }
+
+      const updateData: any = {
+        name: userProfile.name,
+        email: userProfile.email,
+        phone: userProfile.phone,
+      };
+
+      if (userProfile.newPassword) {
+        updateData.currentPassword = userProfile.currentPassword;
+        updateData.newPassword = userProfile.newPassword;
+      }
+
+      await apiClient.updateUser(user!.id, updateData);
+
+      // Update auth context with new user data
+      updateUser({
+        name: userProfile.name,
+        email: userProfile.email,
+        phone: userProfile.phone,
+      });
+
+      // Clear password fields
+      setUserProfile(prev => ({
+        ...prev,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      }));
+
       alert("Profile updated successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Profile update error:", error);
+      alert(error.message || "Failed to update profile");
     } finally {
       setIsLoading(false);
     }
@@ -164,35 +228,48 @@ export default function Settings() {
   const handleSystemUpdate = async () => {
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const updateData = {
+        company_name: systemSettings.companyName,
+        company_email: systemSettings.companyEmail,
+        company_phone: systemSettings.companyPhone,
+        company_address: systemSettings.companyAddress,
+        default_currency: systemSettings.defaultCurrency,
+        timezone: systemSettings.timezone,
+        language: systemSettings.language,
+        auto_backup: systemSettings.autoBackup,
+        email_notifications: systemSettings.emailNotifications,
+        sms_notifications: systemSettings.smsNotifications,
+        booking_timeout: systemSettings.bookingTimeout,
+      };
+
+      await apiClient.updateSettings(updateData);
       alert("System settings updated successfully!");
-    } catch (error) {
+
+      // Reload activity logs to show the update
+      if (hasPermission("system_settings")) {
+        loadActivityLogs();
+      }
+    } catch (error: any) {
       console.error("System update error:", error);
+      alert(error.message || "Failed to update system settings");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDataExport = async () => {
+  const handleDataExport = async (format: string = "csv") => {
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      // Create mock CSV data
-      const csvData =
-        "data:text/csv;charset=utf-8,ID,Airline,Date,Price,Status\n1,Air Arabia,2024-12-25,22000,Available\n2,Emirates,2024-12-26,45000,Booked";
-      const encodedUri = encodeURI(csvData);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute(
-        "download",
-        `bd-ticketpro-export-${new Date().toISOString().split("T")[0]}.csv`,
-      );
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      alert("Data exported successfully!");
-    } catch (error) {
+      await apiClient.exportData(format);
+      alert(`Data exported successfully as ${format.toUpperCase()}!`);
+
+      // Reload activity logs to show the export
+      if (hasPermission("system_settings")) {
+        loadActivityLogs();
+      }
+    } catch (error: any) {
       console.error("Export error:", error);
+      alert(error.message || "Failed to export data");
     } finally {
       setIsLoading(false);
     }
