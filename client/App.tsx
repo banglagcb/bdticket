@@ -58,7 +58,7 @@ const App = () => (
             
             <Route path="/tickets" element={
               <Layout>
-                <PlaceholderPage title="All Tickets" />
+                <Tickets />
               </Layout>
             } />
             
