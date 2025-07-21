@@ -256,7 +256,9 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <motion.div
                 whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
+                onClick={handleViewTickets}
                 className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 <Ticket className="h-8 w-8 text-primary mb-2 animate-float" />
@@ -271,7 +273,9 @@ export default function Dashboard() {
               {hasPermission("create_batches") && (
                 <motion.div
                   whileHover={{ scale: 1.05, y: -5 }}
+                  whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.2 }}
+                  onClick={handleBuyTickets}
                   className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   <ShoppingCart
@@ -289,7 +293,9 @@ export default function Dashboard() {
 
               <motion.div
                 whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
+                onClick={handleManageBookings}
                 className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 <Package
