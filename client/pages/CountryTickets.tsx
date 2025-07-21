@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
-import { 
+import React, { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import {
   ArrowLeft,
   Plane,
   Calendar,
@@ -14,19 +14,25 @@ import {
   Filter,
   Search,
   Users,
-  Badge as BadgeIcon
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
+  Badge as BadgeIcon,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
+} from "../components/ui/select";
 
 interface TicketData {
   id: string;
@@ -38,7 +44,7 @@ interface TicketData {
   duration: string;
   sellingPrice: number;
   buyingPrice?: number;
-  status: 'available' | 'booked' | 'locked' | 'sold';
+  status: "available" | "booked" | "locked" | "sold";
   availableSeats: number;
   totalSeats: number;
   aircraft: string;
@@ -48,149 +54,181 @@ interface TicketData {
 export default function CountryTickets() {
   const { country } = useParams<{ country: string }>();
   const { hasPermission } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [airlineFilter, setAirlineFilter] = useState('all');
-  const [priceSort, setPriceSort] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [airlineFilter, setAirlineFilter] = useState("all");
+  const [priceSort, setPriceSort] = useState("asc");
 
-  const showBuyingPrice = hasPermission('view_buying_price');
+  const showBuyingPrice = hasPermission("view_buying_price");
 
   // Country information mapping
   const countryInfo = {
-    ksa: { name: 'Saudi Arabia', flag: '🇸🇦', code: 'KSA' },
-    uae: { name: 'United Arab Emirates', flag: '🇦🇪', code: 'UAE' },
-    qatar: { name: 'Qatar', flag: '🇶🇦', code: 'QAT' },
-    kuwait: { name: 'Kuwait', flag: '🇰🇼', code: 'KWT' },
-    oman: { name: 'Oman', flag: '🇴🇲', code: 'OMN' },
-    bahrain: { name: 'Bahrain', flag: '🇧🇭', code: 'BHR' },
-    jordan: { name: 'Jordan', flag: '🇯🇴', code: 'JOR' },
-    lebanon: { name: 'Lebanon', flag: '🇱🇧', code: 'LBN' }
+    ksa: { name: "Saudi Arabia", flag: "🇸🇦", code: "KSA" },
+    uae: { name: "United Arab Emirates", flag: "🇦🇪", code: "UAE" },
+    qatar: { name: "Qatar", flag: "🇶🇦", code: "QAT" },
+    kuwait: { name: "Kuwait", flag: "🇰🇼", code: "KWT" },
+    oman: { name: "Oman", flag: "🇴🇲", code: "OMN" },
+    bahrain: { name: "Bahrain", flag: "🇧🇭", code: "BHR" },
+    jordan: { name: "Jordan", flag: "🇯🇴", code: "JOR" },
+    lebanon: { name: "Lebanon", flag: "🇱🇧", code: "LBN" },
   };
 
-  const currentCountry = countryInfo[country?.toLowerCase() as keyof typeof countryInfo];
+  const currentCountry =
+    countryInfo[country?.toLowerCase() as keyof typeof countryInfo];
 
   // Mock ticket data for the specific country
   const tickets: TicketData[] = [
     {
-      id: '1',
-      airline: 'Air Arabia',
-      flightNumber: 'G9 123',
-      departureDate: 'Dec 25, 2024',
-      departureTime: '14:30',
-      arrivalTime: '18:45',
-      duration: '4h 15m',
+      id: "1",
+      airline: "Air Arabia",
+      flightNumber: "G9 123",
+      departureDate: "Dec 25, 2024",
+      departureTime: "14:30",
+      arrivalTime: "18:45",
+      duration: "4h 15m",
       sellingPrice: 22000,
       buyingPrice: 18000,
-      status: 'available',
+      status: "available",
       availableSeats: 15,
       totalSeats: 20,
-      aircraft: 'Airbus A320',
-      terminal: 'Terminal 1'
+      aircraft: "Airbus A320",
+      terminal: "Terminal 1",
     },
     {
-      id: '2',
-      airline: 'Emirates',
-      flightNumber: 'EK 582',
-      departureDate: 'Dec 26, 2024',
-      departureTime: '09:15',
-      arrivalTime: '13:30',
-      duration: '4h 15m',
+      id: "2",
+      airline: "Emirates",
+      flightNumber: "EK 582",
+      departureDate: "Dec 26, 2024",
+      departureTime: "09:15",
+      arrivalTime: "13:30",
+      duration: "4h 15m",
       sellingPrice: 45000,
       buyingPrice: 38000,
-      status: 'available',
+      status: "available",
       availableSeats: 8,
       totalSeats: 12,
-      aircraft: 'Boeing 777',
-      terminal: 'Terminal 3'
+      aircraft: "Boeing 777",
+      terminal: "Terminal 3",
     },
     {
-      id: '3',
-      airline: 'Flydubai',
-      flightNumber: 'FZ 571',
-      departureDate: 'Dec 27, 2024',
-      departureTime: '16:45',
-      arrivalTime: '21:00',
-      duration: '4h 15m',
+      id: "3",
+      airline: "Flydubai",
+      flightNumber: "FZ 571",
+      departureDate: "Dec 27, 2024",
+      departureTime: "16:45",
+      arrivalTime: "21:00",
+      duration: "4h 15m",
       sellingPrice: 28000,
       buyingPrice: 23000,
-      status: 'locked',
+      status: "locked",
       availableSeats: 3,
       totalSeats: 8,
-      aircraft: 'Boeing 737',
-      terminal: 'Terminal 2'
+      aircraft: "Boeing 737",
+      terminal: "Terminal 2",
     },
     {
-      id: '4',
-      airline: 'Saudi Airlines',
-      flightNumber: 'SV 803',
-      departureDate: 'Dec 28, 2024',
-      departureTime: '11:20',
-      arrivalTime: '15:35',
-      duration: '4h 15m',
+      id: "4",
+      airline: "Saudi Airlines",
+      flightNumber: "SV 803",
+      departureDate: "Dec 28, 2024",
+      departureTime: "11:20",
+      arrivalTime: "15:35",
+      duration: "4h 15m",
       sellingPrice: 19500,
       buyingPrice: 16000,
-      status: 'sold',
+      status: "sold",
       availableSeats: 0,
       totalSeats: 5,
-      aircraft: 'Airbus A321',
-      terminal: 'Terminal 1'
+      aircraft: "Airbus A321",
+      terminal: "Terminal 1",
     },
     {
-      id: '5',
-      airline: 'Qatar Airways',
-      flightNumber: 'QR 639',
-      departureDate: 'Dec 29, 2024',
-      departureTime: '20:10',
-      arrivalTime: '00:25',
-      duration: '4h 15m',
+      id: "5",
+      airline: "Qatar Airways",
+      flightNumber: "QR 639",
+      departureDate: "Dec 29, 2024",
+      departureTime: "20:10",
+      arrivalTime: "00:25",
+      duration: "4h 15m",
       sellingPrice: 52000,
       buyingPrice: 44000,
-      status: 'available',
+      status: "available",
       availableSeats: 6,
       totalSeats: 10,
-      aircraft: 'Boeing 787',
-      terminal: 'Terminal 3'
-    }
+      aircraft: "Boeing 787",
+      terminal: "Terminal 3",
+    },
   ];
 
-  const airlines = [...new Set(tickets.map(t => t.airline))];
+  const airlines = [...new Set(tickets.map((t) => t.airline))];
 
   const filteredTickets = tickets
-    .filter(ticket => {
-      const matchesSearch = ticket.airline.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           ticket.flightNumber.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || ticket.status === statusFilter;
-      const matchesAirline = airlineFilter === 'all' || ticket.airline === airlineFilter;
-      
+    .filter((ticket) => {
+      const matchesSearch =
+        ticket.airline.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.flightNumber.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus =
+        statusFilter === "all" || ticket.status === statusFilter;
+      const matchesAirline =
+        airlineFilter === "all" || ticket.airline === airlineFilter;
+
       return matchesSearch && matchesStatus && matchesAirline;
     })
     .sort((a, b) => {
-      if (priceSort === 'asc') return a.sellingPrice - b.sellingPrice;
+      if (priceSort === "asc") return a.sellingPrice - b.sellingPrice;
       return b.sellingPrice - a.sellingPrice;
     });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'available':
-        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Available</Badge>;
-      case 'booked':
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Booked</Badge>;
-      case 'locked':
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Locked</Badge>;
-      case 'sold':
-        return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">Sold Out</Badge>;
+      case "available":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200"
+          >
+            Available
+          </Badge>
+        );
+      case "booked":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-blue-50 text-blue-700 border-blue-200"
+          >
+            Booked
+          </Badge>
+        );
+      case "locked":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-yellow-50 text-yellow-700 border-yellow-200"
+          >
+            Locked
+          </Badge>
+        );
+      case "sold":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-gray-50 text-gray-700 border-gray-200"
+          >
+            Sold Out
+          </Badge>
+        );
       default:
         return <Badge variant="outline">Unknown</Badge>;
     }
   };
 
   const handleBookTicket = (ticketId: string) => {
-    console.log('Booking ticket:', ticketId);
+    console.log("Booking ticket:", ticketId);
     // This would open the booking dialog
   };
 
   const handleViewDetails = (ticketId: string) => {
-    console.log('View ticket details:', ticketId);
+    console.log("View ticket details:", ticketId);
     // This would show detailed ticket information
   };
 
@@ -241,12 +279,12 @@ export default function CountryTickets() {
               </div>
             </div>
           </div>
-          
+
           {/* Quick Stats */}
           <div className="hidden lg:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0">
             <div className="text-center">
               <p className="text-xl font-heading font-bold text-green-600 velvet-text">
-                {filteredTickets.filter(t => t.status === 'available').length}
+                {filteredTickets.filter((t) => t.status === "available").length}
               </p>
               <p className="text-xs font-body text-foreground/60">Available</p>
             </div>
@@ -254,7 +292,9 @@ export default function CountryTickets() {
               <p className="text-xl font-heading font-bold text-blue-600 velvet-text">
                 {filteredTickets.reduce((sum, t) => sum + t.availableSeats, 0)}
               </p>
-              <p className="text-xs font-body text-foreground/60">Total Seats</p>
+              <p className="text-xs font-body text-foreground/60">
+                Total Seats
+              </p>
             </div>
             <div className="text-center">
               <p className="text-xl font-heading font-bold text-primary velvet-text">
@@ -290,7 +330,7 @@ export default function CountryTickets() {
                   className="pl-10 font-body"
                 />
               </div>
-              
+
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="font-body">
                   <SelectValue placeholder="Filter by status" />
@@ -303,19 +343,21 @@ export default function CountryTickets() {
                   <SelectItem value="sold">Sold</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={airlineFilter} onValueChange={setAirlineFilter}>
                 <SelectTrigger className="font-body">
                   <SelectValue placeholder="Filter by airline" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Airlines</SelectItem>
-                  {airlines.map(airline => (
-                    <SelectItem key={airline} value={airline}>{airline}</SelectItem>
+                  {airlines.map((airline) => (
+                    <SelectItem key={airline} value={airline}>
+                      {airline}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={priceSort} onValueChange={setPriceSort}>
                 <SelectTrigger className="font-body">
                   <SelectValue placeholder="Sort by price" />
@@ -325,7 +367,7 @@ export default function CountryTickets() {
                   <SelectItem value="desc">Price: High to Low</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <div className="flex items-center space-x-2">
                 <span className="font-body text-sm text-foreground/70">
                   {filteredTickets.length} flights found
@@ -350,7 +392,9 @@ export default function CountryTickets() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, duration: 0.3 }}
           >
-            <Card className={`luxury-card border-0 h-full ${ticket.status === 'sold' ? 'opacity-75' : ''} hover:shadow-2xl transition-all duration-300 group`}>
+            <Card
+              className={`luxury-card border-0 h-full ${ticket.status === "sold" ? "opacity-75" : ""} hover:shadow-2xl transition-all duration-300 group`}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -358,35 +402,47 @@ export default function CountryTickets() {
                       <Plane className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <CardTitle className="font-heading text-lg velvet-text">{ticket.airline}</CardTitle>
-                      <CardDescription className="font-body text-sm">{ticket.flightNumber}</CardDescription>
+                      <CardTitle className="font-heading text-lg velvet-text">
+                        {ticket.airline}
+                      </CardTitle>
+                      <CardDescription className="font-body text-sm">
+                        {ticket.flightNumber}
+                      </CardDescription>
                     </div>
                   </div>
                   {getStatusBadge(ticket.status)}
                 </div>
               </CardHeader>
-              
+
               <CardContent className="space-y-4">
                 {/* Flight Details */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-foreground/40" />
-                      <span className="font-body text-sm text-foreground">{ticket.departureDate}</span>
+                      <span className="font-body text-sm text-foreground">
+                        {ticket.departureDate}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4 text-foreground/40" />
-                      <span className="font-body text-sm text-foreground">{ticket.departureTime}</span>
+                      <span className="font-body text-sm text-foreground">
+                        {ticket.departureTime}
+                      </span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <MapPin className="h-4 w-4 text-foreground/40" />
-                      <span className="font-body text-sm text-foreground">{ticket.terminal}</span>
+                      <span className="font-body text-sm text-foreground">
+                        {ticket.terminal}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <BadgeIcon className="h-4 w-4 text-foreground/40" />
-                      <span className="font-body text-sm text-foreground">{ticket.aircraft}</span>
+                      <span className="font-body text-sm text-foreground">
+                        {ticket.aircraft}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -400,10 +456,14 @@ export default function CountryTickets() {
                       <Plane className="h-4 w-4" />
                       <div className="w-8 border-t border-foreground/30"></div>
                     </div>
-                    <span className="text-foreground">{currentCountry.code}</span>
+                    <span className="text-foreground">
+                      {currentCountry.code}
+                    </span>
                   </div>
                   <div className="text-center mt-1">
-                    <span className="text-xs text-foreground/60 font-body">{ticket.duration}</span>
+                    <span className="text-xs text-foreground/60 font-body">
+                      {ticket.duration}
+                    </span>
                   </div>
                 </div>
 
@@ -441,7 +501,7 @@ export default function CountryTickets() {
                     <Eye className="h-4 w-4 mr-2" />
                     Details
                   </Button>
-                  {ticket.status === 'available' && (
+                  {ticket.status === "available" && (
                     <Button
                       onClick={() => handleBookTicket(ticket.id)}
                       size="sm"
@@ -451,7 +511,7 @@ export default function CountryTickets() {
                       Book Now
                     </Button>
                   )}
-                  {ticket.status === 'sold' && (
+                  {ticket.status === "sold" && (
                     <Button
                       disabled
                       size="sm"

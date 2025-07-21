@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
-import { 
-  Settings as SettingsIcon, 
-  User, 
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import {
+  Settings as SettingsIcon,
+  User,
   Users,
   Shield,
   Bell,
@@ -21,23 +21,34 @@ import {
   Mail,
   Phone,
   MapPin,
-  Building
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Textarea } from '../components/ui/textarea';
-import { Switch } from '../components/ui/switch';
-import { Badge } from '../components/ui/badge';
+  Building,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+import { Switch } from "../components/ui/switch";
+import { Badge } from "../components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+} from "../components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,15 +59,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../components/ui/alert-dialog';
+} from "../components/ui/alert-dialog";
 
 interface UserData {
   id: string;
   name: string;
   email: string;
   phone: string;
-  role: 'admin' | 'manager' | 'staff';
-  status: 'active' | 'inactive';
+  role: "admin" | "manager" | "staff";
+  status: "active" | "inactive";
   lastLogin: string;
   createdAt: string;
 }
@@ -77,74 +88,74 @@ interface SystemSettings {
 
 export default function Settings() {
   const { user, hasPermission } = useAuth();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState("profile");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Mock user data
   const [users] = useState<UserData[]>([
     {
-      id: '1',
-      name: 'Admin User',
-      email: 'admin@bdticketpro.com',
-      phone: '+8801234567890',
-      role: 'admin',
-      status: 'active',
-      lastLogin: '2024-12-23 10:30 AM',
-      createdAt: '2024-01-15'
+      id: "1",
+      name: "Admin User",
+      email: "admin@bdticketpro.com",
+      phone: "+8801234567890",
+      role: "admin",
+      status: "active",
+      lastLogin: "2024-12-23 10:30 AM",
+      createdAt: "2024-01-15",
     },
     {
-      id: '2',
-      name: 'Manager User',
-      email: 'manager@bdticketpro.com',
-      phone: '+8801234567891',
-      role: 'manager',
-      status: 'active',
-      lastLogin: '2024-12-23 09:15 AM',
-      createdAt: '2024-02-01'
+      id: "2",
+      name: "Manager User",
+      email: "manager@bdticketpro.com",
+      phone: "+8801234567891",
+      role: "manager",
+      status: "active",
+      lastLogin: "2024-12-23 09:15 AM",
+      createdAt: "2024-02-01",
     },
     {
-      id: '3',
-      name: 'Staff User',
-      email: 'staff@bdticketpro.com',
-      phone: '+8801234567892',
-      role: 'staff',
-      status: 'active',
-      lastLogin: '2024-12-22 04:45 PM',
-      createdAt: '2024-03-10'
-    }
+      id: "3",
+      name: "Staff User",
+      email: "staff@bdticketpro.com",
+      phone: "+8801234567892",
+      role: "staff",
+      status: "active",
+      lastLogin: "2024-12-22 04:45 PM",
+      createdAt: "2024-03-10",
+    },
   ]);
 
   const [userProfile, setUserProfile] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
-    companyName: 'BD TicketPro',
-    companyEmail: 'info@bdticketpro.com',
-    companyPhone: '+880-123-456-7890',
-    companyAddress: 'Dhanmondi, Dhaka, Bangladesh',
-    defaultCurrency: 'BDT',
-    timezone: 'Asia/Dhaka',
-    language: 'en',
+    companyName: "BD TicketPro",
+    companyEmail: "info@bdticketpro.com",
+    companyPhone: "+880-123-456-7890",
+    companyAddress: "Dhanmondi, Dhaka, Bangladesh",
+    defaultCurrency: "BDT",
+    timezone: "Asia/Dhaka",
+    language: "en",
     autoBackup: true,
     emailNotifications: true,
     smsNotifications: false,
-    bookingTimeout: 24
+    bookingTimeout: 24,
   });
 
   const handleProfileUpdate = async () => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert('Profile updated successfully!');
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      alert("Profile updated successfully!");
     } catch (error) {
-      console.error('Profile update error:', error);
+      console.error("Profile update error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -153,10 +164,10 @@ export default function Settings() {
   const handleSystemUpdate = async () => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert('System settings updated successfully!');
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      alert("System settings updated successfully!");
     } catch (error) {
-      console.error('System update error:', error);
+      console.error("System update error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -165,19 +176,23 @@ export default function Settings() {
   const handleDataExport = async () => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       // Create mock CSV data
-      const csvData = "data:text/csv;charset=utf-8,ID,Airline,Date,Price,Status\n1,Air Arabia,2024-12-25,22000,Available\n2,Emirates,2024-12-26,45000,Booked";
+      const csvData =
+        "data:text/csv;charset=utf-8,ID,Airline,Date,Price,Status\n1,Air Arabia,2024-12-25,22000,Available\n2,Emirates,2024-12-26,45000,Booked";
       const encodedUri = encodeURI(csvData);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `bd-ticketpro-export-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute(
+        "download",
+        `bd-ticketpro-export-${new Date().toISOString().split("T")[0]}.csv`,
+      );
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      alert('Data exported successfully!');
+      alert("Data exported successfully!");
     } catch (error) {
-      console.error('Export error:', error);
+      console.error("Export error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -185,17 +200,21 @@ export default function Settings() {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'admin': return 'bg-red-100 text-red-800 border-red-200';
-      case 'manager': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'staff': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "admin":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "manager":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "staff":
+        return "bg-green-100 text-green-800 border-green-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getStatusColor = (status: string) => {
-    return status === 'active' 
-      ? 'bg-green-100 text-green-800 border-green-200'
-      : 'bg-gray-100 text-gray-800 border-gray-200';
+    return status === "active"
+      ? "bg-green-100 text-green-800 border-green-200"
+      : "bg-gray-100 text-gray-800 border-gray-200";
   };
 
   return (
@@ -221,17 +240,21 @@ export default function Settings() {
         </div>
       </motion.div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full grid-cols-4 luxury-card border-0 p-1">
-          <TabsTrigger 
-            value="profile" 
+          <TabsTrigger
+            value="profile"
             className="data-[state=active]:velvet-button data-[state=active]:text-primary-foreground font-body"
           >
             <User className="h-4 w-4 mr-2" />
             Profile
           </TabsTrigger>
-          {hasPermission('manage_users') && (
-            <TabsTrigger 
+          {hasPermission("manage_users") && (
+            <TabsTrigger
               value="users"
               className="data-[state=active]:velvet-button data-[state=active]:text-primary-foreground font-body"
             >
@@ -239,14 +262,14 @@ export default function Settings() {
               Users
             </TabsTrigger>
           )}
-          <TabsTrigger 
+          <TabsTrigger
             value="system"
             className="data-[state=active]:velvet-button data-[state=active]:text-primary-foreground font-body"
           >
             <Globe className="h-4 w-4 mr-2" />
             System
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="backup"
             className="data-[state=active]:velvet-button data-[state=active]:text-primary-foreground font-body"
           >
@@ -279,31 +302,47 @@ export default function Settings() {
                     <Label className="font-body font-medium">Full Name</Label>
                     <Input
                       value={userProfile.name}
-                      onChange={(e) => setUserProfile({...userProfile, name: e.target.value})}
+                      onChange={(e) =>
+                        setUserProfile({ ...userProfile, name: e.target.value })
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Email Address</Label>
+                    <Label className="font-body font-medium">
+                      Email Address
+                    </Label>
                     <Input
                       type="email"
                       value={userProfile.email}
-                      onChange={(e) => setUserProfile({...userProfile, email: e.target.value})}
+                      onChange={(e) =>
+                        setUserProfile({
+                          ...userProfile,
+                          email: e.target.value,
+                        })
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Phone Number</Label>
+                    <Label className="font-body font-medium">
+                      Phone Number
+                    </Label>
                     <Input
                       value={userProfile.phone}
-                      onChange={(e) => setUserProfile({...userProfile, phone: e.target.value})}
+                      onChange={(e) =>
+                        setUserProfile({
+                          ...userProfile,
+                          phone: e.target.value,
+                        })
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label className="font-body font-medium">Role</Label>
                     <Input
-                      value={user?.role || ''}
+                      value={user?.role || ""}
                       disabled
                       className="font-body bg-muted capitalize"
                     />
@@ -325,12 +364,19 @@ export default function Settings() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Current Password</Label>
+                    <Label className="font-body font-medium">
+                      Current Password
+                    </Label>
                     <div className="relative">
                       <Input
                         type={showPassword ? "text" : "password"}
                         value={userProfile.currentPassword}
-                        onChange={(e) => setUserProfile({...userProfile, currentPassword: e.target.value})}
+                        onChange={(e) =>
+                          setUserProfile({
+                            ...userProfile,
+                            currentPassword: e.target.value,
+                          })
+                        }
                         className="font-body pr-10"
                       />
                       <button
@@ -338,25 +384,43 @@ export default function Settings() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-3 text-foreground/40 hover:text-foreground"
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">New Password</Label>
+                    <Label className="font-body font-medium">
+                      New Password
+                    </Label>
                     <Input
                       type="password"
                       value={userProfile.newPassword}
-                      onChange={(e) => setUserProfile({...userProfile, newPassword: e.target.value})}
+                      onChange={(e) =>
+                        setUserProfile({
+                          ...userProfile,
+                          newPassword: e.target.value,
+                        })
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Confirm New Password</Label>
+                    <Label className="font-body font-medium">
+                      Confirm New Password
+                    </Label>
                     <Input
                       type="password"
                       value={userProfile.confirmPassword}
-                      onChange={(e) => setUserProfile({...userProfile, confirmPassword: e.target.value})}
+                      onChange={(e) =>
+                        setUserProfile({
+                          ...userProfile,
+                          confirmPassword: e.target.value,
+                        })
+                      }
                       className="font-body"
                     />
                   </div>
@@ -387,7 +451,7 @@ export default function Settings() {
         </TabsContent>
 
         {/* User Management */}
-        {hasPermission('manage_users') && (
+        {hasPermission("manage_users") && (
           <TabsContent value="users">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -409,11 +473,21 @@ export default function Settings() {
                     <table className="w-full">
                       <thead className="bg-gradient-to-r from-cream-100 to-cream-200 border-b border-border/30">
                         <tr>
-                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">User</th>
-                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Role</th>
-                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Status</th>
-                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Last Login</th>
-                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Actions</th>
+                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
+                            User
+                          </th>
+                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
+                            Role
+                          </th>
+                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
+                            Status
+                          </th>
+                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
+                            Last Login
+                          </th>
+                          <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
+                            Actions
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -427,44 +501,73 @@ export default function Settings() {
                           >
                             <td className="px-4 py-3">
                               <div>
-                                <p className="font-body font-medium text-sm text-foreground">{userData.name}</p>
-                                <p className="font-body text-xs text-foreground/60">{userData.email}</p>
-                                <p className="font-body text-xs text-foreground/60">{userData.phone}</p>
+                                <p className="font-body font-medium text-sm text-foreground">
+                                  {userData.name}
+                                </p>
+                                <p className="font-body text-xs text-foreground/60">
+                                  {userData.email}
+                                </p>
+                                <p className="font-body text-xs text-foreground/60">
+                                  {userData.phone}
+                                </p>
                               </div>
                             </td>
                             <td className="px-4 py-3">
-                              <Badge variant="outline" className={`${getRoleColor(userData.role)} text-xs capitalize`}>
+                              <Badge
+                                variant="outline"
+                                className={`${getRoleColor(userData.role)} text-xs capitalize`}
+                              >
                                 {userData.role}
                               </Badge>
                             </td>
                             <td className="px-4 py-3">
-                              <Badge variant="outline" className={`${getStatusColor(userData.status)} text-xs capitalize`}>
+                              <Badge
+                                variant="outline"
+                                className={`${getStatusColor(userData.status)} text-xs capitalize`}
+                              >
                                 {userData.status}
                               </Badge>
                             </td>
-                            <td className="px-4 py-3 font-body text-sm text-foreground">{userData.lastLogin}</td>
+                            <td className="px-4 py-3 font-body text-sm text-foreground">
+                              {userData.lastLogin}
+                            </td>
                             <td className="px-4 py-3">
                               <div className="flex space-x-2">
-                                <Button size="sm" variant="outline" className="font-body text-xs">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="font-body text-xs"
+                                >
                                   Edit
                                 </Button>
                                 {userData.id !== user?.id && (
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                      <Button size="sm" variant="outline" className="font-body text-xs text-red-600 border-red-200">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="font-body text-xs text-red-600 border-red-200"
+                                      >
                                         <Trash2 className="h-3 w-3" />
                                       </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent className="luxury-card border-0">
                                       <AlertDialogHeader>
-                                        <AlertDialogTitle>Delete User</AlertDialogTitle>
+                                        <AlertDialogTitle>
+                                          Delete User
+                                        </AlertDialogTitle>
                                         <AlertDialogDescription>
-                                          Are you sure you want to delete this user? This action cannot be undone.
+                                          Are you sure you want to delete this
+                                          user? This action cannot be undone.
                                         </AlertDialogDescription>
                                       </AlertDialogHeader>
                                       <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                                        <AlertDialogCancel>
+                                          Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction className="bg-red-600 hover:bg-red-700">
+                                          Delete
+                                        </AlertDialogAction>
                                       </AlertDialogFooter>
                                     </AlertDialogContent>
                                   </AlertDialog>
@@ -500,34 +603,62 @@ export default function Settings() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Company Name</Label>
+                    <Label className="font-body font-medium">
+                      Company Name
+                    </Label>
                     <Input
                       value={systemSettings.companyName}
-                      onChange={(e) => setSystemSettings({...systemSettings, companyName: e.target.value})}
+                      onChange={(e) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          companyName: e.target.value,
+                        })
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Company Email</Label>
+                    <Label className="font-body font-medium">
+                      Company Email
+                    </Label>
                     <Input
                       value={systemSettings.companyEmail}
-                      onChange={(e) => setSystemSettings({...systemSettings, companyEmail: e.target.value})}
+                      onChange={(e) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          companyEmail: e.target.value,
+                        })
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Company Phone</Label>
+                    <Label className="font-body font-medium">
+                      Company Phone
+                    </Label>
                     <Input
                       value={systemSettings.companyPhone}
-                      onChange={(e) => setSystemSettings({...systemSettings, companyPhone: e.target.value})}
+                      onChange={(e) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          companyPhone: e.target.value,
+                        })
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Company Address</Label>
+                    <Label className="font-body font-medium">
+                      Company Address
+                    </Label>
                     <Textarea
                       value={systemSettings.companyAddress}
-                      onChange={(e) => setSystemSettings({...systemSettings, companyAddress: e.target.value})}
+                      onChange={(e) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          companyAddress: e.target.value,
+                        })
+                      }
                       className="font-body"
                     />
                   </div>
@@ -545,13 +676,25 @@ export default function Settings() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Default Currency</Label>
-                    <Select value={systemSettings.defaultCurrency} onValueChange={(value) => setSystemSettings({...systemSettings, defaultCurrency: value})}>
+                    <Label className="font-body font-medium">
+                      Default Currency
+                    </Label>
+                    <Select
+                      value={systemSettings.defaultCurrency}
+                      onValueChange={(value) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          defaultCurrency: value,
+                        })
+                      }
+                    >
                       <SelectTrigger className="font-body">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="BDT">BDT - Bangladeshi Taka</SelectItem>
+                        <SelectItem value="BDT">
+                          BDT - Bangladeshi Taka
+                        </SelectItem>
                         <SelectItem value="USD">USD - US Dollar</SelectItem>
                         <SelectItem value="EUR">EUR - Euro</SelectItem>
                       </SelectContent>
@@ -559,7 +702,15 @@ export default function Settings() {
                   </div>
                   <div className="space-y-2">
                     <Label className="font-body font-medium">Timezone</Label>
-                    <Select value={systemSettings.timezone} onValueChange={(value) => setSystemSettings({...systemSettings, timezone: value})}>
+                    <Select
+                      value={systemSettings.timezone}
+                      onValueChange={(value) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          timezone: value,
+                        })
+                      }
+                    >
                       <SelectTrigger className="font-body">
                         <SelectValue />
                       </SelectTrigger>
@@ -572,7 +723,15 @@ export default function Settings() {
                   </div>
                   <div className="space-y-2">
                     <Label className="font-body font-medium">Language</Label>
-                    <Select value={systemSettings.language} onValueChange={(value) => setSystemSettings({...systemSettings, language: value})}>
+                    <Select
+                      value={systemSettings.language}
+                      onValueChange={(value) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          language: value,
+                        })
+                      }
+                    >
                       <SelectTrigger className="font-body">
                         <SelectValue />
                       </SelectTrigger>
@@ -598,40 +757,74 @@ export default function Settings() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-body font-medium text-foreground">Email Notifications</p>
-                      <p className="font-body text-sm text-foreground/60">Receive booking confirmations via email</p>
+                      <p className="font-body font-medium text-foreground">
+                        Email Notifications
+                      </p>
+                      <p className="font-body text-sm text-foreground/60">
+                        Receive booking confirmations via email
+                      </p>
                     </div>
-                    <Switch 
+                    <Switch
                       checked={systemSettings.emailNotifications}
-                      onCheckedChange={(checked) => setSystemSettings({...systemSettings, emailNotifications: checked})}
+                      onCheckedChange={(checked) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          emailNotifications: checked,
+                        })
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-body font-medium text-foreground">SMS Notifications</p>
-                      <p className="font-body text-sm text-foreground/60">Receive booking alerts via SMS</p>
+                      <p className="font-body font-medium text-foreground">
+                        SMS Notifications
+                      </p>
+                      <p className="font-body text-sm text-foreground/60">
+                        Receive booking alerts via SMS
+                      </p>
                     </div>
-                    <Switch 
+                    <Switch
                       checked={systemSettings.smsNotifications}
-                      onCheckedChange={(checked) => setSystemSettings({...systemSettings, smsNotifications: checked})}
+                      onCheckedChange={(checked) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          smsNotifications: checked,
+                        })
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-body font-medium text-foreground">Auto Backup</p>
-                      <p className="font-body text-sm text-foreground/60">Automatically backup data daily</p>
+                      <p className="font-body font-medium text-foreground">
+                        Auto Backup
+                      </p>
+                      <p className="font-body text-sm text-foreground/60">
+                        Automatically backup data daily
+                      </p>
                     </div>
-                    <Switch 
+                    <Switch
                       checked={systemSettings.autoBackup}
-                      onCheckedChange={(checked) => setSystemSettings({...systemSettings, autoBackup: checked})}
+                      onCheckedChange={(checked) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          autoBackup: checked,
+                        })
+                      }
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-body font-medium">Booking Timeout (Hours)</Label>
+                    <Label className="font-body font-medium">
+                      Booking Timeout (Hours)
+                    </Label>
                     <Input
                       type="number"
                       value={systemSettings.bookingTimeout}
-                      onChange={(e) => setSystemSettings({...systemSettings, bookingTimeout: parseInt(e.target.value)})}
+                      onChange={(e) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          bookingTimeout: parseInt(e.target.value),
+                        })
+                      }
                       className="font-body w-24"
                     />
                   </div>
@@ -716,20 +909,34 @@ export default function Settings() {
               <CardContent>
                 <div className="space-y-3">
                   {[
-                    { date: '2024-12-23', size: '2.3 MB', status: 'Completed' },
-                    { date: '2024-12-22', size: '2.1 MB', status: 'Completed' },
-                    { date: '2024-12-21', size: '1.9 MB', status: 'Completed' }
+                    { date: "2024-12-23", size: "2.3 MB", status: "Completed" },
+                    { date: "2024-12-22", size: "2.1 MB", status: "Completed" },
+                    { date: "2024-12-21", size: "1.9 MB", status: "Completed" },
                   ].map((backup, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-cream-100/50 to-transparent rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-gradient-to-r from-cream-100/50 to-transparent rounded-lg"
+                    >
                       <div>
-                        <p className="font-body font-medium text-sm text-foreground">Backup - {backup.date}</p>
-                        <p className="font-body text-xs text-foreground/60">Size: {backup.size}</p>
+                        <p className="font-body font-medium text-sm text-foreground">
+                          Backup - {backup.date}
+                        </p>
+                        <p className="font-body text-xs text-foreground/60">
+                          Size: {backup.size}
+                        </p>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200 text-xs">
+                        <Badge
+                          variant="outline"
+                          className="bg-green-100 text-green-700 border-green-200 text-xs"
+                        >
                           {backup.status}
                         </Badge>
-                        <Button size="sm" variant="outline" className="font-body text-xs">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="font-body text-xs"
+                        >
                           <Download className="h-3 w-3 mr-1" />
                           Download
                         </Button>
