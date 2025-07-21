@@ -91,10 +91,12 @@ export default function Bookings() {
       setLoading(true);
       setError(null);
       const data = await apiClient.getBookings();
-      setBookings(data);
+      // Ensure data is always an array
+      setBookings(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to load bookings:", err);
       setError("Failed to load bookings");
+      setBookings([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
