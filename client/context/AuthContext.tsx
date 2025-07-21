@@ -46,6 +46,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Handle HMR properly
+  useEffect(() => {
+    if (import.meta.hot) {
+      import.meta.hot.accept();
+    }
+  }, []);
+
   useEffect(() => {
     // Check for stored auth data
     const token = localStorage.getItem("bd_ticket_pro_token");
