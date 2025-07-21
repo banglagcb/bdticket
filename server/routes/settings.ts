@@ -26,28 +26,41 @@ const updateSettingsSchema = z.object({
   booking_timeout: z.number().min(1).max(48).optional(),
 });
 
-// Get all system settings (admin only)
-router.get(
-  "/",
-  requirePermission("system_settings"),
-  async (req: Request, res: Response) => {
-    try {
-      const settings = SystemSettingsRepository.findAll();
+// Get system settings (basic info for all users, full settings for admins)
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    const settings = SystemSettingsRepository.findAll();
 
-      res.json({
-        success: true,
-        message: "System settings retrieved successfully",
-        data: { settings },
-      });
-    } catch (error) {
-      console.error("Get settings error:", error);
-      res.status(500).json({
-        success: false,
-        message: "Internal server error",
-      });
+    // Filter settings based on user permissions
+    let filteredSettings = settings;
+
+    // If user doesn't have system_settings permission, only return basic company info
+    if (!req.user || !hasPermission(req.user.role, "system_settings")) {
+      const allowedKeys = [
+        "company_name",
+        "company_email",
+        "company_phone",
+        "company_address",
+        "default_currency",
+        "timezone",
+        "language"
+      ];
+      filteredSettings = settings.filter(setting => allowedKeys.includes(setting.key));
     }
-  },
-);
+
+    res.json({
+      success: true,
+      message: "System settings retrieved successfully",
+      data: { settings: filteredSettings },
+    });
+  } catch (error) {
+    console.error("Get settings error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
 
 // Get specific setting by key
 router.get("/:key", async (req: Request, res: Response) => {
