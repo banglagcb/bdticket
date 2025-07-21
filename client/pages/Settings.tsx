@@ -961,16 +961,28 @@ export default function Settings() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Button
-                    onClick={handleDataExport}
+                    onClick={() => handleDataExport("csv")}
                     disabled={isLoading}
                     className="velvet-button text-primary-foreground font-body hover:scale-105 transform transition-all duration-200 p-6"
                   >
                     <div className="flex flex-col items-center space-y-2">
                       <FileText className="h-6 w-6" />
-                      <span>Export All Data</span>
-                      <span className="text-xs opacity-80">CSV Format</span>
+                      <span>Export CSV</span>
+                      <span className="text-xs opacity-80">Spreadsheet Format</span>
+                    </div>
+                  </Button>
+                  <Button
+                    onClick={() => handleDataExport("json")}
+                    disabled={isLoading}
+                    variant="outline"
+                    className="font-body hover:scale-105 transform transition-all duration-200 p-6"
+                  >
+                    <div className="flex flex-col items-center space-y-2">
+                      <Database className="h-6 w-6" />
+                      <span>Export JSON</span>
+                      <span className="text-xs opacity-80">Database Format</span>
                     </div>
                   </Button>
                   <Button
