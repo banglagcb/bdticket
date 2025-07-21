@@ -55,6 +55,11 @@ export default function Layout({ children }: LayoutProps) {
       icon: <Ticket className="h-4 w-4" />,
     },
     {
+      path: "/bookings",
+      label: "Bookings",
+      icon: <Package className="h-4 w-4" />,
+    },
+    {
       path: "/admin/buying",
       label: "Buy Tickets",
       icon: <ShoppingCart className="h-4 w-4" />,
