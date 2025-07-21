@@ -65,28 +65,28 @@ function TicketRow({ ticket, showBuyingPrice, onView, onBook }: TicketRowProps) 
     <motion.tr
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`border-b hover:bg-gray-50 transition-colors ${isDisabled ? 'opacity-60' : ''}`}
+      className={`border-b border-border/20 hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent transition-all duration-300 ${isDisabled ? 'opacity-60' : ''}`}
     >
-      <td className="px-4 py-3 font-body text-sm">{ticket.sl}</td>
+      <td className="px-4 py-3 font-body text-sm text-foreground">{ticket.sl}</td>
       <td className="px-4 py-3">
         <div className="flex items-center space-x-2">
-          <Plane className="h-4 w-4 text-gray-400" />
-          <span className="font-body font-medium text-sm">{ticket.airline}</span>
+          <Plane className="h-4 w-4 text-foreground/40" />
+          <span className="font-body font-medium text-sm text-foreground">{ticket.airline}</span>
         </div>
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center space-x-2">
-          <Calendar className="h-4 w-4 text-gray-400" />
+          <Calendar className="h-4 w-4 text-foreground/40" />
           <div>
-            <div className="font-body font-medium text-sm">{ticket.departureDate}</div>
-            <div className="font-body text-xs text-gray-500">{ticket.departureDay}</div>
+            <div className="font-body font-medium text-sm text-foreground">{ticket.departureDate}</div>
+            <div className="font-body text-xs text-foreground/50">{ticket.departureDay}</div>
           </div>
         </div>
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center space-x-2">
-          <Clock className="h-4 w-4 text-gray-400" />
-          <span className="font-body text-sm">{ticket.departureTime}</span>
+          <Clock className="h-4 w-4 text-foreground/40" />
+          <span className="font-body text-sm text-foreground">{ticket.departureTime}</span>
         </div>
       </td>
       <td className="px-4 py-3">
@@ -112,7 +112,7 @@ function TicketRow({ ticket, showBuyingPrice, onView, onBook }: TicketRowProps) 
       </td>
       <td className="px-4 py-3">
         {ticket.lockStatus && (
-          <div className="flex items-center space-x-1 text-xs text-gray-500">
+          <div className="flex items-center space-x-1 text-xs text-foreground/50">
             <Lock className="h-3 w-3" />
             <span>{ticket.lockStatus}</span>
           </div>
@@ -124,7 +124,7 @@ function TicketRow({ ticket, showBuyingPrice, onView, onBook }: TicketRowProps) 
             size="sm"
             variant="outline"
             onClick={() => onView(ticket.id)}
-            className="font-body text-xs"
+            className="font-body text-xs hover:scale-105 transform transition-all duration-200"
           >
             <Eye className="h-3 w-3 mr-1" />
             View
@@ -133,7 +133,7 @@ function TicketRow({ ticket, showBuyingPrice, onView, onBook }: TicketRowProps) 
             <Button
               size="sm"
               onClick={() => onBook(ticket.id)}
-              className="font-body text-xs bg-teal-primary hover:bg-teal-primary/90"
+              className="font-body text-xs velvet-button hover:scale-105 transform transition-all duration-200"
             >
               <CheckCircle className="h-3 w-3 mr-1" />
               Book
@@ -248,14 +248,14 @@ export default function Tickets() {
         transition={{ duration: 0.5 }}
       >
         <div className="flex items-center space-x-4">
-          <div className="p-3 bg-teal-primary rounded-full">
+          <div className="p-3 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-full animate-glow animate-float">
             <TicketIcon className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-heading font-bold text-gray-900">
+            <h1 className="text-3xl font-heading font-bold velvet-text">
               All Tickets
             </h1>
-            <p className="text-gray-600 font-body">
+            <p className="text-foreground/70 font-body">
               Manage and book flight tickets
             </p>
           </div>
@@ -268,9 +268,9 @@ export default function Tickets() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        <Card>
+        <Card className="luxury-card border-0">
           <CardHeader>
-            <CardTitle className="font-heading flex items-center space-x-2">
+            <CardTitle className="font-heading flex items-center space-x-2 velvet-text">
               <Filter className="h-5 w-5" />
               <span>Filters</span>
             </CardTitle>
@@ -281,7 +281,7 @@ export default function Tickets() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-foreground/40" />
                 <Input
                   placeholder="Search airline or date..."
                   value={searchTerm}
@@ -316,7 +316,7 @@ export default function Tickets() {
               </Select>
               
               <div className="flex items-center space-x-2">
-                <span className="font-body text-sm text-gray-600">
+                <span className="font-body text-sm text-foreground/70">
                   {filteredTickets.length} tickets found
                 </span>
               </div>
@@ -331,23 +331,23 @@ export default function Tickets() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
       >
-        <Card>
+        <Card className="luxury-card border-0">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-gradient-to-r from-cream-100 to-cream-200 border-b border-border/30">
                   <tr>
-                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">SL</th>
-                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">Airline</th>
-                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">Departure Date</th>
-                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">Time</th>
-                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">Selling Price</th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">SL</th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Airline</th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Departure Date</th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Time</th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Selling Price</th>
                     {showBuyingPrice && (
-                      <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">Buying Price</th>
+                      <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Buying Price</th>
                     )}
-                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">Booking Status</th>
-                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">Lock Status</th>
-                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-gray-700">Action</th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Booking Status</th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Lock Status</th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -374,39 +374,39 @@ export default function Tickets() {
         transition={{ delay: 0.6, duration: 0.5 }}
         className="grid grid-cols-1 md:grid-cols-4 gap-4"
       >
-        <Card className="text-center">
+        <Card className="text-center luxury-card border-0">
           <CardContent className="p-4">
-            <div className="text-2xl font-heading font-bold text-green-600">
+            <div className="text-2xl font-heading font-bold text-green-600 velvet-text">
               {filteredTickets.filter(t => t.status === 'available').length}
             </div>
-            <div className="text-sm font-body text-gray-600">Available</div>
+            <div className="text-sm font-body text-foreground/60">Available</div>
           </CardContent>
         </Card>
         
-        <Card className="text-center">
+        <Card className="text-center luxury-card border-0">
           <CardContent className="p-4">
-            <div className="text-2xl font-heading font-bold text-blue-600">
+            <div className="text-2xl font-heading font-bold text-blue-600 velvet-text">
               {filteredTickets.filter(t => t.status === 'booked').length}
             </div>
-            <div className="text-sm font-body text-gray-600">Booked</div>
+            <div className="text-sm font-body text-foreground/60">Booked</div>
           </CardContent>
         </Card>
         
-        <Card className="text-center">
+        <Card className="text-center luxury-card border-0">
           <CardContent className="p-4">
-            <div className="text-2xl font-heading font-bold text-yellow-600">
+            <div className="text-2xl font-heading font-bold text-yellow-600 velvet-text">
               {filteredTickets.filter(t => t.status === 'locked').length}
             </div>
-            <div className="text-sm font-body text-gray-600">Locked</div>
+            <div className="text-sm font-body text-foreground/60">Locked</div>
           </CardContent>
         </Card>
         
-        <Card className="text-center">
+        <Card className="text-center luxury-card border-0">
           <CardContent className="p-4">
-            <div className="text-2xl font-heading font-bold text-gray-600">
+            <div className="text-2xl font-heading font-bold text-foreground/60 velvet-text">
               {filteredTickets.filter(t => t.status === 'sold').length}
             </div>
-            <div className="text-sm font-body text-gray-600">Sold</div>
+            <div className="text-sm font-body text-foreground/60">Sold</div>
           </CardContent>
         </Card>
       </motion.div>
