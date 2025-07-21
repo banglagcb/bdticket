@@ -182,6 +182,19 @@ export default function Dashboard() {
 
   const tilesToShow = [...commonTiles, ...adminTiles];
 
+  // Quick Action handlers
+  const handleViewTickets = () => {
+    navigate("/countries");
+  };
+
+  const handleBuyTickets = () => {
+    navigate("/admin-buying");
+  };
+
+  const handleManageBookings = () => {
+    navigate("/settings");
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
