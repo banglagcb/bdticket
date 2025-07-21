@@ -42,7 +42,32 @@ class APIClient {
 
     try {
       const response = await fetch(url, config);
-      const result = await response.json();
+
+      // Check if response has content
+      const contentType = response.headers.get("content-type");
+      let result;
+
+      if (contentType && contentType.includes("application/json")) {
+        // Clone the response to avoid "body stream already read" error
+        const clonedResponse = response.clone();
+        try {
+          result = await clonedResponse.json();
+        } catch (jsonError) {
+          // If JSON parsing fails, try to read as text
+          result = {
+            success: response.ok,
+            message: await response.text() || `HTTP ${response.status}`
+          };
+        }
+      } else {
+        // Non-JSON response
+        const text = await response.text();
+        result = {
+          success: response.ok,
+          message: text || `HTTP ${response.status}`,
+          data: text
+        };
+      }
 
       if (!response.ok) {
         throw new Error(
