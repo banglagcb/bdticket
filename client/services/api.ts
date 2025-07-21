@@ -231,7 +231,7 @@ class APIClient {
     status?: string;
     limit?: number;
     offset?: number;
-  }): Promise<any> {
+  }): Promise<any[]> {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -245,7 +245,8 @@ class APIClient {
     const result = await this.request<any>(endpoint);
 
     if (result.success && result.data) {
-      return result.data;
+      // Return the bookings array from the nested data structure
+      return result.data.bookings || [];
     }
     throw new Error(result.message || "Failed to get bookings");
   }
