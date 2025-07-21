@@ -95,6 +95,15 @@ const App = () => (
             />
 
             <Route
+              path="/bookings"
+              element={
+                <Layout>
+                  <Bookings />
+                </Layout>
+              }
+            />
+
+            <Route
               path="/settings"
               element={
                 <Layout>
