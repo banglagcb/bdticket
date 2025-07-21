@@ -117,16 +117,23 @@ export default function Bookings() {
     }
   };
 
-  const filteredBookings = (Array.isArray(bookings) ? bookings : []).filter((booking) => {
-    const matchesSearch =
-      booking.passengerInfo?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.agentInfo?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.id?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredBookings = (Array.isArray(bookings) ? bookings : []).filter(
+    (booking) => {
+      const matchesSearch =
+        booking.passengerInfo?.name
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        booking.agentInfo?.name
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        booking.id?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || booking.status === statusFilter;
+      const matchesStatus =
+        statusFilter === "all" || booking.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
-  });
+      return matchesSearch && matchesStatus;
+    },
+  );
 
   if (!user) {
     return <div>Loading...</div>;
@@ -223,19 +230,25 @@ export default function Bookings() {
             },
             {
               title: "Pending",
-              value: Array.isArray(bookings) ? bookings.filter((b) => b.status === "pending").length : 0,
+              value: Array.isArray(bookings)
+                ? bookings.filter((b) => b.status === "pending").length
+                : 0,
               icon: <Clock className="h-4 w-4 text-white" />,
               color: "bg-yellow-500",
             },
             {
               title: "Confirmed",
-              value: Array.isArray(bookings) ? bookings.filter((b) => b.status === "confirmed").length : 0,
+              value: Array.isArray(bookings)
+                ? bookings.filter((b) => b.status === "confirmed").length
+                : 0,
               icon: <CheckCircle className="h-4 w-4 text-white" />,
               color: "bg-green-500",
             },
             {
               title: "Cancelled",
-              value: Array.isArray(bookings) ? bookings.filter((b) => b.status === "cancelled").length : 0,
+              value: Array.isArray(bookings)
+                ? bookings.filter((b) => b.status === "cancelled").length
+                : 0,
               icon: <XCircle className="h-4 w-4 text-white" />,
               color: "bg-red-500",
             },
@@ -346,7 +359,9 @@ export default function Bookings() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-body">{booking.agentInfo.name}</div>
+                        <div className="font-body">
+                          {booking.agentInfo.name}
+                        </div>
                         <div className="text-xs text-foreground/50 font-body">
                           {booking.agentInfo.phone}
                         </div>
@@ -354,20 +369,30 @@ export default function Bookings() {
                       <TableCell>
                         <Badge
                           className={`${
-                            statusColors[booking.status as keyof typeof statusColors]
+                            statusColors[
+                              booking.status as keyof typeof statusColors
+                            ]
                           } flex items-center space-x-1 font-body`}
                         >
-                          {statusIcons[booking.status as keyof typeof statusIcons]}
+                          {
+                            statusIcons[
+                              booking.status as keyof typeof statusIcons
+                            ]
+                          }
                           <span className="capitalize">{booking.status}</span>
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge
                           className={`${
-                            paymentColors[booking.paymentType as keyof typeof paymentColors]
+                            paymentColors[
+                              booking.paymentType as keyof typeof paymentColors
+                            ]
                           } font-body`}
                         >
-                          {booking.paymentType === "full" ? "Full Payment" : "Partial Payment"}
+                          {booking.paymentType === "full"
+                            ? "Full Payment"
+                            : "Partial Payment"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm text-foreground/70 font-body">
@@ -403,10 +428,25 @@ export default function Bookings() {
                                         Passenger Information
                                       </h4>
                                       <div className="text-sm space-y-1 font-body">
-                                        <p><strong>Name:</strong> {selectedBooking.passengerInfo.name}</p>
-                                        <p><strong>Passport:</strong> {selectedBooking.passengerInfo.passportNo}</p>
-                                        <p><strong>Phone:</strong> {selectedBooking.passengerInfo.phone}</p>
-                                        <p><strong>Email:</strong> {selectedBooking.passengerInfo.email}</p>
+                                        <p>
+                                          <strong>Name:</strong>{" "}
+                                          {selectedBooking.passengerInfo.name}
+                                        </p>
+                                        <p>
+                                          <strong>Passport:</strong>{" "}
+                                          {
+                                            selectedBooking.passengerInfo
+                                              .passportNo
+                                          }
+                                        </p>
+                                        <p>
+                                          <strong>Phone:</strong>{" "}
+                                          {selectedBooking.passengerInfo.phone}
+                                        </p>
+                                        <p>
+                                          <strong>Email:</strong>{" "}
+                                          {selectedBooking.passengerInfo.email}
+                                        </p>
                                       </div>
                                     </div>
                                     <div className="space-y-2">
@@ -414,26 +454,46 @@ export default function Bookings() {
                                         Agent Information
                                       </h4>
                                       <div className="text-sm space-y-1 font-body">
-                                        <p><strong>Name:</strong> {selectedBooking.agentInfo.name}</p>
-                                        <p><strong>Phone:</strong> {selectedBooking.agentInfo.phone}</p>
-                                        <p><strong>Email:</strong> {selectedBooking.agentInfo.email}</p>
+                                        <p>
+                                          <strong>Name:</strong>{" "}
+                                          {selectedBooking.agentInfo.name}
+                                        </p>
+                                        <p>
+                                          <strong>Phone:</strong>{" "}
+                                          {selectedBooking.agentInfo.phone}
+                                        </p>
+                                        <p>
+                                          <strong>Email:</strong>{" "}
+                                          {selectedBooking.agentInfo.email}
+                                        </p>
                                       </div>
                                     </div>
                                   </div>
-                                  
+
                                   <div className="flex space-x-2">
-                                    {hasPermission("confirm_bookings") && selectedBooking.status === "pending" && (
-                                      <Button
-                                        onClick={() => handleStatusUpdate(selectedBooking.id, "confirmed")}
-                                        className="velvet-button bg-green-600 hover:bg-green-700 font-body"
-                                      >
-                                        <CheckCircle className="h-4 w-4 mr-2" />
-                                        Confirm Booking
-                                      </Button>
-                                    )}
+                                    {hasPermission("confirm_bookings") &&
+                                      selectedBooking.status === "pending" && (
+                                        <Button
+                                          onClick={() =>
+                                            handleStatusUpdate(
+                                              selectedBooking.id,
+                                              "confirmed",
+                                            )
+                                          }
+                                          className="velvet-button bg-green-600 hover:bg-green-700 font-body"
+                                        >
+                                          <CheckCircle className="h-4 w-4 mr-2" />
+                                          Confirm Booking
+                                        </Button>
+                                      )}
                                     {selectedBooking.status !== "cancelled" && (
                                       <Button
-                                        onClick={() => handleStatusUpdate(selectedBooking.id, "cancelled")}
+                                        onClick={() =>
+                                          handleStatusUpdate(
+                                            selectedBooking.id,
+                                            "cancelled",
+                                          )
+                                        }
                                         variant="destructive"
                                         className="font-body"
                                       >
@@ -452,7 +512,7 @@ export default function Bookings() {
                   ))}
                 </TableBody>
               </Table>
-              
+
               {filteredBookings.length === 0 && (
                 <div className="text-center py-12">
                   <Package className="h-12 w-12 text-foreground/30 mx-auto mb-4" />
