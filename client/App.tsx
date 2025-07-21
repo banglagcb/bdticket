@@ -16,6 +16,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Countries from "./pages/Countries";
 import Tickets from "./pages/Tickets";
+import AdminBuying from "./pages/AdminBuying";
 import NotFound from "./pages/NotFound";
 
 // Placeholder components for routes not yet implemented
@@ -85,7 +86,7 @@ const App = () => (
               path="/admin/buying"
               element={
                 <Layout>
-                  <PlaceholderPage title="Admin Ticket Buying" />
+                  <AdminBuying />
                 </Layout>
               }
             />
