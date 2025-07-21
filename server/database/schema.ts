@@ -378,6 +378,98 @@ export function seedDatabase() {
       }
     }
 
+    // Add sample bookings
+    const insertBooking = db.prepare(`
+      INSERT INTO bookings (
+        id, ticket_id, status, agent_info, passenger_info,
+        selling_price, payment_type, payment_method,
+        created_by, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    // Get first few tickets to create bookings for
+    const sampleTickets = db.prepare("SELECT id FROM tickets LIMIT 5").all();
+
+    const sampleBookings = [
+      {
+        id: uuidv4(),
+        ticketId: sampleTickets[0]?.id,
+        status: "pending",
+        agentInfo: JSON.stringify({
+          name: "Rahman Travel Agency",
+          phone: "+8801712345678",
+          email: "rahman@travelagency.com"
+        }),
+        passengerInfo: JSON.stringify({
+          name: "Mohammed Abdul Rahman",
+          passportNo: "EB1234567",
+          phone: "+8801987654321",
+          paxCount: 1,
+          email: "mohammed@email.com"
+        }),
+        sellingPrice: 22000,
+        paymentType: "partial",
+        paymentMethod: "bank_transfer"
+      },
+      {
+        id: uuidv4(),
+        ticketId: sampleTickets[1]?.id,
+        status: "confirmed",
+        agentInfo: JSON.stringify({
+          name: "Dhaka Express Travel",
+          phone: "+8801555777888",
+          email: "info@dhakaexpress.com"
+        }),
+        passengerInfo: JSON.stringify({
+          name: "Fatima Begum",
+          passportNo: "EB2345678",
+          phone: "+8801666888999",
+          paxCount: 1,
+          email: "fatima@email.com"
+        }),
+        sellingPrice: 45600,
+        paymentType: "full",
+        paymentMethod: "cash"
+      },
+      {
+        id: uuidv4(),
+        ticketId: sampleTickets[2]?.id,
+        status: "pending",
+        agentInfo: JSON.stringify({
+          name: "Golden Wings Travel",
+          phone: "+8801888999000",
+          email: "contact@goldenwings.com"
+        }),
+        passengerInfo: JSON.stringify({
+          name: "Ahmed Hassan",
+          passportNo: "EB3456789",
+          phone: "+8801444555666",
+          paxCount: 1,
+          email: "ahmed@email.com"
+        }),
+        sellingPrice: 52800,
+        paymentType: "full",
+        paymentMethod: "bkash"
+      }
+    ];
+
+    for (const booking of sampleBookings) {
+      if (booking.ticketId) {
+        insertBooking.run(
+          booking.id,
+          booking.ticketId,
+          booking.status,
+          booking.agentInfo,
+          booking.passengerInfo,
+          booking.sellingPrice,
+          booking.paymentType,
+          booking.paymentMethod,
+          adminUser.id,
+          new Date().toISOString()
+        );
+      }
+    }
+
     console.log("Database seeded successfully with sample data");
   } catch (error) {
     console.error("Error seeding database:", error);
