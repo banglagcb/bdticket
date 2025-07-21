@@ -117,14 +117,14 @@ export default function Bookings() {
     }
   };
 
-  const filteredBookings = bookings.filter((booking) => {
-    const matchesSearch = 
-      booking.passengerInfo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.agentInfo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.id.toLowerCase().includes(searchTerm.toLowerCase());
-    
+  const filteredBookings = (Array.isArray(bookings) ? bookings : []).filter((booking) => {
+    const matchesSearch =
+      booking.passengerInfo?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.agentInfo?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.id?.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesStatus = statusFilter === "all" || booking.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
