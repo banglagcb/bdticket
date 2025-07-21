@@ -1002,47 +1002,45 @@ export default function Settings() {
             <Card className="luxury-card border-0">
               <CardHeader>
                 <CardTitle className="font-heading velvet-text flex items-center space-x-2">
-                  <Database className="h-5 w-5" />
-                  <span>Backup History</span>
+                  <FileText className="h-5 w-5" />
+                  <span>Recent Activity</span>
                 </CardTitle>
+                <CardDescription className="font-body">
+                  System activity and export history
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {[
-                    { date: "2024-12-23", size: "2.3 MB", status: "Completed" },
-                    { date: "2024-12-22", size: "2.1 MB", status: "Completed" },
-                    { date: "2024-12-21", size: "1.9 MB", status: "Completed" },
-                  ].map((backup, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 bg-gradient-to-r from-cream-100/50 to-transparent rounded-lg"
-                    >
-                      <div>
-                        <p className="font-body font-medium text-sm text-foreground">
-                          Backup - {backup.date}
-                        </p>
-                        <p className="font-body text-xs text-foreground/60">
-                          Size: {backup.size}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
+                <div className="space-y-3 max-h-64 overflow-y-auto">
+                  {activityLogs.length > 0 ? (
+                    activityLogs.map((log, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-cream-100/50 to-transparent rounded-lg"
+                      >
+                        <div>
+                          <p className="font-body font-medium text-sm text-foreground capitalize">
+                            {log.action?.replace(/_/g, ' ')} - {log.entity_type}
+                          </p>
+                          <p className="font-body text-xs text-foreground/60">
+                            By: {log.user_name || 'System'} • {new Date(log.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
                         <Badge
                           variant="outline"
-                          className="bg-green-100 text-green-700 border-green-200 text-xs"
+                          className="bg-blue-100 text-blue-700 border-blue-200 text-xs"
                         >
-                          {backup.status}
+                          {log.action}
                         </Badge>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="font-body text-xs"
-                        >
-                          <Download className="h-3 w-3 mr-1" />
-                          Download
-                        </Button>
                       </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-6">
+                      <FileText className="h-8 w-8 text-foreground/30 mx-auto mb-2" />
+                      <p className="font-body text-sm text-foreground/60">
+                        No recent activity found
+                      </p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
