@@ -56,7 +56,7 @@ class APIClient {
           // If JSON parsing fails, try to read as text
           result = {
             success: response.ok,
-            message: await response.text() || `HTTP ${response.status}`
+            message: (await response.text()) || `HTTP ${response.status}`,
           };
         }
       } else {
@@ -65,7 +65,7 @@ class APIClient {
         result = {
           success: response.ok,
           message: text || `HTTP ${response.status}`,
-          data: text
+          data: text,
         };
       }
 
