@@ -79,7 +79,7 @@ const App = () => (
               path="/tickets/:country"
               element={
                 <Layout>
-                  <PlaceholderPage title="Country Tickets" />
+                  <CountryTickets />
                 </Layout>
               }
             />
@@ -97,7 +97,7 @@ const App = () => (
               path="/settings"
               element={
                 <Layout>
-                  <PlaceholderPage title="Settings" />
+                  <Settings />
                 </Layout>
               }
             />
