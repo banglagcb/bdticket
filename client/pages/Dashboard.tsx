@@ -188,7 +188,7 @@ export default function Dashboard() {
   };
 
   const handleBuyTickets = () => {
-    navigate("/admin-buying");
+    navigate("/admin/buying");
   };
 
   const handleManageBookings = () => {
