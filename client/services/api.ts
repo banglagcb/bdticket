@@ -48,15 +48,13 @@ class APIClient {
       let result;
 
       if (contentType && contentType.includes("application/json")) {
-        // Clone the response to avoid "body stream already read" error
-        const clonedResponse = response.clone();
         try {
-          result = await clonedResponse.json();
+          result = await response.json();
         } catch (jsonError) {
-          // If JSON parsing fails, try to read as text
+          // If JSON parsing fails, create a fallback result without reading body again
           result = {
             success: response.ok,
-            message: (await response.text()) || `HTTP ${response.status}`,
+            message: `Failed to parse JSON response: ${response.status}`,
           };
         }
       } else {
