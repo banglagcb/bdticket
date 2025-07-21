@@ -80,10 +80,10 @@ export default function Layout({ children }: LayoutProps) {
     return (
       <Link
         to={item.path}
-        className={`flex items-center space-x-3 px-3 py-2 rounded-lg font-body font-medium transition-colors ${
+        className={`flex items-center space-x-3 px-3 py-2 rounded-lg font-body font-medium transition-all duration-300 transform hover:scale-105 ${
           isActive
-            ? 'bg-teal-primary text-white'
-            : 'text-gray-700 hover:bg-gray-100'
+            ? 'velvet-button text-primary-foreground shadow-lg'
+            : 'text-foreground hover:bg-gradient-to-r hover:from-cream-200 hover:to-cream-300 hover:shadow-md'
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
       >
@@ -94,15 +94,15 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-cream-50 via-luxury-pearl to-cream-100">
       {/* Top Navigation Bar */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="luxury-card shadow-lg border-b border-border/30 backdrop-blur-md bg-gradient-to-r from-card to-cream-100">
         <div className="flex items-center justify-between px-4 py-3">
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+              className="md:hidden p-2 rounded-lg hover:bg-cream-200/50 transition-all duration-200"
             >
               {isMobileMenuOpen ? (
                 <X className="h-5 w-5" />
@@ -112,11 +112,11 @@ export default function Layout({ children }: LayoutProps) {
             </button>
             
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <div className="p-2 bg-teal-primary rounded-lg">
+              <div className="p-2 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-lg animate-glow">
                 <Plane className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="font-heading font-bold text-lg text-gray-900">
+                <h1 className="font-heading font-bold text-lg velvet-text">
                   BD TicketPro
                 </h1>
               </div>
@@ -125,15 +125,15 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* User Profile and Actions */}
           <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center space-x-2">
-              <div className="p-2 bg-gray-100 rounded-full">
-                <User className="h-4 w-4 text-gray-600" />
+            <div className="hidden sm:flex items-center space-x-2 animate-luxury-fade">
+              <div className="p-2 bg-gradient-to-br from-cream-200 to-cream-300 rounded-full">
+                <User className="h-4 w-4 text-foreground/70" />
               </div>
               <div className="text-right">
-                <p className="font-body font-medium text-sm text-gray-900">
+                <p className="font-body font-medium text-sm text-foreground">
                   {user.name}
                 </p>
-                <p className="font-body text-xs text-gray-500 capitalize">
+                <p className="font-body text-xs text-foreground/60 capitalize">
                   {user.role}
                 </p>
               </div>
@@ -143,7 +143,7 @@ export default function Layout({ children }: LayoutProps) {
               onClick={handleLogout}
               variant="outline"
               size="sm"
-              className="font-body"
+              className="font-body hover:scale-105 transform transition-all duration-200 border-border/50"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Logout
@@ -154,7 +154,7 @@ export default function Layout({ children }: LayoutProps) {
 
       <div className="flex">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex md:flex-col w-64 bg-white shadow-sm border-r h-[calc(100vh-73px)]">
+        <aside className="hidden md:flex md:flex-col w-64 luxury-card shadow-lg border-r border-border/30 h-[calc(100vh-73px)] backdrop-blur-md">
           <nav className="flex-1 p-4 space-y-2">
             {visibleNavItems.map((item) => (
               <NavLink key={item.path} item={item} />
@@ -162,16 +162,16 @@ export default function Layout({ children }: LayoutProps) {
           </nav>
           
           {/* User info at bottom */}
-          <div className="p-4 border-t">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-teal-primary/10 rounded-full">
-                <User className="h-4 w-4 text-teal-primary" />
+          <div className="p-4 border-t border-border/30 bg-gradient-to-r from-cream-100 to-cream-200">
+            <div className="flex items-center space-x-3 animate-velvet-slide">
+              <div className="p-2 bg-gradient-to-br from-luxury-gold/20 to-luxury-bronze/20 rounded-full">
+                <User className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <p className="font-body font-medium text-sm text-gray-900">
+                <p className="font-body font-medium text-sm text-foreground">
                   {user.name}
                 </p>
-                <p className="font-body text-xs text-gray-500 capitalize">
+                <p className="font-body text-xs text-foreground/60 capitalize">
                   {user.role} Account
                 </p>
               </div>
@@ -192,15 +192,15 @@ export default function Layout({ children }: LayoutProps) {
               initial={{ x: -300 }}
               animate={{ x: 0 }}
               exit={{ x: -300 }}
-              className="w-64 bg-white h-full shadow-lg"
+              className="w-64 luxury-card h-full shadow-2xl backdrop-blur-md"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-4 border-b">
+              <div className="p-4 border-b border-border/30">
                 <div className="flex items-center space-x-2">
-                  <div className="p-2 bg-teal-primary rounded-lg">
+                  <div className="p-2 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-lg animate-glow">
                     <Plane className="h-5 w-5 text-white" />
                   </div>
-                  <h1 className="font-heading font-bold text-lg text-gray-900">
+                  <h1 className="font-heading font-bold text-lg velvet-text">
                     BD TicketPro
                   </h1>
                 </div>
@@ -212,16 +212,16 @@ export default function Layout({ children }: LayoutProps) {
                 ))}
               </nav>
               
-              <div className="p-4 border-t">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-teal-primary/10 rounded-full">
-                    <User className="h-4 w-4 text-teal-primary" />
+              <div className="p-4 border-t border-border/30 bg-gradient-to-r from-cream-100 to-cream-200">
+                <div className="flex items-center space-x-3 animate-velvet-slide">
+                  <div className="p-2 bg-gradient-to-br from-luxury-gold/20 to-luxury-bronze/20 rounded-full">
+                    <User className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="font-body font-medium text-sm text-gray-900">
+                    <p className="font-body font-medium text-sm text-foreground">
                       {user.name}
                     </p>
-                    <p className="font-body text-xs text-gray-500 capitalize">
+                    <p className="font-body text-xs text-foreground/60 capitalize">
                       {user.role} Account
                     </p>
                   </div>
@@ -232,12 +232,12 @@ export default function Layout({ children }: LayoutProps) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-6 overflow-auto bg-gradient-to-br from-transparent to-cream-50/30">
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
           >
             {children}
           </motion.div>
