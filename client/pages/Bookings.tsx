@@ -217,25 +217,25 @@ export default function Bookings() {
           {[
             {
               title: "Total Bookings",
-              value: bookings.length,
+              value: Array.isArray(bookings) ? bookings.length : 0,
               icon: <Package className="h-4 w-4 text-white" />,
               color: "bg-blue-500",
             },
             {
               title: "Pending",
-              value: bookings.filter((b) => b.status === "pending").length,
+              value: Array.isArray(bookings) ? bookings.filter((b) => b.status === "pending").length : 0,
               icon: <Clock className="h-4 w-4 text-white" />,
               color: "bg-yellow-500",
             },
             {
               title: "Confirmed",
-              value: bookings.filter((b) => b.status === "confirmed").length,
+              value: Array.isArray(bookings) ? bookings.filter((b) => b.status === "confirmed").length : 0,
               icon: <CheckCircle className="h-4 w-4 text-white" />,
               color: "bg-green-500",
             },
             {
               title: "Cancelled",
-              value: bookings.filter((b) => b.status === "cancelled").length,
+              value: Array.isArray(bookings) ? bookings.filter((b) => b.status === "cancelled").length : 0,
               icon: <XCircle className="h-4 w-4 text-white" />,
               color: "bg-red-500",
             },
