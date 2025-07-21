@@ -3,6 +3,7 @@
 ## 📋 Pre-Deployment Checklist
 
 ### ✅ Environment Setup
+
 - [ ] Copy `.env.example` to `.env`
 - [ ] Update `JWT_SECRET` with a strong production key
 - [ ] Set `NODE_ENV=production`
@@ -11,6 +12,7 @@
 - [ ] Set strong `SESSION_SECRET`
 
 ### ✅ Security Configuration
+
 - [ ] Generate secure JWT secret (minimum 32 characters)
 - [ ] Configure rate limiting settings
 - [ ] Set up CORS for specific domains only
@@ -18,12 +20,14 @@
 - [ ] Enable HTTPS in production
 
 ### ✅ Database Configuration
+
 - [ ] Ensure SQLite file permissions are correct
 - [ ] Set up automated backups
 - [ ] Configure backup retention policy
 - [ ] Test database initialization
 
 ### ✅ Build Verification
+
 - [ ] Run `npm run build` successfully
 - [ ] Test production server with `npm start`
 - [ ] Verify all API endpoints work
@@ -55,6 +59,7 @@ COMPANY_ADDRESS=Your Address, Dhaka, Bangladesh
 ## 🐳 Docker Deployment
 
 ### Dockerfile
+
 ```dockerfile
 FROM node:18-alpine
 
@@ -84,8 +89,9 @@ CMD ["npm", "start"]
 ```
 
 ### Docker Compose
+
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   bd-ticketpro:
     build: .
@@ -104,15 +110,18 @@ services:
 ## ☁️ Platform-Specific Deployment
 
 ### Netlify Deployment (Recommended)
+
 This project is configured for Netlify deployment:
 
 1. **Connect Repository**
+
    - Link your Git repository to Netlify
    - Configure build settings:
      - Build command: `npm run build`
      - Publish directory: `dist/spa`
 
 2. **Environment Variables**
+
    ```
    NODE_ENV=production
    JWT_SECRET=your-production-secret
@@ -124,27 +133,29 @@ This project is configured for Netlify deployment:
    - API endpoints available at `/.netlify/functions/api`
 
 ### Digital Ocean App Platform
+
 ```yaml
 name: bd-ticketpro
 services:
-- name: web
-  source_dir: /
-  github:
-    repo: your-username/bd-ticketpro
-    branch: main
-  run_command: npm start
-  build_command: npm run build
-  environment_slug: node-js
-  instance_count: 1
-  instance_size_slug: basic-xxs
-  envs:
-  - key: NODE_ENV
-    value: production
-  - key: JWT_SECRET
-    value: your-production-secret
+  - name: web
+    source_dir: /
+    github:
+      repo: your-username/bd-ticketpro
+      branch: main
+    run_command: npm start
+    build_command: npm run build
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        value: your-production-secret
 ```
 
 ### Railway
+
 ```json
 {
   "build": {
@@ -160,32 +171,36 @@ services:
 ## 🔒 Security Considerations
 
 ### 1. Authentication
+
 - Change default admin credentials immediately
 - Enforce strong password policies
 - Set short JWT expiration times
 - Implement session management
 
 ### 2. Database Security
+
 - Regular automated backups
 - Encrypted database file (if supported)
 - Restricted file permissions
 - Monitor database access
 
 ### 3. API Security
+
 - Rate limiting enabled
 - CORS properly configured
 - Input validation with Zod
 - SQL injection prevention
 
 ### 4. HTTPS Configuration
+
 ```nginx
 server {
     listen 443 ssl http2;
     server_name your-domain.com;
-    
+
     ssl_certificate /path/to/certificate.crt;
     ssl_certificate_key /path/to/private.key;
-    
+
     location / {
         proxy_pass http://localhost:8080;
         proxy_set_header Host $host;
@@ -199,6 +214,7 @@ server {
 ## 📊 Monitoring & Maintenance
 
 ### Health Checks
+
 ```bash
 # API Health Check
 curl https://your-domain.com/api/auth/health
@@ -208,6 +224,7 @@ curl https://your-domain.com/api/settings/system-info
 ```
 
 ### Log Management
+
 ```bash
 # Application logs
 tail -f logs/app.log
@@ -220,12 +237,14 @@ tail -f logs/backup.log
 ```
 
 ### Backup Strategy
+
 - **Daily**: Automated database backups
 - **Weekly**: Full system backups
 - **Monthly**: Archive old backups
 - **Monitoring**: Backup success/failure alerts
 
 ### Performance Monitoring
+
 - Monitor response times
 - Track database query performance
 - Monitor memory usage
@@ -236,25 +255,28 @@ tail -f logs/backup.log
 ### Common Production Issues
 
 1. **Database Permission Errors**
+
    ```bash
    chmod 755 /app/data
    chmod 666 /app/data/bd-ticketpro.db
    ```
 
 2. **Memory Issues**
+
    ```bash
    # Check memory usage
    ps aux --sort=-%mem | head
-   
+
    # Restart if needed
    pm2 restart bd-ticketpro
    ```
 
 3. **Port Conflicts**
+
    ```bash
    # Check port usage
    lsof -i :8080
-   
+
    # Kill conflicting process
    kill -9 <PID>
    ```
@@ -262,11 +284,13 @@ tail -f logs/backup.log
 ## 📞 Production Support
 
 ### Emergency Contacts
+
 - **System Admin**: admin@yourcompany.com
 - **Database Admin**: dba@yourcompany.com
 - **24/7 Support**: +880-XXX-XXX-XXXX
 
 ### Rollback Procedure
+
 1. Stop current service
 2. Restore from last known good backup
 3. Verify functionality
