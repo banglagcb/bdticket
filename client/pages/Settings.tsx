@@ -294,6 +294,17 @@ export default function Settings() {
       : "bg-gray-100 text-gray-800 border-gray-200";
   };
 
+  if (settingsLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="flex items-center space-x-2">
+          <RefreshCw className="h-6 w-6 animate-spin text-primary" />
+          <span className="font-body text-foreground">Loading settings...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
