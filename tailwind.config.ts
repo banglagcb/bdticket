@@ -61,11 +61,22 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        teal: {
-          primary: "#289E8E",
+        cream: {
+          50: "#fefdf9",
+          100: "#fef9f0",
+          200: "#fcf0d9",
+          300: "#f9e4b8",
+          400: "#f5d085",
+          500: "#f0b853",
+          600: "#e19d2b",
+          700: "#c4821c",
+          800: "#a06818",
+          900: "#7d5017",
         },
-        gray: {
-          light: "#F5F5F5",
+        luxury: {
+          gold: "#d4af37",
+          bronze: "#cd7f32",
+          pearl: "#f8f6f0",
         },
       },
       borderRadius: {
@@ -90,10 +101,50 @@ export default {
             height: "0",
           },
         },
+        "float": {
+          "0%, 100%": {
+            transform: "translateY(0px)",
+          },
+          "50%": {
+            transform: "translateY(-10px)",
+          },
+        },
+        "glow": {
+          "0%": {
+            boxShadow: "0 0 20px rgba(212, 175, 55, 0.3)",
+          },
+          "100%": {
+            boxShadow: "0 0 30px rgba(212, 175, 55, 0.6)",
+          },
+        },
+        "luxury-fade": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px) scale(0.95)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0px) scale(1)",
+          },
+        },
+        "velvet-slide": {
+          "0%": {
+            transform: "translateX(-100%)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateX(0%)",
+            opacity: "1",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "float": "float 3s ease-in-out infinite",
+        "glow": "glow 2s ease-in-out infinite alternate",
+        "luxury-fade": "luxury-fade 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+        "velvet-slide": "velvet-slide 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
       },
     },
   },
