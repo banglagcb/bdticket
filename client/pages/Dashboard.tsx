@@ -192,7 +192,7 @@ export default function Dashboard() {
   };
 
   const handleManageBookings = () => {
-    navigate("/settings");
+    navigate("/bookings");
   };
 
   return (
