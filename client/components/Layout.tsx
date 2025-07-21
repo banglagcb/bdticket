@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Globe,
   Ticket,
+  Package,
   ShoppingCart,
   Settings,
   LogOut,
