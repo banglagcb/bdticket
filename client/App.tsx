@@ -18,6 +18,7 @@ import Countries from "./pages/Countries";
 import Tickets from "./pages/Tickets";
 import CountryTickets from "./pages/CountryTickets";
 import AdminBuying from "./pages/AdminBuying";
+import Bookings from "./pages/Bookings";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
