@@ -121,7 +121,8 @@ export default function Settings() {
           companyName: settingsMap.company_name || "BD TicketPro",
           companyEmail: settingsMap.company_email || "info@bdticketpro.com",
           companyPhone: settingsMap.company_phone || "+880-123-456-7890",
-          companyAddress: settingsMap.company_address || "Dhanmondi, Dhaka, Bangladesh",
+          companyAddress:
+            settingsMap.company_address || "Dhanmondi, Dhaka, Bangladesh",
           defaultCurrency: settingsMap.default_currency || "BDT",
           timezone: settingsMap.timezone || "Asia/Dhaka",
           language: settingsMap.language || "en",
@@ -183,7 +184,10 @@ export default function Settings() {
     setIsLoading(true);
     try {
       // Validate passwords match if changing password
-      if (userProfile.newPassword && userProfile.newPassword !== userProfile.confirmPassword) {
+      if (
+        userProfile.newPassword &&
+        userProfile.newPassword !== userProfile.confirmPassword
+      ) {
         alert("New passwords do not match!");
         return;
       }
@@ -209,7 +213,7 @@ export default function Settings() {
       });
 
       // Clear password fields
-      setUserProfile(prev => ({
+      setUserProfile((prev) => ({
         ...prev,
         currentPassword: "",
         newPassword: "",
@@ -970,7 +974,9 @@ export default function Settings() {
                     <div className="flex flex-col items-center space-y-2">
                       <FileText className="h-6 w-6" />
                       <span>Export CSV</span>
-                      <span className="text-xs opacity-80">Spreadsheet Format</span>
+                      <span className="text-xs opacity-80">
+                        Spreadsheet Format
+                      </span>
                     </div>
                   </Button>
                   <Button
@@ -982,7 +988,9 @@ export default function Settings() {
                     <div className="flex flex-col items-center space-y-2">
                       <Database className="h-6 w-6" />
                       <span>Export JSON</span>
-                      <span className="text-xs opacity-80">Database Format</span>
+                      <span className="text-xs opacity-80">
+                        Database Format
+                      </span>
                     </div>
                   </Button>
                   <Button
@@ -1019,10 +1027,11 @@ export default function Settings() {
                       >
                         <div>
                           <p className="font-body font-medium text-sm text-foreground capitalize">
-                            {log.action?.replace(/_/g, ' ')} - {log.entity_type}
+                            {log.action?.replace(/_/g, " ")} - {log.entity_type}
                           </p>
                           <p className="font-body text-xs text-foreground/60">
-                            By: {log.user_name || 'System'} • {new Date(log.created_at).toLocaleDateString()}
+                            By: {log.user_name || "System"} •{" "}
+                            {new Date(log.created_at).toLocaleDateString()}
                           </p>
                         </div>
                         <Badge
