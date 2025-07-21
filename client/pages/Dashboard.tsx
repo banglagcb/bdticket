@@ -1,17 +1,23 @@
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
-import { 
-  DollarSign, 
-  Ticket, 
-  Lock, 
-  Package, 
+import React from "react";
+import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import {
+  DollarSign,
+  Ticket,
+  Lock,
+  Package,
   TrendingUp,
   ShoppingCart,
   AlertCircle,
-  Users 
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+  Users,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 
 interface DashboardTileProps {
   title: string;
@@ -22,7 +28,14 @@ interface DashboardTileProps {
   delay?: number;
 }
 
-function DashboardTile({ title, value, description, icon, color, delay = 0 }: DashboardTileProps) {
+function DashboardTile({
+  title,
+  value,
+  description,
+  icon,
+  color,
+  delay = 0,
+}: DashboardTileProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -37,12 +50,16 @@ function DashboardTile({ title, value, description, icon, color, delay = 0 }: Da
           <CardTitle className="text-sm font-heading font-medium velvet-text">
             {title}
           </CardTitle>
-          <div className={`p-2 rounded-full ${color} animate-glow group-hover:scale-110 transition-transform duration-300`}>
+          <div
+            className={`p-2 rounded-full ${color} animate-glow group-hover:scale-110 transition-transform duration-300`}
+          >
             {icon}
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-2xl font-heading font-bold mb-1 velvet-text">{value}</div>
+          <div className="text-2xl font-heading font-bold mb-1 velvet-text">
+            {value}
+          </div>
           <p className="text-xs text-muted-foreground font-body">
             {description}
           </p>
@@ -67,7 +84,7 @@ export default function Dashboard() {
     totalInventory: 320,
     estimatedProfit: 85000,
     todaysTicketsBought: 25,
-    unsoldTickets: 187
+    unsoldTickets: 187,
   };
 
   const commonTiles = [
@@ -76,29 +93,29 @@ export default function Dashboard() {
       value: `৳${stats.todaysSales.amount.toLocaleString()}`,
       description: `${stats.todaysSales.count} tickets sold today`,
       icon: <DollarSign className="h-4 w-4 text-white" />,
-      color: "bg-green-500"
+      color: "bg-green-500",
     },
     {
       title: "Total Bookings",
       value: stats.totalBookings,
       description: "Active booking requests",
       icon: <Ticket className="h-4 w-4 text-white" />,
-      color: "bg-blue-500"
+      color: "bg-blue-500",
     },
     {
       title: "Locked Tickets",
       value: stats.lockedTickets,
       description: "Temporarily reserved",
       icon: <Lock className="h-4 w-4 text-white" />,
-      color: "bg-yellow-500"
+      color: "bg-yellow-500",
     },
     {
       title: "Total Inventory",
       value: stats.totalInventory,
       description: "Available tickets",
       icon: <Package className="h-4 w-4 text-white" />,
-      color: "bg-purple-500"
-    }
+      color: "bg-purple-500",
+    },
   ];
 
   const adminTiles = [
@@ -107,25 +124,25 @@ export default function Dashboard() {
       value: `৳${stats.estimatedProfit.toLocaleString()}`,
       description: "Based on current sales",
       icon: <TrendingUp className="h-4 w-4 text-white" />,
-      color: "bg-teal-primary"
+      color: "bg-teal-primary",
     },
     {
       title: "Today's Purchases",
       value: stats.todaysTicketsBought,
       description: "Tickets bought today",
       icon: <ShoppingCart className="h-4 w-4 text-white" />,
-      color: "bg-indigo-500"
+      color: "bg-indigo-500",
     },
     {
       title: "Unsold Tickets",
       value: stats.unsoldTickets,
       description: "Remaining inventory",
       icon: <AlertCircle className="h-4 w-4 text-white" />,
-      color: "bg-orange-500"
-    }
+      color: "bg-orange-500",
+    },
   ];
 
-  const tilesToShow = hasPermission('view_profit') 
+  const tilesToShow = hasPermission("view_profit")
     ? [...commonTiles, ...adminTiles]
     : commonTiles;
 
@@ -155,11 +172,7 @@ export default function Dashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {tilesToShow.map((tile, index) => (
-          <DashboardTile
-            key={tile.title}
-            {...tile}
-            delay={index * 0.1}
-          />
+          <DashboardTile key={tile.title} {...tile} delay={index * 0.1} />
         ))}
       </div>
 
@@ -171,7 +184,9 @@ export default function Dashboard() {
       >
         <Card className="luxury-card border-0">
           <CardHeader>
-            <CardTitle className="font-heading velvet-text">Quick Actions</CardTitle>
+            <CardTitle className="font-heading velvet-text">
+              Quick Actions
+            </CardTitle>
             <CardDescription className="font-body">
               Frequently used features for your role
             </CardDescription>
@@ -184,19 +199,30 @@ export default function Dashboard() {
                 className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 <Ticket className="h-8 w-8 text-primary mb-2 animate-float" />
-                <h3 className="font-heading font-semibold velvet-text">View Tickets</h3>
-                <p className="text-sm text-foreground/70 font-body">Browse available tickets</p>
+                <h3 className="font-heading font-semibold velvet-text">
+                  View Tickets
+                </h3>
+                <p className="text-sm text-foreground/70 font-body">
+                  Browse available tickets
+                </p>
               </motion.div>
 
-              {hasPermission('create_batches') && (
+              {hasPermission("create_batches") && (
                 <motion.div
                   whileHover={{ scale: 1.05, y: -5 }}
                   transition={{ duration: 0.2 }}
                   className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  <ShoppingCart className="h-8 w-8 text-primary mb-2 animate-float" style={{animationDelay: '0.5s'}} />
-                  <h3 className="font-heading font-semibold velvet-text">Buy Tickets</h3>
-                  <p className="text-sm text-foreground/70 font-body">Add new inventory</p>
+                  <ShoppingCart
+                    className="h-8 w-8 text-primary mb-2 animate-float"
+                    style={{ animationDelay: "0.5s" }}
+                  />
+                  <h3 className="font-heading font-semibold velvet-text">
+                    Buy Tickets
+                  </h3>
+                  <p className="text-sm text-foreground/70 font-body">
+                    Add new inventory
+                  </p>
                 </motion.div>
               )}
 
@@ -205,9 +231,16 @@ export default function Dashboard() {
                 transition={{ duration: 0.2 }}
                 className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
               >
-                <Package className="h-8 w-8 text-primary mb-2 animate-float" style={{animationDelay: '1s'}} />
-                <h3 className="font-heading font-semibold velvet-text">Manage Bookings</h3>
-                <p className="text-sm text-foreground/70 font-body">Process customer requests</p>
+                <Package
+                  className="h-8 w-8 text-primary mb-2 animate-float"
+                  style={{ animationDelay: "1s" }}
+                />
+                <h3 className="font-heading font-semibold velvet-text">
+                  Manage Bookings
+                </h3>
+                <p className="text-sm text-foreground/70 font-body">
+                  Process customer requests
+                </p>
               </motion.div>
             </div>
           </CardContent>
@@ -222,7 +255,9 @@ export default function Dashboard() {
       >
         <Card className="luxury-card border-0">
           <CardHeader>
-            <CardTitle className="font-heading velvet-text">Recent Activity</CardTitle>
+            <CardTitle className="font-heading velvet-text">
+              Recent Activity
+            </CardTitle>
             <CardDescription className="font-body">
               Latest updates and transactions
             </CardDescription>
@@ -230,10 +265,26 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-3">
               {[
-                { action: "Ticket sold", details: "Air Arabia • KSA • ৳20,000", time: "2 minutes ago" },
-                { action: "New booking", details: "Emirates • UAE • John Doe", time: "15 minutes ago" },
-                { action: "Ticket locked", details: "Flydubai • Qatar • 24hr hold", time: "1 hour ago" },
-                { action: "Booking confirmed", details: "Saudi Airlines • KSA • ৳18,500", time: "2 hours ago" }
+                {
+                  action: "Ticket sold",
+                  details: "Air Arabia • KSA • ৳20,000",
+                  time: "2 minutes ago",
+                },
+                {
+                  action: "New booking",
+                  details: "Emirates • UAE • John Doe",
+                  time: "15 minutes ago",
+                },
+                {
+                  action: "Ticket locked",
+                  details: "Flydubai • Qatar • 24hr hold",
+                  time: "1 hour ago",
+                },
+                {
+                  action: "Booking confirmed",
+                  details: "Saudi Airlines • KSA • ৳18,500",
+                  time: "2 hours ago",
+                },
               ].map((activity, index) => (
                 <motion.div
                   key={index}
@@ -245,11 +296,17 @@ export default function Dashboard() {
                   <div className="flex items-center space-x-3">
                     <div className="w-2 h-2 bg-gradient-to-r from-luxury-gold to-luxury-bronze rounded-full animate-glow"></div>
                     <div>
-                      <p className="font-body font-medium text-sm text-foreground">{activity.action}</p>
-                      <p className="font-body text-xs text-foreground/60">{activity.details}</p>
+                      <p className="font-body font-medium text-sm text-foreground">
+                        {activity.action}
+                      </p>
+                      <p className="font-body text-xs text-foreground/60">
+                        {activity.details}
+                      </p>
                     </div>
                   </div>
-                  <span className="font-body text-xs text-foreground/50">{activity.time}</span>
+                  <span className="font-body text-xs text-foreground/50">
+                    {activity.time}
+                  </span>
                 </motion.div>
               ))}
             </div>

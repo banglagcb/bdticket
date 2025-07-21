@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        'heading': ['Oswald', 'sans-serif'],
-        'body': ['Montserrat', 'sans-serif'],
+        heading: ["Oswald", "sans-serif"],
+        body: ["Montserrat", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -101,7 +101,7 @@ export default {
             height: "0",
           },
         },
-        "float": {
+        float: {
           "0%, 100%": {
             transform: "translateY(0px)",
           },
@@ -109,7 +109,7 @@ export default {
             transform: "translateY(-10px)",
           },
         },
-        "glow": {
+        glow: {
           "0%": {
             boxShadow: "0 0 20px rgba(212, 175, 55, 0.3)",
           },
@@ -141,10 +141,11 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "float": "float 3s ease-in-out infinite",
-        "glow": "glow 2s ease-in-out infinite alternate",
+        float: "float 3s ease-in-out infinite",
+        glow: "glow 2s ease-in-out infinite alternate",
         "luxury-fade": "luxury-fade 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-        "velvet-slide": "velvet-slide 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+        "velvet-slide":
+          "velvet-slide 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
       },
     },
   },

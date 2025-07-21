@@ -1,8 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Plane, MapPin, Ticket } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Plane, MapPin, Ticket } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 
 interface CountryCardProps {
   country: {
@@ -16,8 +22,9 @@ interface CountryCardProps {
 }
 
 function CountryCard({ country, index }: CountryCardProps) {
-  const availabilityPercentage = (country.availableTickets / country.totalTickets) * 100;
-  
+  const availabilityPercentage =
+    (country.availableTickets / country.totalTickets) * 100;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -37,24 +44,26 @@ function CountryCard({ country, index }: CountryCardProps) {
               {country.code}
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             {/* Ticket Availability */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="font-body text-sm text-gray-600">Available</span>
+                <span className="font-body text-sm text-gray-600">
+                  Available
+                </span>
                 <span className="font-heading font-semibold text-primary">
                   {country.availableTickets}
                 </span>
               </div>
-              
+
               <div className="w-full bg-gradient-to-r from-cream-200 to-cream-300 rounded-full h-2">
                 <div
                   className="bg-gradient-to-r from-luxury-gold to-luxury-bronze h-2 rounded-full transition-all duration-300 animate-glow"
                   style={{ width: `${availabilityPercentage}%` }}
                 ></div>
               </div>
-              
+
               <div className="flex justify-between items-center text-xs font-body text-foreground/50">
                 <span>Total: {country.totalTickets}</span>
                 <span>{availabilityPercentage.toFixed(0)}% available</span>
@@ -73,7 +82,10 @@ function CountryCard({ country, index }: CountryCardProps) {
               </div>
 
               <div className="flex items-center space-x-2">
-                <div className="p-1 bg-gradient-to-br from-green-100 to-green-200 rounded animate-float" style={{animationDelay: '0.5s'}}>
+                <div
+                  className="p-1 bg-gradient-to-br from-green-100 to-green-200 rounded animate-float"
+                  style={{ animationDelay: "0.5s" }}
+                >
                   <Ticket className="h-3 w-3 text-green-600" />
                 </div>
                 <span className="font-body text-xs text-foreground/70">
@@ -92,65 +104,71 @@ export default function Countries() {
   // Mock data - in a real app, this would come from API
   const countries = [
     {
-      code: 'KSA',
-      name: 'Saudi Arabia',
-      flag: '🇸🇦',
+      code: "KSA",
+      name: "Saudi Arabia",
+      flag: "🇸🇦",
       totalTickets: 85,
-      availableTickets: 42
+      availableTickets: 42,
     },
     {
-      code: 'UAE',
-      name: 'United Arab Emirates',
-      flag: '🇦🇪',
+      code: "UAE",
+      name: "United Arab Emirates",
+      flag: "🇦🇪",
       totalTickets: 72,
-      availableTickets: 38
+      availableTickets: 38,
     },
     {
-      code: 'QAT',
-      name: 'Qatar',
-      flag: '🇶🇦',
+      code: "QAT",
+      name: "Qatar",
+      flag: "🇶🇦",
       totalTickets: 56,
-      availableTickets: 29
+      availableTickets: 29,
     },
     {
-      code: 'KWT',
-      name: 'Kuwait',
-      flag: '🇰🇼',
+      code: "KWT",
+      name: "Kuwait",
+      flag: "🇰🇼",
       totalTickets: 48,
-      availableTickets: 25
+      availableTickets: 25,
     },
     {
-      code: 'OMN',
-      name: 'Oman',
-      flag: '🇴🇲',
+      code: "OMN",
+      name: "Oman",
+      flag: "🇴🇲",
       totalTickets: 34,
-      availableTickets: 18
+      availableTickets: 18,
     },
     {
-      code: 'BHR',
-      name: 'Bahrain',
-      flag: '🇧🇭',
+      code: "BHR",
+      name: "Bahrain",
+      flag: "🇧🇭",
       totalTickets: 28,
-      availableTickets: 15
+      availableTickets: 15,
     },
     {
-      code: 'JOR',
-      name: 'Jordan',
-      flag: '🇯🇴',
+      code: "JOR",
+      name: "Jordan",
+      flag: "🇯🇴",
       totalTickets: 22,
-      availableTickets: 12
+      availableTickets: 12,
     },
     {
-      code: 'LBN',
-      name: 'Lebanon',
-      flag: '🇱🇧',
+      code: "LBN",
+      name: "Lebanon",
+      flag: "🇱🇧",
       totalTickets: 18,
-      availableTickets: 9
-    }
+      availableTickets: 9,
+    },
   ];
 
-  const totalAvailable = countries.reduce((sum, country) => sum + country.availableTickets, 0);
-  const totalTickets = countries.reduce((sum, country) => sum + country.totalTickets, 0);
+  const totalAvailable = countries.reduce(
+    (sum, country) => sum + country.availableTickets,
+    0,
+  );
+  const totalTickets = countries.reduce(
+    (sum, country) => sum + country.totalTickets,
+    0,
+  );
 
   return (
     <div className="space-y-6">
@@ -174,7 +192,7 @@ export default function Countries() {
               </p>
             </div>
           </div>
-          
+
           {/* Summary Stats */}
           <div className="hidden md:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0 backdrop-blur-md">
             <div className="text-center">
@@ -229,11 +247,7 @@ export default function Countries() {
       {/* Countries Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {countries.map((country, index) => (
-          <CountryCard
-            key={country.code}
-            country={country}
-            index={index}
-          />
+          <CountryCard key={country.code} country={country} index={index} />
         ))}
       </div>
 

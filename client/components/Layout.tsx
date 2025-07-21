@@ -1,7 +1,7 @@
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
-import { Link, useLocation, Navigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import React from "react";
+import { useAuth } from "../context/AuthContext";
+import { Link, useLocation, Navigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Plane,
   LayoutDashboard,
@@ -12,10 +12,10 @@ import {
   LogOut,
   User,
   Menu,
-  X
-} from 'lucide-react';
-import { Button } from './ui/button';
-import { useState } from 'react';
+  X,
+} from "lucide-react";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -39,35 +39,35 @@ export default function Layout({ children }: LayoutProps) {
 
   const navigationItems: NavItem[] = [
     {
-      path: '/dashboard',
-      label: 'Dashboard',
-      icon: <LayoutDashboard className="h-4 w-4" />
+      path: "/dashboard",
+      label: "Dashboard",
+      icon: <LayoutDashboard className="h-4 w-4" />,
     },
     {
-      path: '/countries',
-      label: 'Countries',
-      icon: <Globe className="h-4 w-4" />
+      path: "/countries",
+      label: "Countries",
+      icon: <Globe className="h-4 w-4" />,
     },
     {
-      path: '/tickets',
-      label: 'Tickets',
-      icon: <Ticket className="h-4 w-4" />
+      path: "/tickets",
+      label: "Tickets",
+      icon: <Ticket className="h-4 w-4" />,
     },
     {
-      path: '/admin/buying',
-      label: 'Buy Tickets',
+      path: "/admin/buying",
+      label: "Buy Tickets",
       icon: <ShoppingCart className="h-4 w-4" />,
-      permission: 'create_batches'
+      permission: "create_batches",
     },
     {
-      path: '/settings',
-      label: 'Settings',
-      icon: <Settings className="h-4 w-4" />
-    }
+      path: "/settings",
+      label: "Settings",
+      icon: <Settings className="h-4 w-4" />,
+    },
   ];
 
-  const visibleNavItems = navigationItems.filter(item => 
-    !item.permission || hasPermission(item.permission)
+  const visibleNavItems = navigationItems.filter(
+    (item) => !item.permission || hasPermission(item.permission),
   );
 
   const handleLogout = () => {
@@ -76,14 +76,14 @@ export default function Layout({ children }: LayoutProps) {
 
   const NavLink = ({ item }: { item: NavItem }) => {
     const isActive = location.pathname === item.path;
-    
+
     return (
       <Link
         to={item.path}
         className={`flex items-center space-x-3 px-3 py-2 rounded-lg font-body font-medium transition-all duration-300 transform hover:scale-105 ${
           isActive
-            ? 'velvet-button text-primary-foreground shadow-lg'
-            : 'text-foreground hover:bg-gradient-to-r hover:from-cream-200 hover:to-cream-300 hover:shadow-md'
+            ? "velvet-button text-primary-foreground shadow-lg"
+            : "text-foreground hover:bg-gradient-to-r hover:from-cream-200 hover:to-cream-300 hover:shadow-md"
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
       >
@@ -110,7 +110,7 @@ export default function Layout({ children }: LayoutProps) {
                 <Menu className="h-5 w-5" />
               )}
             </button>
-            
+
             <Link to="/dashboard" className="flex items-center space-x-2">
               <div className="p-2 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-lg animate-glow">
                 <Plane className="h-5 w-5 text-white" />
@@ -138,7 +138,7 @@ export default function Layout({ children }: LayoutProps) {
                 </p>
               </div>
             </div>
-            
+
             <Button
               onClick={handleLogout}
               variant="outline"
@@ -160,7 +160,7 @@ export default function Layout({ children }: LayoutProps) {
               <NavLink key={item.path} item={item} />
             ))}
           </nav>
-          
+
           {/* User info at bottom */}
           <div className="p-4 border-t border-border/30 bg-gradient-to-r from-cream-100 to-cream-200">
             <div className="flex items-center space-x-3 animate-velvet-slide">
@@ -205,13 +205,13 @@ export default function Layout({ children }: LayoutProps) {
                   </h1>
                 </div>
               </div>
-              
+
               <nav className="flex-1 p-4 space-y-2">
                 {visibleNavItems.map((item) => (
                   <NavLink key={item.path} item={item} />
                 ))}
               </nav>
-              
+
               <div className="p-4 border-t border-border/30 bg-gradient-to-r from-cream-100 to-cream-200">
                 <div className="flex items-center space-x-3 animate-velvet-slide">
                   <div className="p-2 bg-gradient-to-br from-luxury-gold/20 to-luxury-bronze/20 rounded-full">

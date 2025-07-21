@@ -1,5 +1,5 @@
 // User Roles and Authentication
-export type UserRole = 'admin' | 'manager' | 'staff';
+export type UserRole = "admin" | "manager" | "staff";
 
 export interface User {
   id: string;
@@ -22,8 +22,8 @@ export interface LoginResponse {
 }
 
 // Ticket and Inventory Management
-export type TicketStatus = 'available' | 'booked' | 'locked' | 'sold';
-export type PaymentType = 'full' | 'partial';
+export type TicketStatus = "available" | "booked" | "locked" | "sold";
+export type PaymentType = "full" | "partial";
 
 export interface Country {
   code: string;

@@ -25,7 +25,8 @@ const PlaceholderPage = ({ title }: { title: string }) => (
       {title}
     </h1>
     <p className="text-gray-600 font-body">
-      This page is under development. Continue prompting to build out this section.
+      This page is under development. Continue prompting to build out this
+      section.
     </p>
   </div>
 );
@@ -42,47 +43,65 @@ const App = () => (
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
-            
+
             {/* Protected Routes with Layout */}
-            <Route path="/dashboard" element={
-              <Layout>
-                <Dashboard />
-              </Layout>
-            } />
-            
-            <Route path="/countries" element={
-              <Layout>
-                <Countries />
-              </Layout>
-            } />
-            
-            <Route path="/tickets" element={
-              <Layout>
-                <Tickets />
-              </Layout>
-            } />
-            
-            <Route path="/tickets/:country" element={
-              <Layout>
-                <PlaceholderPage title="Country Tickets" />
-              </Layout>
-            } />
-            
-            <Route path="/admin/buying" element={
-              <Layout>
-                <PlaceholderPage title="Admin Ticket Buying" />
-              </Layout>
-            } />
-            
-            <Route path="/settings" element={
-              <Layout>
-                <PlaceholderPage title="Settings" />
-              </Layout>
-            } />
-            
+            <Route
+              path="/dashboard"
+              element={
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/countries"
+              element={
+                <Layout>
+                  <Countries />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/tickets"
+              element={
+                <Layout>
+                  <Tickets />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/tickets/:country"
+              element={
+                <Layout>
+                  <PlaceholderPage title="Country Tickets" />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/admin/buying"
+              element={
+                <Layout>
+                  <PlaceholderPage title="Admin Ticket Buying" />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/settings"
+              element={
+                <Layout>
+                  <PlaceholderPage title="Settings" />
+                </Layout>
+              }
+            />
+
             {/* Root redirect */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            
+
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
