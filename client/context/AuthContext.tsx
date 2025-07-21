@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, UserRole, LoginRequest } from '@shared/api';
-import { apiClient } from '../services/api';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { User, UserRole, LoginRequest } from "@shared/api";
+import { apiClient } from "../services/api";
 
 interface AuthContextType {
   user: User | null;
@@ -16,28 +22,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const PERMISSIONS = {
   admin: [
-    'view_buying_price',
-    'edit_batches',
-    'delete_batches',
-    'create_batches',
-    'view_profit',
-    'override_locks',
-    'manage_users',
-    'view_all_bookings',
-    'confirm_sales',
-    'system_settings'
+    "view_buying_price",
+    "edit_batches",
+    "delete_batches",
+    "create_batches",
+    "view_profit",
+    "override_locks",
+    "manage_users",
+    "view_all_bookings",
+    "confirm_sales",
+    "system_settings",
   ],
   manager: [
-    'view_tickets',
-    'create_bookings',
-    'confirm_sales',
-    'view_all_bookings'
+    "view_tickets",
+    "create_bookings",
+    "confirm_sales",
+    "view_all_bookings",
   ],
-  staff: [
-    'view_tickets',
-    'create_bookings',
-    'partial_payments'
-  ]
+  staff: ["view_tickets", "create_bookings", "partial_payments"],
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -46,23 +48,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for stored auth data
-    const token = localStorage.getItem('bd_ticket_pro_token');
-    const userData = localStorage.getItem('bd_ticket_pro_user');
-    
+    const token = localStorage.getItem("bd_ticket_pro_token");
+    const userData = localStorage.getItem("bd_ticket_pro_user");
+
     if (token && userData) {
       try {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
-        
+
         // Optionally verify token with server
         // apiClient.getCurrentUser().then(setUser).catch(() => {
         //   localStorage.removeItem('bd_ticket_pro_token');
         //   localStorage.removeItem('bd_ticket_pro_user');
         // });
       } catch (error) {
-        console.error('Error parsing stored user data:', error);
-        localStorage.removeItem('bd_ticket_pro_token');
-        localStorage.removeItem('bd_ticket_pro_user');
+        console.error("Error parsing stored user data:", error);
+        localStorage.removeItem("bd_ticket_pro_token");
+        localStorage.removeItem("bd_ticket_pro_user");
       }
     }
     setLoading(false);
@@ -74,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(response.user);
       return true;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       return false;
     }
   };
@@ -97,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem('bd_ticket_pro_user', JSON.stringify(updatedUser));
+      localStorage.setItem("bd_ticket_pro_user", JSON.stringify(updatedUser));
     }
   };
 
@@ -108,20 +110,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     hasPermission,
     isRole,
     loading,
-    updateUser
+    updateUser,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

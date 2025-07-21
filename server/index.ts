@@ -17,21 +17,24 @@ export function createServer() {
   try {
     initializeDatabase();
     seedDatabase();
-    console.log('Database initialized and seeded successfully');
+    console.log("Database initialized and seeded successfully");
   } catch (error) {
-    console.error('Database initialization error:', error);
+    console.error("Database initialization error:", error);
   }
 
   // Middleware
-  app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://your-domain.com'] // Add your production domain
-      : ['http://localhost:3000', 'http://localhost:5173'], // Development origins
-    credentials: true
-  }));
-  
-  app.use(express.json({ limit: '10mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  app.use(
+    cors({
+      origin:
+        process.env.NODE_ENV === "production"
+          ? ["https://your-domain.com"] // Add your production domain
+          : ["http://localhost:3000", "http://localhost:5173"], // Development origins
+      credentials: true,
+    }),
+  );
+
+  app.use(express.json({ limit: "10mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
   // Add request logging middleware
   app.use((req, res, next) => {
@@ -41,11 +44,11 @@ export function createServer() {
 
   // Health check endpoint
   app.get("/api/ping", (_req, res) => {
-    res.json({ 
+    res.json({
       message: "BD TicketPro API Server",
       status: "healthy",
       timestamp: new Date().toISOString(),
-      version: "1.0.0"
+      version: "1.0.0",
     });
   });
 
@@ -58,22 +61,29 @@ export function createServer() {
   app.use("/api/settings", settingsRoutes);
 
   // Global error handler
-  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error('Global error handler:', err);
-    
-    res.status(err.status || 500).json({
-      success: false,
-      message: err.message || 'Internal server error',
-      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-    });
-  });
+  app.use(
+    (
+      err: any,
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      console.error("Global error handler:", err);
+
+      res.status(err.status || 500).json({
+        success: false,
+        message: err.message || "Internal server error",
+        ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+      });
+    },
+  );
 
   // 404 handler for API routes
-  app.use('/api/*', (req, res) => {
+  app.use("/api/*", (req, res) => {
     res.status(404).json({
       success: false,
-      message: 'API endpoint not found',
-      path: req.path
+      message: "API endpoint not found",
+      path: req.path,
     });
   });
 

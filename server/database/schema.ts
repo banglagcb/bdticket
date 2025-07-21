@@ -1,13 +1,13 @@
-import Database from 'better-sqlite3';
-import { join } from 'path';
-import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
+import Database from "better-sqlite3";
+import { join } from "path";
+import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from "uuid";
 
-const dbPath = join(process.cwd(), 'bd-ticketpro.db');
+const dbPath = join(process.cwd(), "bd-ticketpro.db");
 export const db = new Database(dbPath);
 
 // Enable foreign keys
-db.pragma('foreign_keys = ON');
+db.pragma("foreign_keys = ON");
 
 // Create tables
 export function initializeDatabase() {
@@ -160,16 +160,18 @@ export function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_activity_logs_created_at ON activity_logs(created_at);
   `);
 
-  console.log('Database schema initialized successfully');
+  console.log("Database schema initialized successfully");
 }
 
 // Seed initial data
 export function seedDatabase() {
   try {
     // Check if data already exists
-    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
+    const userCount = db
+      .prepare("SELECT COUNT(*) as count FROM users")
+      .get() as { count: number };
     if (userCount.count > 0) {
-      console.log('Database already seeded');
+      console.log("Database already seeded");
       return;
     }
 
@@ -177,16 +179,16 @@ export function seedDatabase() {
     const insertCountry = db.prepare(`
       INSERT INTO countries (code, name, flag) VALUES (?, ?, ?)
     `);
-    
+
     const countries = [
-      ['KSA', 'Saudi Arabia', '🇸🇦'],
-      ['UAE', 'United Arab Emirates', '🇦🇪'],
-      ['QAT', 'Qatar', '🇶🇦'],
-      ['KWT', 'Kuwait', '🇰🇼'],
-      ['OMN', 'Oman', '🇴🇲'],
-      ['BHR', 'Bahrain', '🇧🇭'],
-      ['JOR', 'Jordan', '🇯🇴'],
-      ['LBN', 'Lebanon', '🇱🇧']
+      ["KSA", "Saudi Arabia", "🇸🇦"],
+      ["UAE", "United Arab Emirates", "🇦🇪"],
+      ["QAT", "Qatar", "🇶🇦"],
+      ["KWT", "Kuwait", "🇰🇼"],
+      ["OMN", "Oman", "🇴🇲"],
+      ["BHR", "Bahrain", "🇧🇭"],
+      ["JOR", "Jordan", "🇯🇴"],
+      ["LBN", "Lebanon", "🇱🇧"],
     ];
 
     for (const country of countries) {
@@ -197,16 +199,16 @@ export function seedDatabase() {
     const insertAirline = db.prepare(`
       INSERT INTO airlines (id, name, code) VALUES (?, ?, ?)
     `);
-    
+
     const airlines = [
-      [uuidv4(), 'Air Arabia', 'G9'],
-      [uuidv4(), 'Emirates', 'EK'],
-      [uuidv4(), 'Qatar Airways', 'QR'],
-      [uuidv4(), 'Saudi Airlines', 'SV'],
-      [uuidv4(), 'Flydubai', 'FZ'],
-      [uuidv4(), 'Kuwait Airways', 'KU'],
-      [uuidv4(), 'Oman Air', 'WY'],
-      [uuidv4(), 'Gulf Air', 'GF']
+      [uuidv4(), "Air Arabia", "G9"],
+      [uuidv4(), "Emirates", "EK"],
+      [uuidv4(), "Qatar Airways", "QR"],
+      [uuidv4(), "Saudi Airlines", "SV"],
+      [uuidv4(), "Flydubai", "FZ"],
+      [uuidv4(), "Kuwait Airways", "KU"],
+      [uuidv4(), "Oman Air", "WY"],
+      [uuidv4(), "Gulf Air", "GF"],
     ];
 
     for (const airline of airlines) {
@@ -222,31 +224,31 @@ export function seedDatabase() {
     const defaultUsers = [
       {
         id: uuidv4(),
-        username: 'admin',
-        password: 'admin123',
-        name: 'Admin User',
-        email: 'admin@bdticketpro.com',
-        phone: '+8801234567890',
-        role: 'admin'
+        username: "admin",
+        password: "admin123",
+        name: "Admin User",
+        email: "admin@bdticketpro.com",
+        phone: "+8801234567890",
+        role: "admin",
       },
       {
         id: uuidv4(),
-        username: 'manager',
-        password: 'manager123',
-        name: 'Manager User',
-        email: 'manager@bdticketpro.com',
-        phone: '+8801234567891',
-        role: 'manager'
+        username: "manager",
+        password: "manager123",
+        name: "Manager User",
+        email: "manager@bdticketpro.com",
+        phone: "+8801234567891",
+        role: "manager",
       },
       {
         id: uuidv4(),
-        username: 'staff',
-        password: 'staff123',
-        name: 'Staff User',
-        email: 'staff@bdticketpro.com',
-        phone: '+8801234567892',
-        role: 'staff'
-      }
+        username: "staff",
+        password: "staff123",
+        name: "Staff User",
+        email: "staff@bdticketpro.com",
+        phone: "+8801234567892",
+        role: "staff",
+      },
     ];
 
     for (const user of defaultUsers) {
@@ -258,7 +260,7 @@ export function seedDatabase() {
         user.name,
         user.email,
         user.phone,
-        user.role
+        user.role,
       );
     }
 
@@ -268,17 +270,17 @@ export function seedDatabase() {
     `);
 
     const settings = [
-      ['company_name', 'BD TicketPro'],
-      ['company_email', 'info@bdticketpro.com'],
-      ['company_phone', '+880-123-456-7890'],
-      ['company_address', 'Dhanmondi, Dhaka, Bangladesh'],
-      ['default_currency', 'BDT'],
-      ['timezone', 'Asia/Dhaka'],
-      ['language', 'en'],
-      ['auto_backup', 'true'],
-      ['email_notifications', 'true'],
-      ['sms_notifications', 'false'],
-      ['booking_timeout', '24']
+      ["company_name", "BD TicketPro"],
+      ["company_email", "info@bdticketpro.com"],
+      ["company_phone", "+880-123-456-7890"],
+      ["company_address", "Dhanmondi, Dhaka, Bangladesh"],
+      ["default_currency", "BDT"],
+      ["timezone", "Asia/Dhaka"],
+      ["language", "en"],
+      ["auto_backup", "true"],
+      ["email_notifications", "true"],
+      ["sms_notifications", "false"],
+      ["booking_timeout", "24"],
     ];
 
     for (const setting of settings) {
@@ -286,8 +288,10 @@ export function seedDatabase() {
     }
 
     // Create sample ticket batches and tickets
-    const adminUser = db.prepare('SELECT id FROM users WHERE role = "admin" LIMIT 1').get() as { id: string };
-    
+    const adminUser = db
+      .prepare('SELECT id FROM users WHERE role = "admin" LIMIT 1')
+      .get() as { id: string };
+
     const insertBatch = db.prepare(`
       INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, created_by)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -302,37 +306,37 @@ export function seedDatabase() {
     const sampleBatches = [
       {
         id: uuidv4(),
-        countryCode: 'KSA',
-        airline: 'Air Arabia',
-        flightDate: '2024-12-25',
-        flightTime: '14:30',
+        countryCode: "KSA",
+        airline: "Air Arabia",
+        flightDate: "2024-12-25",
+        flightTime: "14:30",
         buyingPrice: 18000,
         quantity: 20,
-        agentName: 'Ahmed Travel',
-        agentContact: '+8801234567890'
+        agentName: "Ahmed Travel",
+        agentContact: "+8801234567890",
       },
       {
         id: uuidv4(),
-        countryCode: 'UAE',
-        airline: 'Emirates',
-        flightDate: '2024-12-26',
-        flightTime: '09:15',
+        countryCode: "UAE",
+        airline: "Emirates",
+        flightDate: "2024-12-26",
+        flightTime: "09:15",
         buyingPrice: 38000,
         quantity: 15,
-        agentName: 'Gulf Air Agency',
-        agentContact: '+8801987654321'
+        agentName: "Gulf Air Agency",
+        agentContact: "+8801987654321",
       },
       {
         id: uuidv4(),
-        countryCode: 'QAT',
-        airline: 'Qatar Airways',
-        flightDate: '2024-12-27',
-        flightTime: '20:10',
+        countryCode: "QAT",
+        airline: "Qatar Airways",
+        flightDate: "2024-12-27",
+        flightTime: "20:10",
         buyingPrice: 44000,
         quantity: 10,
-        agentName: 'Royal Travel',
-        agentContact: '+8801555666777'
-      }
+        agentName: "Royal Travel",
+        agentContact: "+8801555666777",
+      },
     ];
 
     for (const batch of sampleBatches) {
@@ -346,33 +350,37 @@ export function seedDatabase() {
         batch.quantity,
         batch.agentName,
         batch.agentContact,
-        adminUser.id
+        adminUser.id,
       );
 
       // Create individual tickets for this batch
       for (let i = 1; i <= batch.quantity; i++) {
         const ticketId = uuidv4();
-        const flightNumber = `${batch.airline === 'Air Arabia' ? 'G9' : batch.airline === 'Emirates' ? 'EK' : 'QR'} ${Math.floor(Math.random() * 900) + 100}`;
+        const flightNumber = `${batch.airline === "Air Arabia" ? "G9" : batch.airline === "Emirates" ? "EK" : "QR"} ${Math.floor(Math.random() * 900) + 100}`;
         const sellingPrice = Math.floor(batch.buyingPrice * 1.2); // 20% markup
-        
+
         insertTicket.run(
           ticketId,
           batch.id,
           flightNumber,
           sellingPrice,
-          batch.airline === 'Air Arabia' ? 'Airbus A320' : batch.airline === 'Emirates' ? 'Boeing 777' : 'Boeing 787',
+          batch.airline === "Air Arabia"
+            ? "Airbus A320"
+            : batch.airline === "Emirates"
+              ? "Boeing 777"
+              : "Boeing 787",
           `Terminal ${Math.floor(Math.random() * 3) + 1}`,
-          '18:45', // Sample arrival time
-          '4h 15m', // Sample duration
+          "18:45", // Sample arrival time
+          "4h 15m", // Sample duration
           1, // Available seats for this ticket
-          1  // Total seats for this ticket
+          1, // Total seats for this ticket
         );
       }
     }
 
-    console.log('Database seeded successfully with sample data');
+    console.log("Database seeded successfully with sample data");
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error("Error seeding database:", error);
   }
 }
 

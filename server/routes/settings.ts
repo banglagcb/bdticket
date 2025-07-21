@@ -1,7 +1,10 @@
-import { Router, Request, Response } from 'express';
-import { SystemSettingsRepository, ActivityLogRepository } from '../database/models';
-import { authenticate, requirePermission } from '../middleware/auth';
-import { z } from 'zod';
+import { Router, Request, Response } from "express";
+import {
+  SystemSettingsRepository,
+  ActivityLogRepository,
+} from "../database/models";
+import { authenticate, requirePermission } from "../middleware/auth";
+import { z } from "zod";
 
 const router = Router();
 
@@ -14,278 +17,309 @@ const updateSettingsSchema = z.object({
   company_email: z.string().email().optional(),
   company_phone: z.string().optional(),
   company_address: z.string().optional(),
-  default_currency: z.enum(['BDT', 'USD', 'EUR']).optional(),
+  default_currency: z.enum(["BDT", "USD", "EUR"]).optional(),
   timezone: z.string().optional(),
-  language: z.enum(['en', 'bn', 'ar']).optional(),
+  language: z.enum(["en", "bn", "ar"]).optional(),
   auto_backup: z.boolean().optional(),
   email_notifications: z.boolean().optional(),
   sms_notifications: z.boolean().optional(),
-  booking_timeout: z.number().min(1).max(48).optional()
+  booking_timeout: z.number().min(1).max(48).optional(),
 });
 
 // Get all system settings (admin only)
-router.get('/', requirePermission('system_settings'), async (req: Request, res: Response) => {
-  try {
-    const settings = SystemSettingsRepository.findAll();
+router.get(
+  "/",
+  requirePermission("system_settings"),
+  async (req: Request, res: Response) => {
+    try {
+      const settings = SystemSettingsRepository.findAll();
 
-    res.json({
-      success: true,
-      message: 'System settings retrieved successfully',
-      data: { settings }
-    });
-  } catch (error) {
-    console.error('Get settings error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
+      res.json({
+        success: true,
+        message: "System settings retrieved successfully",
+        data: { settings },
+      });
+    } catch (error) {
+      console.error("Get settings error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  },
+);
 
 // Get specific setting by key
-router.get('/:key', async (req: Request, res: Response) => {
+router.get("/:key", async (req: Request, res: Response) => {
   try {
     const { key } = req.params;
-    
+
     // Allow certain settings to be viewed by all authenticated users
     const publicSettings = [
-      'company_name',
-      'default_currency',
-      'timezone',
-      'language',
-      'booking_timeout'
+      "company_name",
+      "default_currency",
+      "timezone",
+      "language",
+      "booking_timeout",
     ];
 
-    if (!publicSettings.includes(key) && !req.user!.role === 'admin') {
+    if (!publicSettings.includes(key) && !req.user!.role === "admin") {
       return res.status(403).json({
         success: false,
-        message: 'Access denied'
+        message: "Access denied",
       });
     }
 
     const value = SystemSettingsRepository.get(key);
-    
+
     if (value === undefined) {
       return res.status(404).json({
         success: false,
-        message: 'Setting not found'
+        message: "Setting not found",
       });
     }
 
     res.json({
       success: true,
-      message: 'Setting retrieved successfully',
-      data: { key, value }
+      message: "Setting retrieved successfully",
+      data: { key, value },
     });
   } catch (error) {
-    console.error('Get setting error:', error);
+    console.error("Get setting error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 });
 
 // Update system settings (admin only)
-router.put('/', requirePermission('system_settings'), async (req: Request, res: Response) => {
-  try {
-    const updates = updateSettingsSchema.parse(req.body);
+router.put(
+  "/",
+  requirePermission("system_settings"),
+  async (req: Request, res: Response) => {
+    try {
+      const updates = updateSettingsSchema.parse(req.body);
 
-    // Convert boolean values to strings for storage
-    const settingsToUpdate: Record<string, string> = {};
-    
-    for (const [key, value] of Object.entries(updates)) {
-      if (value !== undefined) {
-        settingsToUpdate[key] = typeof value === 'boolean' ? value.toString() : value.toString();
+      // Convert boolean values to strings for storage
+      const settingsToUpdate: Record<string, string> = {};
+
+      for (const [key, value] of Object.entries(updates)) {
+        if (value !== undefined) {
+          settingsToUpdate[key] =
+            typeof value === "boolean" ? value.toString() : value.toString();
+        }
       }
-    }
 
-    // Update settings
-    SystemSettingsRepository.setBatch(settingsToUpdate);
+      // Update settings
+      SystemSettingsRepository.setBatch(settingsToUpdate);
 
-    // Log activity
-    ActivityLogRepository.create({
-      user_id: req.user!.id,
-      action: 'update_settings',
-      entity_type: 'system_settings',
-      details: JSON.stringify({
-        updates: settingsToUpdate,
-        updated_by: req.user!.name
-      }),
-      ip_address: req.ip || req.connection.remoteAddress,
-      user_agent: req.get('User-Agent')
-    });
+      // Log activity
+      ActivityLogRepository.create({
+        user_id: req.user!.id,
+        action: "update_settings",
+        entity_type: "system_settings",
+        details: JSON.stringify({
+          updates: settingsToUpdate,
+          updated_by: req.user!.name,
+        }),
+        ip_address: req.ip || req.connection.remoteAddress,
+        user_agent: req.get("User-Agent"),
+      });
 
-    res.json({
-      success: true,
-      message: 'System settings updated successfully'
-    });
-  } catch (error) {
-    console.error('Update settings error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
+      res.json({
+        success: true,
+        message: "System settings updated successfully",
+      });
+    } catch (error) {
+      console.error("Update settings error:", error);
+
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          errors: error.errors,
+        });
+      }
+
+      res.status(500).json({
         success: false,
-        message: 'Validation error',
-        errors: error.errors
+        message: "Internal server error",
       });
     }
-
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
+  },
+);
 
 // Update single setting (admin only)
-router.put('/:key', requirePermission('system_settings'), async (req: Request, res: Response) => {
-  try {
-    const { key } = req.params;
-    const { value } = req.body;
+router.put(
+  "/:key",
+  requirePermission("system_settings"),
+  async (req: Request, res: Response) => {
+    try {
+      const { key } = req.params;
+      const { value } = req.body;
 
-    if (value === undefined || value === null) {
-      return res.status(400).json({
+      if (value === undefined || value === null) {
+        return res.status(400).json({
+          success: false,
+          message: "Value is required",
+        });
+      }
+
+      // Validate specific settings
+      const validSettings = [
+        "company_name",
+        "company_email",
+        "company_phone",
+        "company_address",
+        "default_currency",
+        "timezone",
+        "language",
+        "auto_backup",
+        "email_notifications",
+        "sms_notifications",
+        "booking_timeout",
+      ];
+
+      if (!validSettings.includes(key)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid setting key",
+        });
+      }
+
+      // Convert value to string for storage
+      const stringValue =
+        typeof value === "boolean" ? value.toString() : value.toString();
+
+      SystemSettingsRepository.set(key, stringValue);
+
+      // Log activity
+      ActivityLogRepository.create({
+        user_id: req.user!.id,
+        action: "update_setting",
+        entity_type: "system_settings",
+        details: JSON.stringify({
+          key,
+          old_value: SystemSettingsRepository.get(key),
+          new_value: stringValue,
+          updated_by: req.user!.name,
+        }),
+        ip_address: req.ip || req.connection.remoteAddress,
+        user_agent: req.get("User-Agent"),
+      });
+
+      res.json({
+        success: true,
+        message: "Setting updated successfully",
+      });
+    } catch (error) {
+      console.error("Update setting error:", error);
+      res.status(500).json({
         success: false,
-        message: 'Value is required'
+        message: "Internal server error",
       });
     }
-
-    // Validate specific settings
-    const validSettings = [
-      'company_name',
-      'company_email', 
-      'company_phone',
-      'company_address',
-      'default_currency',
-      'timezone',
-      'language',
-      'auto_backup',
-      'email_notifications',
-      'sms_notifications',
-      'booking_timeout'
-    ];
-
-    if (!validSettings.includes(key)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid setting key'
-      });
-    }
-
-    // Convert value to string for storage
-    const stringValue = typeof value === 'boolean' ? value.toString() : value.toString();
-    
-    SystemSettingsRepository.set(key, stringValue);
-
-    // Log activity
-    ActivityLogRepository.create({
-      user_id: req.user!.id,
-      action: 'update_setting',
-      entity_type: 'system_settings',
-      details: JSON.stringify({
-        key,
-        old_value: SystemSettingsRepository.get(key),
-        new_value: stringValue,
-        updated_by: req.user!.name
-      }),
-      ip_address: req.ip || req.connection.remoteAddress,
-      user_agent: req.get('User-Agent')
-    });
-
-    res.json({
-      success: true,
-      message: 'Setting updated successfully'
-    });
-  } catch (error) {
-    console.error('Update setting error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
+  },
+);
 
 // Export data (admin only)
-router.get('/export/data', requirePermission('system_settings'), async (req: Request, res: Response) => {
-  try {
-    const { format = 'json' } = req.query;
+router.get(
+  "/export/data",
+  requirePermission("system_settings"),
+  async (req: Request, res: Response) => {
+    try {
+      const { format = "json" } = req.query;
 
-    // This is a simplified export - in a real implementation you'd want to
-    // export actual data from multiple tables
-    const exportData = {
-      exported_at: new Date().toISOString(),
-      exported_by: req.user!.name,
-      version: '1.0',
-      data: {
-        settings: SystemSettingsRepository.findAll(),
-        // Add other data exports here
+      // This is a simplified export - in a real implementation you'd want to
+      // export actual data from multiple tables
+      const exportData = {
+        exported_at: new Date().toISOString(),
+        exported_by: req.user!.name,
+        version: "1.0",
+        data: {
+          settings: SystemSettingsRepository.findAll(),
+          // Add other data exports here
+        },
+      };
+
+      if (format === "csv") {
+        // Convert to CSV format
+        const csv = Object.entries(exportData.data.settings)
+          .map(([key, value]) => `${key},${value}`)
+          .join("\n");
+
+        res.setHeader("Content-Type", "text/csv");
+        res.setHeader(
+          "Content-Disposition",
+          'attachment; filename="bd-ticketpro-export.csv"',
+        );
+        res.send(`key,value\n${csv}`);
+      } else {
+        res.setHeader("Content-Type", "application/json");
+        res.setHeader(
+          "Content-Disposition",
+          'attachment; filename="bd-ticketpro-export.json"',
+        );
+        res.json(exportData);
       }
-    };
 
-    if (format === 'csv') {
-      // Convert to CSV format
-      const csv = Object.entries(exportData.data.settings)
-        .map(([key, value]) => `${key},${value}`)
-        .join('\n');
-      
-      res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', 'attachment; filename="bd-ticketpro-export.csv"');
-      res.send(`key,value\n${csv}`);
-    } else {
-      res.setHeader('Content-Type', 'application/json');
-      res.setHeader('Content-Disposition', 'attachment; filename="bd-ticketpro-export.json"');
-      res.json(exportData);
+      // Log activity
+      ActivityLogRepository.create({
+        user_id: req.user!.id,
+        action: "export_data",
+        entity_type: "system",
+        details: JSON.stringify({
+          format,
+          exported_by: req.user!.name,
+        }),
+        ip_address: req.ip || req.connection.remoteAddress,
+        user_agent: req.get("User-Agent"),
+      });
+    } catch (error) {
+      console.error("Export data error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
     }
-
-    // Log activity
-    ActivityLogRepository.create({
-      user_id: req.user!.id,
-      action: 'export_data',
-      entity_type: 'system',
-      details: JSON.stringify({
-        format,
-        exported_by: req.user!.name
-      }),
-      ip_address: req.ip || req.connection.remoteAddress,
-      user_agent: req.get('User-Agent')
-    });
-  } catch (error) {
-    console.error('Export data error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
+  },
+);
 
 // Get activity logs (admin only)
-router.get('/logs/activity', requirePermission('system_settings'), async (req: Request, res: Response) => {
-  try {
-    const { limit = 100, user_id } = req.query;
+router.get(
+  "/logs/activity",
+  requirePermission("system_settings"),
+  async (req: Request, res: Response) => {
+    try {
+      const { limit = 100, user_id } = req.query;
 
-    let logs;
-    if (user_id) {
-      logs = ActivityLogRepository.findByUser(user_id as string, parseInt(limit as string));
-    } else {
-      logs = ActivityLogRepository.findRecent(parseInt(limit as string));
-    }
-
-    res.json({
-      success: true,
-      message: 'Activity logs retrieved successfully',
-      data: { 
-        logs,
-        total: logs.length
+      let logs;
+      if (user_id) {
+        logs = ActivityLogRepository.findByUser(
+          user_id as string,
+          parseInt(limit as string),
+        );
+      } else {
+        logs = ActivityLogRepository.findRecent(parseInt(limit as string));
       }
-    });
-  } catch (error) {
-    console.error('Get activity logs error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
+
+      res.json({
+        success: true,
+        message: "Activity logs retrieved successfully",
+        data: {
+          logs,
+          total: logs.length,
+        },
+      });
+    } catch (error) {
+      console.error("Get activity logs error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  },
+);
 
 export default router;

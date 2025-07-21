@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Plane, MapPin, Ticket, RefreshCw, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { apiClient } from '../services/api';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Plane, MapPin, Ticket, RefreshCw, AlertCircle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { apiClient } from "../services/api";
 
 interface Country {
   code: string;
@@ -20,10 +26,11 @@ interface CountryCardProps {
 }
 
 function CountryCard({ country, index }: CountryCardProps) {
-  const availabilityPercentage = country.totalTickets > 0 
-    ? (country.availableTickets / country.totalTickets) * 100 
-    : 0;
-  
+  const availabilityPercentage =
+    country.totalTickets > 0
+      ? (country.availableTickets / country.totalTickets) * 100
+      : 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -44,24 +51,26 @@ function CountryCard({ country, index }: CountryCardProps) {
               {country.code}
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="space-y-4 relative z-10">
             {/* Ticket Availability */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="font-body text-sm text-foreground/70">Available</span>
+                <span className="font-body text-sm text-foreground/70">
+                  Available
+                </span>
                 <span className="font-heading font-semibold text-primary">
                   {country.availableTickets}
                 </span>
               </div>
-              
+
               <div className="w-full bg-gradient-to-r from-cream-200 to-cream-300 rounded-full h-2">
                 <div
                   className="bg-gradient-to-r from-luxury-gold to-luxury-bronze h-2 rounded-full transition-all duration-300 animate-glow"
                   style={{ width: `${availabilityPercentage}%` }}
                 ></div>
               </div>
-              
+
               <div className="flex justify-between items-center text-xs font-body text-foreground/50">
                 <span>Total: {country.totalTickets}</span>
                 <span>{availabilityPercentage.toFixed(0)}% available</span>
@@ -78,9 +87,12 @@ function CountryCard({ country, index }: CountryCardProps) {
                   Multiple Airlines
                 </span>
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <div className="p-1 bg-gradient-to-br from-green-100 to-green-200 rounded animate-float" style={{animationDelay: '0.5s'}}>
+                <div
+                  className="p-1 bg-gradient-to-br from-green-100 to-green-200 rounded animate-float"
+                  style={{ animationDelay: "0.5s" }}
+                >
                   <Ticket className="h-3 w-3 text-green-600" />
                 </div>
                 <span className="font-body text-xs text-foreground/70">
@@ -107,8 +119,8 @@ export default function Countries() {
       const data = await apiClient.getCountries();
       setCountries(data.countries || []);
     } catch (err) {
-      console.error('Failed to load countries:', err);
-      setError('Failed to load countries data');
+      console.error("Failed to load countries:", err);
+      setError("Failed to load countries data");
     } finally {
       setLoading(false);
     }
@@ -123,7 +135,9 @@ export default function Countries() {
       <div className="flex items-center justify-center h-64">
         <div className="flex items-center space-x-2">
           <RefreshCw className="h-6 w-6 animate-spin text-primary" />
-          <span className="font-body text-foreground">Loading countries...</span>
+          <span className="font-body text-foreground">
+            Loading countries...
+          </span>
         </div>
       </div>
     );
@@ -137,7 +151,10 @@ export default function Countries() {
           Error Loading Countries
         </h3>
         <p className="text-foreground/70 font-body mb-4">{error}</p>
-        <Button onClick={loadCountries} className="velvet-button text-primary-foreground font-body">
+        <Button
+          onClick={loadCountries}
+          className="velvet-button text-primary-foreground font-body"
+        >
           <RefreshCw className="h-4 w-4 mr-2" />
           Retry
         </Button>
@@ -145,8 +162,14 @@ export default function Countries() {
     );
   }
 
-  const totalAvailable = countries.reduce((sum, country) => sum + country.availableTickets, 0);
-  const totalTickets = countries.reduce((sum, country) => sum + country.totalTickets, 0);
+  const totalAvailable = countries.reduce(
+    (sum, country) => sum + country.availableTickets,
+    0,
+  );
+  const totalTickets = countries.reduce(
+    (sum, country) => sum + country.totalTickets,
+    0,
+  );
 
   return (
     <div className="space-y-6">
@@ -170,25 +193,27 @@ export default function Countries() {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-4">
-            <Button 
+            <Button
               onClick={loadCountries}
-              variant="outline" 
-              size="sm" 
+              variant="outline"
+              size="sm"
               className="font-body hover:scale-105 transform transition-all duration-200"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
-            
+
             {/* Summary Stats */}
             <div className="hidden md:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0 backdrop-blur-md">
               <div className="text-center">
                 <p className="text-2xl font-heading font-bold text-primary velvet-text">
                   {totalAvailable}
                 </p>
-                <p className="text-xs font-body text-foreground/60">Available</p>
+                <p className="text-xs font-body text-foreground/60">
+                  Available
+                </p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-heading font-bold text-foreground velvet-text">
@@ -200,7 +225,9 @@ export default function Countries() {
                 <p className="text-2xl font-heading font-bold text-blue-600 velvet-text">
                   {countries.length}
                 </p>
-                <p className="text-xs font-body text-foreground/60">Countries</p>
+                <p className="text-xs font-body text-foreground/60">
+                  Countries
+                </p>
               </div>
             </div>
           </div>
@@ -238,11 +265,7 @@ export default function Countries() {
       {countries.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {countries.map((country, index) => (
-            <CountryCard
-              key={country.code}
-              country={country}
-              index={index}
-            />
+            <CountryCard key={country.code} country={country} index={index} />
           ))}
         </div>
       ) : (

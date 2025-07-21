@@ -1,18 +1,18 @@
-import { Router, Request, Response } from 'express';
-import { UserRepository, ActivityLogRepository } from '../database/models';
-import { generateToken } from '../middleware/auth';
-import { z } from 'zod';
+import { Router, Request, Response } from "express";
+import { UserRepository, ActivityLogRepository } from "../database/models";
+import { generateToken } from "../middleware/auth";
+import { z } from "zod";
 
 const router = Router();
 
 // Login schema validation
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(1, 'Password is required')
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
 });
 
 // Login endpoint
-router.post('/login', async (req: Request, res: Response) => {
+router.post("/login", async (req: Request, res: Response) => {
   try {
     const { username, password } = loginSchema.parse(req.body);
 
@@ -21,15 +21,15 @@ router.post('/login', async (req: Request, res: Response) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid username or password'
+        message: "Invalid username or password",
       });
     }
 
     // Check if user is active
-    if (user.status !== 'active') {
+    if (user.status !== "active") {
       return res.status(401).json({
         success: false,
-        message: 'Account is inactive'
+        message: "Account is inactive",
       });
     }
 
@@ -37,7 +37,7 @@ router.post('/login', async (req: Request, res: Response) => {
     if (!UserRepository.verifyPassword(password, user.password_hash!)) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid username or password'
+        message: "Invalid username or password",
       });
     }
 
@@ -47,10 +47,10 @@ router.post('/login', async (req: Request, res: Response) => {
     // Log activity
     ActivityLogRepository.create({
       user_id: user.id,
-      action: 'login',
-      entity_type: 'auth',
+      action: "login",
+      entity_type: "auth",
       ip_address: req.ip || req.connection.remoteAddress,
-      user_agent: req.get('User-Agent')
+      user_agent: req.get("User-Agent"),
     });
 
     // Generate JWT token
@@ -61,42 +61,43 @@ router.post('/login', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      message: 'Login successful',
+      message: "Login successful",
       data: {
         user,
-        token
-      }
+        token,
+      },
     });
   } catch (error) {
-    console.error('Login error:', error);
-    
+    console.error("Login error:", error);
+
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         success: false,
-        message: 'Validation error',
-        errors: error.errors
+        message: "Validation error",
+        errors: error.errors,
       });
     }
 
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 });
 
 // Get current user profile
-router.get('/me', async (req: Request, res: Response) => {
+router.get("/me", async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ') 
-      ? authHeader.substring(7) 
-      : null;
+    const token =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.substring(7)
+        : null;
 
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Access token required'
+        message: "Access token required",
       });
     }
 
@@ -104,35 +105,35 @@ router.get('/me', async (req: Request, res: Response) => {
     // In production, you'd want to verify the token properly
     res.json({
       success: true,
-      message: 'User profile retrieved',
+      message: "User profile retrieved",
       data: {
-        user: null // Will be populated after proper token verification
-      }
+        user: null, // Will be populated after proper token verification
+      },
     });
   } catch (error) {
-    console.error('Get profile error:', error);
+    console.error("Get profile error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 });
 
 // Logout endpoint (client-side mainly, but can log activity)
-router.post('/logout', async (req: Request, res: Response) => {
+router.post("/logout", async (req: Request, res: Response) => {
   try {
     // In a stateless JWT system, logout is mainly client-side
     // But we can log the activity if user info is available
-    
+
     res.json({
       success: true,
-      message: 'Logout successful'
+      message: "Logout successful",
     });
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error("Logout error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 });

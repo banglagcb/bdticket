@@ -1,6 +1,6 @@
-import { db } from './schema';
-import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
+import { db } from "./schema";
+import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from "uuid";
 
 // User model
 export interface User {
@@ -10,8 +10,8 @@ export interface User {
   name: string;
   email?: string;
   phone?: string;
-  role: 'admin' | 'manager' | 'staff';
-  status: 'active' | 'inactive';
+  role: "admin" | "manager" | "staff";
+  status: "active" | "inactive";
   last_login?: string;
   created_at: string;
   updated_at: string;
@@ -19,27 +19,35 @@ export interface User {
 
 export class UserRepository {
   static findById(id: string): User | undefined {
-    return db.prepare('SELECT * FROM users WHERE id = ?').get(id) as User;
+    return db.prepare("SELECT * FROM users WHERE id = ?").get(id) as User;
   }
 
   static findByUsername(username: string): User | undefined {
-    return db.prepare('SELECT * FROM users WHERE username = ?').get(username) as User;
+    return db
+      .prepare("SELECT * FROM users WHERE username = ?")
+      .get(username) as User;
   }
 
   static findAll(): User[] {
-    return db.prepare('SELECT * FROM users ORDER BY created_at DESC').all() as User[];
+    return db
+      .prepare("SELECT * FROM users ORDER BY created_at DESC")
+      .all() as User[];
   }
 
-  static create(userData: Omit<User, 'id' | 'created_at' | 'updated_at'> & { password: string }): User {
+  static create(
+    userData: Omit<User, "id" | "created_at" | "updated_at"> & {
+      password: string;
+    },
+  ): User {
     const id = uuidv4();
     const password_hash = bcrypt.hashSync(userData.password, 10);
     const now = new Date().toISOString();
-    
+
     const stmt = db.prepare(`
       INSERT INTO users (id, username, password_hash, name, email, phone, role, status, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    
+
     stmt.run(
       id,
       userData.username,
@@ -50,7 +58,7 @@ export class UserRepository {
       userData.role,
       userData.status,
       now,
-      now
+      now,
     );
 
     return this.findById(id)!;
@@ -60,9 +68,14 @@ export class UserRepository {
     const now = new Date().toISOString();
     updates.updated_at = now;
 
-    const fields = Object.keys(updates).filter(key => key !== 'id').join(' = ?, ') + ' = ?';
-    const values = Object.values(updates).filter((_, index) => Object.keys(updates)[index] !== 'id');
-    
+    const fields =
+      Object.keys(updates)
+        .filter((key) => key !== "id")
+        .join(" = ?, ") + " = ?";
+    const values = Object.values(updates).filter(
+      (_, index) => Object.keys(updates)[index] !== "id",
+    );
+
     const stmt = db.prepare(`UPDATE users SET ${fields} WHERE id = ?`);
     stmt.run(...values, id);
 
@@ -70,7 +83,7 @@ export class UserRepository {
   }
 
   static updateLastLogin(id: string): void {
-    const stmt = db.prepare('UPDATE users SET last_login = ? WHERE id = ?');
+    const stmt = db.prepare("UPDATE users SET last_login = ? WHERE id = ?");
     stmt.run(new Date().toISOString(), id);
   }
 
@@ -79,7 +92,7 @@ export class UserRepository {
   }
 
   static delete(id: string): boolean {
-    const stmt = db.prepare('DELETE FROM users WHERE id = ?');
+    const stmt = db.prepare("DELETE FROM users WHERE id = ?");
     const result = stmt.run(id);
     return result.changes > 0;
   }
@@ -95,11 +108,15 @@ export interface Country {
 
 export class CountryRepository {
   static findAll(): Country[] {
-    return db.prepare('SELECT * FROM countries ORDER BY name').all() as Country[];
+    return db
+      .prepare("SELECT * FROM countries ORDER BY name")
+      .all() as Country[];
   }
 
   static findByCode(code: string): Country | undefined {
-    return db.prepare('SELECT * FROM countries WHERE code = ?').get(code) as Country;
+    return db
+      .prepare("SELECT * FROM countries WHERE code = ?")
+      .get(code) as Country;
   }
 }
 
@@ -113,15 +130,19 @@ export interface Airline {
 
 export class AirlineRepository {
   static findAll(): Airline[] {
-    return db.prepare('SELECT * FROM airlines ORDER BY name').all() as Airline[];
+    return db
+      .prepare("SELECT * FROM airlines ORDER BY name")
+      .all() as Airline[];
   }
 
   static findById(id: string): Airline | undefined {
-    return db.prepare('SELECT * FROM airlines WHERE id = ?').get(id) as Airline;
+    return db.prepare("SELECT * FROM airlines WHERE id = ?").get(id) as Airline;
   }
 
   static findByName(name: string): Airline | undefined {
-    return db.prepare('SELECT * FROM airlines WHERE name = ?').get(name) as Airline;
+    return db
+      .prepare("SELECT * FROM airlines WHERE name = ?")
+      .get(name) as Airline;
   }
 }
 
@@ -145,26 +166,36 @@ export interface TicketBatch {
 
 export class TicketBatchRepository {
   static findAll(): TicketBatch[] {
-    return db.prepare('SELECT * FROM ticket_batches ORDER BY created_at DESC').all() as TicketBatch[];
+    return db
+      .prepare("SELECT * FROM ticket_batches ORDER BY created_at DESC")
+      .all() as TicketBatch[];
   }
 
   static findById(id: string): TicketBatch | undefined {
-    return db.prepare('SELECT * FROM ticket_batches WHERE id = ?').get(id) as TicketBatch;
+    return db
+      .prepare("SELECT * FROM ticket_batches WHERE id = ?")
+      .get(id) as TicketBatch;
   }
 
   static findByCountry(countryCode: string): TicketBatch[] {
-    return db.prepare('SELECT * FROM ticket_batches WHERE country_code = ? ORDER BY created_at DESC').all(countryCode) as TicketBatch[];
+    return db
+      .prepare(
+        "SELECT * FROM ticket_batches WHERE country_code = ? ORDER BY created_at DESC",
+      )
+      .all(countryCode) as TicketBatch[];
   }
 
-  static create(batchData: Omit<TicketBatch, 'id' | 'created_at'>): TicketBatch {
+  static create(
+    batchData: Omit<TicketBatch, "id" | "created_at">,
+  ): TicketBatch {
     const id = uuidv4();
     const now = new Date().toISOString();
-    
+
     const stmt = db.prepare(`
       INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, agent_address, remarks, document_url, created_by, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    
+
     stmt.run(
       id,
       batchData.country_code,
@@ -179,14 +210,20 @@ export class TicketBatchRepository {
       batchData.remarks,
       batchData.document_url,
       batchData.created_by,
-      now
+      now,
     );
 
     return this.findById(id)!;
   }
 
-  static getStatsByCountry(): Array<{country_code: string; total_tickets: number; available_tickets: number}> {
-    return db.prepare(`
+  static getStatsByCountry(): Array<{
+    country_code: string;
+    total_tickets: number;
+    available_tickets: number;
+  }> {
+    return db
+      .prepare(
+        `
       SELECT 
         tb.country_code,
         COALESCE(SUM(tb.quantity), 0) as total_tickets,
@@ -194,7 +231,13 @@ export class TicketBatchRepository {
       FROM ticket_batches tb
       LEFT JOIN tickets t ON tb.id = t.batch_id
       GROUP BY tb.country_code
-    `).all() as Array<{country_code: string; total_tickets: number; available_tickets: number}>;
+    `,
+      )
+      .all() as Array<{
+      country_code: string;
+      total_tickets: number;
+      available_tickets: number;
+    }>;
   }
 }
 
@@ -203,7 +246,7 @@ export interface Ticket {
   id: string;
   batch_id: string;
   flight_number: string;
-  status: 'available' | 'booked' | 'locked' | 'sold';
+  status: "available" | "booked" | "locked" | "sold";
   selling_price: number;
   aircraft?: string;
   terminal?: string;
@@ -225,7 +268,9 @@ export interface TicketWithBatch extends Ticket {
 
 export class TicketRepository {
   static findAll(): TicketWithBatch[] {
-    return db.prepare(`
+    return db
+      .prepare(
+        `
       SELECT 
         t.*,
         tb.country_code, tb.airline_name, tb.flight_date, tb.flight_time, tb.buying_price, tb.agent_name,
@@ -234,11 +279,16 @@ export class TicketRepository {
       JOIN ticket_batches tb ON t.batch_id = tb.id
       JOIN countries c ON tb.country_code = c.code
       ORDER BY t.created_at DESC
-    `).all().map(this.mapTicketWithBatch) as TicketWithBatch[];
+    `,
+      )
+      .all()
+      .map(this.mapTicketWithBatch) as TicketWithBatch[];
   }
 
   static findById(id: string): TicketWithBatch | undefined {
-    const result = db.prepare(`
+    const result = db
+      .prepare(
+        `
       SELECT 
         t.*,
         tb.country_code, tb.airline_name, tb.flight_date, tb.flight_time, tb.buying_price, tb.agent_name,
@@ -247,13 +297,17 @@ export class TicketRepository {
       JOIN ticket_batches tb ON t.batch_id = tb.id
       JOIN countries c ON tb.country_code = c.code
       WHERE t.id = ?
-    `).get(id);
+    `,
+      )
+      .get(id);
 
     return result ? this.mapTicketWithBatch(result) : undefined;
   }
 
   static findByCountry(countryCode: string): TicketWithBatch[] {
-    return db.prepare(`
+    return db
+      .prepare(
+        `
       SELECT 
         t.*,
         tb.country_code, tb.airline_name, tb.flight_date, tb.flight_time, tb.buying_price, tb.agent_name,
@@ -263,18 +317,23 @@ export class TicketRepository {
       JOIN countries c ON tb.country_code = c.code
       WHERE tb.country_code = ?
       ORDER BY t.created_at DESC
-    `).all(countryCode).map(this.mapTicketWithBatch) as TicketWithBatch[];
+    `,
+      )
+      .all(countryCode)
+      .map(this.mapTicketWithBatch) as TicketWithBatch[];
   }
 
-  static create(ticketData: Omit<Ticket, 'id' | 'created_at' | 'updated_at'>): Ticket {
+  static create(
+    ticketData: Omit<Ticket, "id" | "created_at" | "updated_at">,
+  ): Ticket {
     const id = uuidv4();
     const now = new Date().toISOString();
-    
+
     const stmt = db.prepare(`
       INSERT INTO tickets (id, batch_id, flight_number, status, selling_price, aircraft, terminal, arrival_time, duration, available_seats, total_seats, locked_until, sold_by, sold_at, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    
+
     stmt.run(
       id,
       ticketData.batch_id,
@@ -291,25 +350,37 @@ export class TicketRepository {
       ticketData.sold_by,
       ticketData.sold_at,
       now,
-      now
+      now,
     );
 
-    return db.prepare('SELECT * FROM tickets WHERE id = ?').get(id) as Ticket;
+    return db.prepare("SELECT * FROM tickets WHERE id = ?").get(id) as Ticket;
   }
 
-  static updateStatus(id: string, status: Ticket['status'], soldBy?: string): boolean {
+  static updateStatus(
+    id: string,
+    status: Ticket["status"],
+    soldBy?: string,
+  ): boolean {
     const now = new Date().toISOString();
     let stmt;
-    
-    if (status === 'sold' && soldBy) {
-      stmt = db.prepare('UPDATE tickets SET status = ?, sold_by = ?, sold_at = ?, updated_at = ? WHERE id = ?');
+
+    if (status === "sold" && soldBy) {
+      stmt = db.prepare(
+        "UPDATE tickets SET status = ?, sold_by = ?, sold_at = ?, updated_at = ? WHERE id = ?",
+      );
       stmt.run(status, soldBy, now, now, id);
-    } else if (status === 'locked') {
-      const lockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours from now
-      stmt = db.prepare('UPDATE tickets SET status = ?, locked_until = ?, updated_at = ? WHERE id = ?');
+    } else if (status === "locked") {
+      const lockedUntil = new Date(
+        Date.now() + 24 * 60 * 60 * 1000,
+      ).toISOString(); // 24 hours from now
+      stmt = db.prepare(
+        "UPDATE tickets SET status = ?, locked_until = ?, updated_at = ? WHERE id = ?",
+      );
       stmt.run(status, lockedUntil, now, id);
     } else {
-      stmt = db.prepare('UPDATE tickets SET status = ?, locked_until = NULL, updated_at = ? WHERE id = ?');
+      stmt = db.prepare(
+        "UPDATE tickets SET status = ?, locked_until = NULL, updated_at = ? WHERE id = ?",
+      );
       stmt.run(status, now, id);
     }
 
@@ -317,39 +388,59 @@ export class TicketRepository {
   }
 
   static getDashboardStats() {
-    const today = new Date().toISOString().split('T')[0];
-    
-    const todaysSales = db.prepare(`
+    const today = new Date().toISOString().split("T")[0];
+
+    const todaysSales = db
+      .prepare(
+        `
       SELECT COUNT(*) as count, COALESCE(SUM(selling_price), 0) as amount
       FROM tickets 
       WHERE status = 'sold' AND DATE(sold_at) = ?
-    `).get(today) as { count: number; amount: number };
+    `,
+      )
+      .get(today) as { count: number; amount: number };
 
-    const totalBookings = db.prepare(`
+    const totalBookings = db
+      .prepare(
+        `
       SELECT COUNT(*) as count FROM bookings WHERE status = 'confirmed'
-    `).get() as { count: number };
+    `,
+      )
+      .get() as { count: number };
 
-    const lockedTickets = db.prepare(`
+    const lockedTickets = db
+      .prepare(
+        `
       SELECT COUNT(*) as count FROM tickets WHERE status = 'locked'
-    `).get() as { count: number };
+    `,
+      )
+      .get() as { count: number };
 
-    const totalInventory = db.prepare(`
+    const totalInventory = db
+      .prepare(
+        `
       SELECT COUNT(*) as count FROM tickets WHERE status IN ('available', 'locked')
-    `).get() as { count: number };
+    `,
+      )
+      .get() as { count: number };
 
-    const estimatedProfit = db.prepare(`
+    const estimatedProfit = db
+      .prepare(
+        `
       SELECT COALESCE(SUM(t.selling_price - tb.buying_price), 0) as profit
       FROM tickets t
       JOIN ticket_batches tb ON t.batch_id = tb.id
       WHERE t.status = 'sold'
-    `).get() as { profit: number };
+    `,
+      )
+      .get() as { profit: number };
 
     return {
       todaysSales,
       totalBookings: totalBookings.count,
       lockedTickets: lockedTickets.count,
       totalInventory: totalInventory.count,
-      estimatedProfit: estimatedProfit.profit
+      estimatedProfit: estimatedProfit.profit,
     };
   }
 
@@ -380,15 +471,15 @@ export class TicketRepository {
         buying_price: row.buying_price,
         quantity: 0, // Will be filled if needed
         agent_name: row.agent_name,
-        created_by: '',
-        created_at: ''
+        created_by: "",
+        created_at: "",
       },
       country: {
         code: row.country_code,
         name: row.country_name,
         flag: row.country_flag,
-        created_at: ''
-      }
+        created_at: "",
+      },
     };
   }
 }
@@ -406,12 +497,12 @@ export interface Booking {
   passenger_email?: string;
   pax_count: number;
   selling_price: number;
-  payment_type: 'full' | 'partial';
+  payment_type: "full" | "partial";
   partial_amount?: number;
   payment_method: string;
   payment_details?: string;
   comments?: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'expired';
+  status: "pending" | "confirmed" | "cancelled" | "expired";
   created_by: string;
   confirmed_at?: string;
   expires_at?: string;
@@ -421,29 +512,38 @@ export interface Booking {
 
 export class BookingRepository {
   static findAll(): Booking[] {
-    return db.prepare('SELECT * FROM bookings ORDER BY created_at DESC').all() as Booking[];
+    return db
+      .prepare("SELECT * FROM bookings ORDER BY created_at DESC")
+      .all() as Booking[];
   }
 
   static findById(id: string): Booking | undefined {
-    return db.prepare('SELECT * FROM bookings WHERE id = ?').get(id) as Booking;
+    return db.prepare("SELECT * FROM bookings WHERE id = ?").get(id) as Booking;
   }
 
   static findByUser(userId: string): Booking[] {
-    return db.prepare('SELECT * FROM bookings WHERE created_by = ? ORDER BY created_at DESC').all(userId) as Booking[];
+    return db
+      .prepare(
+        "SELECT * FROM bookings WHERE created_by = ? ORDER BY created_at DESC",
+      )
+      .all(userId) as Booking[];
   }
 
-  static create(bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>): Booking {
+  static create(
+    bookingData: Omit<Booking, "id" | "created_at" | "updated_at">,
+  ): Booking {
     const id = uuidv4();
     const now = new Date().toISOString();
-    const expiresAt = bookingData.payment_type === 'partial' 
-      ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
-      : undefined;
-    
+    const expiresAt =
+      bookingData.payment_type === "partial"
+        ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+        : undefined;
+
     const stmt = db.prepare(`
       INSERT INTO bookings (id, ticket_id, agent_name, agent_phone, agent_email, passenger_name, passenger_passport, passenger_phone, passenger_email, pax_count, selling_price, payment_type, partial_amount, payment_method, payment_details, comments, status, created_by, expires_at, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    
+
     stmt.run(
       id,
       bookingData.ticket_id,
@@ -465,21 +565,25 @@ export class BookingRepository {
       bookingData.created_by,
       expiresAt,
       now,
-      now
+      now,
     );
 
     return this.findById(id)!;
   }
 
-  static updateStatus(id: string, status: Booking['status']): boolean {
+  static updateStatus(id: string, status: Booking["status"]): boolean {
     const now = new Date().toISOString();
     let stmt;
-    
-    if (status === 'confirmed') {
-      stmt = db.prepare('UPDATE bookings SET status = ?, confirmed_at = ?, updated_at = ? WHERE id = ?');
+
+    if (status === "confirmed") {
+      stmt = db.prepare(
+        "UPDATE bookings SET status = ?, confirmed_at = ?, updated_at = ? WHERE id = ?",
+      );
       stmt.run(status, now, now, id);
     } else {
-      stmt = db.prepare('UPDATE bookings SET status = ?, updated_at = ? WHERE id = ?');
+      stmt = db.prepare(
+        "UPDATE bookings SET status = ?, updated_at = ? WHERE id = ?",
+      );
       stmt.run(status, now, id);
     }
 
@@ -496,15 +600,22 @@ export interface SystemSetting {
 
 export class SystemSettingsRepository {
   static findAll(): Record<string, string> {
-    const settings = db.prepare('SELECT key, value FROM system_settings').all() as SystemSetting[];
-    return settings.reduce((acc, setting) => {
-      acc[setting.key] = setting.value;
-      return acc;
-    }, {} as Record<string, string>);
+    const settings = db
+      .prepare("SELECT key, value FROM system_settings")
+      .all() as SystemSetting[];
+    return settings.reduce(
+      (acc, setting) => {
+        acc[setting.key] = setting.value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
   }
 
   static get(key: string): string | undefined {
-    const result = db.prepare('SELECT value FROM system_settings WHERE key = ?').get(key) as { value: string } | undefined;
+    const result = db
+      .prepare("SELECT value FROM system_settings WHERE key = ?")
+      .get(key) as { value: string } | undefined;
     return result?.value;
   }
 
@@ -550,15 +661,15 @@ export interface ActivityLog {
 }
 
 export class ActivityLogRepository {
-  static create(logData: Omit<ActivityLog, 'id' | 'created_at'>): ActivityLog {
+  static create(logData: Omit<ActivityLog, "id" | "created_at">): ActivityLog {
     const id = uuidv4();
     const now = new Date().toISOString();
-    
+
     const stmt = db.prepare(`
       INSERT INTO activity_logs (id, user_id, action, entity_type, entity_id, details, ip_address, user_agent, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    
+
     stmt.run(
       id,
       logData.user_id,
@@ -568,17 +679,25 @@ export class ActivityLogRepository {
       logData.details,
       logData.ip_address,
       logData.user_agent,
-      now
+      now,
     );
 
-    return db.prepare('SELECT * FROM activity_logs WHERE id = ?').get(id) as ActivityLog;
+    return db
+      .prepare("SELECT * FROM activity_logs WHERE id = ?")
+      .get(id) as ActivityLog;
   }
 
   static findByUser(userId: string, limit: number = 50): ActivityLog[] {
-    return db.prepare('SELECT * FROM activity_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT ?').all(userId, limit) as ActivityLog[];
+    return db
+      .prepare(
+        "SELECT * FROM activity_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT ?",
+      )
+      .all(userId, limit) as ActivityLog[];
   }
 
   static findRecent(limit: number = 100): ActivityLog[] {
-    return db.prepare('SELECT * FROM activity_logs ORDER BY created_at DESC LIMIT ?').all(limit) as ActivityLog[];
+    return db
+      .prepare("SELECT * FROM activity_logs ORDER BY created_at DESC LIMIT ?")
+      .all(limit) as ActivityLog[];
   }
 }
