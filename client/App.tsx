@@ -16,7 +16,9 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Countries from "./pages/Countries";
 import Tickets from "./pages/Tickets";
+import CountryTickets from "./pages/CountryTickets";
 import AdminBuying from "./pages/AdminBuying";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 // Placeholder components for routes not yet implemented
