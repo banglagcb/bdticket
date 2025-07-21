@@ -1,23 +1,21 @@
-import React from "react";
-import { useAuth } from "../context/AuthContext";
-import { motion } from "framer-motion";
-import {
-  DollarSign,
-  Ticket,
-  Lock,
-  Package,
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
+import { 
+  DollarSign, 
+  Ticket, 
+  Lock, 
+  Package, 
   TrendingUp,
   ShoppingCart,
   AlertCircle,
   Users,
-} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
+  RefreshCw
+} from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { apiClient } from '../services/api';
+import { DashboardStats } from '@shared/api';
 
 interface DashboardTileProps {
   title: string;
@@ -28,14 +26,7 @@ interface DashboardTileProps {
   delay?: number;
 }
 
-function DashboardTile({
-  title,
-  value,
-  description,
-  icon,
-  color,
-  delay = 0,
-}: DashboardTileProps) {
+function DashboardTile({ title, value, description, icon, color, delay = 0 }: DashboardTileProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -50,16 +41,12 @@ function DashboardTile({
           <CardTitle className="text-sm font-heading font-medium velvet-text">
             {title}
           </CardTitle>
-          <div
-            className={`p-2 rounded-full ${color} animate-glow group-hover:scale-110 transition-transform duration-300`}
-          >
+          <div className={`p-2 rounded-full ${color} animate-glow group-hover:scale-110 transition-transform duration-300`}>
             {icon}
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-2xl font-heading font-bold mb-1 velvet-text">
-            {value}
-          </div>
+          <div className="text-2xl font-heading font-bold mb-1 velvet-text">{value}</div>
           <p className="text-xs text-muted-foreground font-body">
             {description}
           </p>
@@ -71,80 +58,103 @@ function DashboardTile({
 
 export default function Dashboard() {
   const { user, hasPermission } = useAuth();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadDashboardStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await apiClient.getDashboardStats();
+      setStats(data);
+    } catch (err) {
+      console.error('Failed to load dashboard stats:', err);
+      setError('Failed to load dashboard statistics');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      loadDashboardStats();
+    }
+  }, [user]);
 
   if (!user) {
     return <div>Loading...</div>;
   }
 
-  // Mock data - in a real app, this would come from API
-  const stats = {
-    todaysSales: { count: 12, amount: 240000 },
-    totalBookings: 45,
-    lockedTickets: 8,
-    totalInventory: 320,
-    estimatedProfit: 85000,
-    todaysTicketsBought: 25,
-    unsoldTickets: 187,
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="flex items-center space-x-2">
+          <RefreshCw className="h-6 w-6 animate-spin text-primary" />
+          <span className="font-body text-foreground">Loading dashboard...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+        <h3 className="text-lg font-heading font-bold text-foreground mb-2">
+          Error Loading Dashboard
+        </h3>
+        <p className="text-foreground/70 font-body mb-4">{error}</p>
+        <Button onClick={loadDashboardStats} className="velvet-button text-primary-foreground font-body">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   const commonTiles = [
     {
       title: "Today's Sales",
-      value: `৳${stats.todaysSales.amount.toLocaleString()}`,
-      description: `${stats.todaysSales.count} tickets sold today`,
+      value: `৳${stats?.todaysSales?.amount?.toLocaleString() || '0'}`,
+      description: `${stats?.todaysSales?.count || 0} tickets sold today`,
       icon: <DollarSign className="h-4 w-4 text-white" />,
-      color: "bg-green-500",
+      color: "bg-green-500"
     },
     {
       title: "Total Bookings",
-      value: stats.totalBookings,
+      value: stats?.totalBookings || 0,
       description: "Active booking requests",
       icon: <Ticket className="h-4 w-4 text-white" />,
-      color: "bg-blue-500",
+      color: "bg-blue-500"
     },
     {
       title: "Locked Tickets",
-      value: stats.lockedTickets,
+      value: stats?.lockedTickets || 0,
       description: "Temporarily reserved",
       icon: <Lock className="h-4 w-4 text-white" />,
-      color: "bg-yellow-500",
+      color: "bg-yellow-500"
     },
     {
       title: "Total Inventory",
-      value: stats.totalInventory,
+      value: stats?.totalInventory || 0,
       description: "Available tickets",
       icon: <Package className="h-4 w-4 text-white" />,
-      color: "bg-purple-500",
-    },
+      color: "bg-purple-500"
+    }
   ];
 
-  const adminTiles = [
+  const adminTiles = hasPermission('view_profit') ? [
     {
       title: "Estimated Profit",
-      value: `৳${stats.estimatedProfit.toLocaleString()}`,
+      value: `৳${stats?.estimatedProfit?.toLocaleString() || '0'}`,
       description: "Based on current sales",
       icon: <TrendingUp className="h-4 w-4 text-white" />,
-      color: "bg-teal-primary",
-    },
-    {
-      title: "Today's Purchases",
-      value: stats.todaysTicketsBought,
-      description: "Tickets bought today",
-      icon: <ShoppingCart className="h-4 w-4 text-white" />,
-      color: "bg-indigo-500",
-    },
-    {
-      title: "Unsold Tickets",
-      value: stats.unsoldTickets,
-      description: "Remaining inventory",
-      icon: <AlertCircle className="h-4 w-4 text-white" />,
-      color: "bg-orange-500",
-    },
-  ];
+      color: "bg-teal-primary"
+    }
+  ] : [];
 
-  const tilesToShow = hasPermission("view_profit")
-    ? [...commonTiles, ...adminTiles]
-    : commonTiles;
+  const tilesToShow = [...commonTiles, ...adminTiles];
 
   return (
     <div className="space-y-6">
@@ -154,25 +164,41 @@ export default function Dashboard() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center space-x-4">
-          <div className="p-3 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-full animate-glow animate-float">
-            <Users className="h-6 w-6 text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-full animate-glow animate-float">
+              <Users className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-heading font-bold velvet-text">
+                Welcome back, {user.name}
+              </h1>
+              <p className="text-foreground/70 font-body capitalize">
+                {user.role} Dashboard • BD TicketPro
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-heading font-bold velvet-text">
-              Welcome back, {user.name}
-            </h1>
-            <p className="text-foreground/70 font-body capitalize">
-              {user.role} Dashboard • BD TicketPro
-            </p>
-          </div>
+          
+          <Button 
+            onClick={loadDashboardStats}
+            variant="outline" 
+            size="sm" 
+            className="font-body hover:scale-105 transform transition-all duration-200"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
         </div>
       </motion.div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {tilesToShow.map((tile, index) => (
-          <DashboardTile key={tile.title} {...tile} delay={index * 0.1} />
+          <DashboardTile
+            key={tile.title}
+            {...tile}
+            delay={index * 0.1}
+          />
         ))}
       </div>
 
@@ -184,9 +210,7 @@ export default function Dashboard() {
       >
         <Card className="luxury-card border-0">
           <CardHeader>
-            <CardTitle className="font-heading velvet-text">
-              Quick Actions
-            </CardTitle>
+            <CardTitle className="font-heading velvet-text">Quick Actions</CardTitle>
             <CardDescription className="font-body">
               Frequently used features for your role
             </CardDescription>
@@ -199,30 +223,19 @@ export default function Dashboard() {
                 className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 <Ticket className="h-8 w-8 text-primary mb-2 animate-float" />
-                <h3 className="font-heading font-semibold velvet-text">
-                  View Tickets
-                </h3>
-                <p className="text-sm text-foreground/70 font-body">
-                  Browse available tickets
-                </p>
+                <h3 className="font-heading font-semibold velvet-text">View Tickets</h3>
+                <p className="text-sm text-foreground/70 font-body">Browse available tickets</p>
               </motion.div>
 
-              {hasPermission("create_batches") && (
+              {hasPermission('create_batches') && (
                 <motion.div
                   whileHover={{ scale: 1.05, y: -5 }}
                   transition={{ duration: 0.2 }}
                   className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  <ShoppingCart
-                    className="h-8 w-8 text-primary mb-2 animate-float"
-                    style={{ animationDelay: "0.5s" }}
-                  />
-                  <h3 className="font-heading font-semibold velvet-text">
-                    Buy Tickets
-                  </h3>
-                  <p className="text-sm text-foreground/70 font-body">
-                    Add new inventory
-                  </p>
+                  <ShoppingCart className="h-8 w-8 text-primary mb-2 animate-float" style={{animationDelay: '0.5s'}} />
+                  <h3 className="font-heading font-semibold velvet-text">Buy Tickets</h3>
+                  <p className="text-sm text-foreground/70 font-body">Add new inventory</p>
                 </motion.div>
               )}
 
@@ -231,16 +244,9 @@ export default function Dashboard() {
                 transition={{ duration: 0.2 }}
                 className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-cream-100 to-cream-200 hover:from-cream-200 hover:to-cream-300 transition-all duration-300 shadow-md hover:shadow-lg"
               >
-                <Package
-                  className="h-8 w-8 text-primary mb-2 animate-float"
-                  style={{ animationDelay: "1s" }}
-                />
-                <h3 className="font-heading font-semibold velvet-text">
-                  Manage Bookings
-                </h3>
-                <p className="text-sm text-foreground/70 font-body">
-                  Process customer requests
-                </p>
+                <Package className="h-8 w-8 text-primary mb-2 animate-float" style={{animationDelay: '1s'}} />
+                <h3 className="font-heading font-semibold velvet-text">Manage Bookings</h3>
+                <p className="text-sm text-foreground/70 font-body">Process customer requests</p>
               </motion.div>
             </div>
           </CardContent>
@@ -255,9 +261,7 @@ export default function Dashboard() {
       >
         <Card className="luxury-card border-0">
           <CardHeader>
-            <CardTitle className="font-heading velvet-text">
-              Recent Activity
-            </CardTitle>
+            <CardTitle className="font-heading velvet-text">Recent Activity</CardTitle>
             <CardDescription className="font-body">
               Latest updates and transactions
             </CardDescription>
@@ -265,29 +269,12 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-3">
               {[
-                {
-                  action: "Ticket sold",
-                  details: "Air Arabia • KSA • ৳20,000",
-                  time: "2 minutes ago",
-                },
-                {
-                  action: "New booking",
-                  details: "Emirates • UAE • John Doe",
-                  time: "15 minutes ago",
-                },
-                {
-                  action: "Ticket locked",
-                  details: "Flydubai • Qatar • 24hr hold",
-                  time: "1 hour ago",
-                },
-                {
-                  action: "Booking confirmed",
-                  details: "Saudi Airlines • KSA • ৳18,500",
-                  time: "2 hours ago",
-                },
+                { action: "Dashboard loaded", details: "System statistics updated", time: "Just now" },
+                { action: "Session started", details: `${user.name} logged in`, time: "1 minute ago" },
+                { action: "System ready", details: "BD TicketPro initialized", time: "2 minutes ago" }
               ].map((activity, index) => (
-                <motion.div
-                  key={index}
+                <motion.div 
+                  key={index} 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1, duration: 0.3 }}
@@ -296,17 +283,11 @@ export default function Dashboard() {
                   <div className="flex items-center space-x-3">
                     <div className="w-2 h-2 bg-gradient-to-r from-luxury-gold to-luxury-bronze rounded-full animate-glow"></div>
                     <div>
-                      <p className="font-body font-medium text-sm text-foreground">
-                        {activity.action}
-                      </p>
-                      <p className="font-body text-xs text-foreground/60">
-                        {activity.details}
-                      </p>
+                      <p className="font-body font-medium text-sm text-foreground">{activity.action}</p>
+                      <p className="font-body text-xs text-foreground/60">{activity.details}</p>
                     </div>
                   </div>
-                  <span className="font-body text-xs text-foreground/50">
-                    {activity.time}
-                  </span>
+                  <span className="font-body text-xs text-foreground/50">{activity.time}</span>
                 </motion.div>
               ))}
             </div>
