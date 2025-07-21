@@ -131,9 +131,38 @@ export default function Settings() {
           smsNotifications: settingsMap.sms_notifications === "true",
           bookingTimeout: parseInt(settingsMap.booking_timeout) || 24,
         });
+      } else {
+        // Fallback to default settings if no data returned
+        setSystemSettings({
+          companyName: "BD TicketPro",
+          companyEmail: "info@bdticketpro.com",
+          companyPhone: "+880-123-456-7890",
+          companyAddress: "Dhanmondi, Dhaka, Bangladesh",
+          defaultCurrency: "BDT",
+          timezone: "Asia/Dhaka",
+          language: "en",
+          autoBackup: true,
+          emailNotifications: true,
+          smsNotifications: false,
+          bookingTimeout: 24,
+        });
       }
     } catch (error) {
       console.error("Failed to load settings:", error);
+      // Set default settings on error
+      setSystemSettings({
+        companyName: "BD TicketPro",
+        companyEmail: "info@bdticketpro.com",
+        companyPhone: "+880-123-456-7890",
+        companyAddress: "Dhanmondi, Dhaka, Bangladesh",
+        defaultCurrency: "BDT",
+        timezone: "Asia/Dhaka",
+        language: "en",
+        autoBackup: true,
+        emailNotifications: true,
+        smsNotifications: false,
+        bookingTimeout: 24,
+      });
     } finally {
       setSettingsLoading(false);
     }
