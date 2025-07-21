@@ -76,6 +76,7 @@ function DashboardTile({
 
 export default function Dashboard() {
   const { user, hasPermission } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
