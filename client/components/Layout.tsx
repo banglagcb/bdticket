@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "./ui/button";
+import { NotificationCenter } from "./NotificationCenter";
 import { useState } from "react";
 
 interface LayoutProps {
