@@ -217,8 +217,8 @@ export function seedDatabase() {
 
     // Create default users
     const insertUser = db.prepare(`
-      INSERT INTO users (id, username, password_hash, name, email, phone, role) 
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO users (id, username, password_hash, name, email, phone, role, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const defaultUsers = [
