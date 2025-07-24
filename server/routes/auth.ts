@@ -86,29 +86,15 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 // Get current user profile
-router.get("/me", async (req: Request, res: Response) => {
+router.get("/me", authenticate, async (req: Request, res: Response) => {
   try {
-    const authHeader = req.headers.authorization;
-    const token =
-      authHeader && authHeader.startsWith("Bearer ")
-        ? authHeader.substring(7)
-        : null;
+    // User is already verified by authenticate middleware
+    const user = req.user!;
 
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Access token required",
-      });
-    }
-
-    // For now, we'll use a simple approach
-    // In production, you'd want to verify the token properly
     res.json({
       success: true,
       message: "User profile retrieved",
-      data: {
-        user: null, // Will be populated after proper token verification
-      },
+      data: user,
     });
   } catch (error) {
     console.error("Get profile error:", error);
