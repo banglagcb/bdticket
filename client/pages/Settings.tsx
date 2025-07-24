@@ -277,9 +277,10 @@ export default function Settings() {
   const loadActivityLogs = async () => {
     try {
       const data = await apiClient.getActivityLogs({ limit: 50 });
-      setActivityLogs(data?.logs || []);
+      setActivityLogs(Array.isArray(data?.logs) ? data.logs : []);
     } catch (error) {
       console.error("Failed to load activity logs:", error);
+      setActivityLogs([]); // Ensure activity logs is always an array
     }
   };
 
