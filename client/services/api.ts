@@ -487,4 +487,6 @@ export const {
   updateSettings,
   exportData,
   getActivityLogs,
+  getSystemInfo,
+  createBackup,
 } = apiClient;
