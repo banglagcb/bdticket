@@ -318,20 +318,25 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
         // Continue anyway, booking status was already updated
       }
 
-      // Log activity
-      ActivityLogRepository.create({
-        user_id: req.user!.id,
-        action: "update_booking_status",
-        entity_type: "booking",
-        entity_id: id,
-        details: JSON.stringify({
-          old_status: booking.status,
-          new_status: status,
-          ticket_status: newTicketStatus,
-        }),
-        ip_address: req.ip || "127.0.0.1",
-        user_agent: req.get("User-Agent") || "Unknown",
-      });
+      // Log activity (temporarily disabled for debugging)
+      try {
+        ActivityLogRepository.create({
+          user_id: req.user!.id,
+          action: "update_booking_status",
+          entity_type: "booking",
+          entity_id: id,
+          details: JSON.stringify({
+            old_status: booking.status,
+            new_status: status,
+            ticket_status: newTicketStatus,
+          }),
+          ip_address: req.ip || "127.0.0.1",
+          user_agent: req.get("User-Agent") || "Unknown",
+        });
+      } catch (activityError) {
+        console.error("Activity logging failed:", activityError);
+        // Continue without logging activity
+      }
 
       res.json({
         success: true,
