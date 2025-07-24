@@ -266,27 +266,35 @@ router.get("/dashboard/stats", async (req: Request, res: Response) => {
 // Get countries with ticket counts
 router.get("/countries/stats", async (req: Request, res: Response) => {
   try {
+    console.log("📊 Countries stats API called");
+
     const countries = CountryRepository.findAll();
+    console.log(`🌍 Found ${countries.length} countries:`, countries);
+
     const stats = TicketBatchRepository.getStatsByCountry();
+    console.log(`📈 Ticket stats:`, stats);
 
     const countriesWithStats = countries.map((country) => {
       const countryStats = stats.find(
         (stat) => stat.country_code === country.code,
       );
-      return {
+      const result = {
         ...country,
         totalTickets: countryStats?.total_tickets || 0,
         availableTickets: countryStats?.available_tickets || 0,
       };
+      console.log(`🏁 ${country.name}: ${result.totalTickets} total, ${result.availableTickets} available`);
+      return result;
     });
 
+    console.log("✅ Sending countries response");
     res.json({
       success: true,
       message: "Countries with statistics retrieved successfully",
       data: { countries: countriesWithStats },
     });
   } catch (error) {
-    console.error("Get countries stats error:", error);
+    console.error("❌ Get countries stats error:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
