@@ -66,6 +66,12 @@ export default function Layout({ children }: LayoutProps) {
       permission: "create_batches",
     },
     {
+      path: "/reports",
+      label: "Reports",
+      icon: <BarChart3 className="h-4 w-4" />,
+      permission: "view_profit",
+    },
+    {
       path: "/settings",
       label: "Settings",
       icon: <Settings className="h-4 w-4" />,
