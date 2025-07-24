@@ -384,9 +384,6 @@ router.post(
   requirePermission("system_settings"),
   async (req: Request, res: Response) => {
     try {
-      const fs = require("fs");
-      const path = require("path");
-
       // Create backup directory if it doesn't exist
       const backupDir = path.join(process.cwd(), "backups");
       if (!fs.existsSync(backupDir)) {
