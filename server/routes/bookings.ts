@@ -44,9 +44,10 @@ router.get("/", async (req: Request, res: Response) => {
 
     // Check if user can view all bookings or just their own
     if (hasPermission(req.user!.role, "view_all_bookings")) {
-      bookings = BookingRepository.findAll();
+      bookings = BookingRepository.findAllForFrontend();
     } else {
-      bookings = BookingRepository.findByUser(req.user!.id);
+      const userBookings = BookingRepository.findByUser(req.user!.id);
+      bookings = userBookings.map(booking => BookingRepository.transformForFrontend(booking));
     }
 
     // Apply status filter
