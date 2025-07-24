@@ -40,6 +40,21 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { Skeleton } from "../components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../components/ui/sheet";
 import { getTicketsByCountry } from "../services/api";
 import { useToast } from "../hooks/use-toast";
 
@@ -91,6 +106,9 @@ export default function CountryTickets() {
   const [priceSort, setPriceSort] = useState("asc");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [refreshing, setRefreshing] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const showBuyingPrice = hasPermission("view_buying_price");
 
@@ -261,8 +279,31 @@ export default function CountryTickets() {
   };
 
   const handleViewDetails = (ticketId: string) => {
-    console.log("View ticket details:", ticketId);
-    // This would show detailed ticket information
+    const ticket = tickets.find(t => t.id === ticketId);
+    if (ticket) {
+      setSelectedTicket(ticket);
+      setDetailsOpen(true);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "available":
+        return "text-green-600 bg-green-50";
+      case "booked":
+        return "text-blue-600 bg-blue-50";
+      case "locked":
+        return "text-yellow-600 bg-yellow-50";
+      case "sold":
+        return "text-gray-600 bg-gray-50";
+      default:
+        return "text-gray-600 bg-gray-50";
+    }
+  };
+
+  const getAvailabilityPercentage = (available: number, total: number) => {
+    if (total === 0) return 0;
+    return Math.round((available / total) * 100);
   };
 
   if (!currentCountry) {
@@ -399,79 +440,202 @@ export default function CountryTickets() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div className="relative md:col-span-2 lg:col-span-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-foreground/40" />
-                <Input
-                  placeholder="Search flights, airlines, agents..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 font-body"
-                  disabled={loading}
-                />
-              </div>
+            {/* Desktop Filters */}
+            <div className="hidden md:block">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="relative md:col-span-2 lg:col-span-1">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-foreground/40" />
+                  <Input
+                    placeholder="Search flights, airlines, agents..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 font-body"
+                    disabled={loading}
+                  />
+                </div>
 
-              <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
-                <SelectTrigger className="font-body">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="available">Available</SelectItem>
-                  <SelectItem value="booked">Booked</SelectItem>
-                  <SelectItem value="locked">Locked</SelectItem>
-                  <SelectItem value="sold">Sold</SelectItem>
-                </SelectContent>
-              </Select>
+                <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
+                  <SelectTrigger className="font-body">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="available">Available</SelectItem>
+                    <SelectItem value="booked">Booked</SelectItem>
+                    <SelectItem value="locked">Locked</SelectItem>
+                    <SelectItem value="sold">Sold</SelectItem>
+                  </SelectContent>
+                </Select>
 
-              <Select value={airlineFilter} onValueChange={setAirlineFilter} disabled={loading}>
-                <SelectTrigger className="font-body">
-                  <SelectValue placeholder="Filter by airline" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Airlines</SelectItem>
-                  {airlines.map((airline) => (
-                    <SelectItem key={airline} value={airline}>
-                      {airline}
+                <Select value={airlineFilter} onValueChange={setAirlineFilter} disabled={loading}>
+                  <SelectTrigger className="font-body">
+                    <SelectValue placeholder="Filter by airline" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Airlines</SelectItem>
+                    {airlines.map((airline) => (
+                      <SelectItem key={airline} value={airline}>
+                        {airline}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={priceSort} onValueChange={setPriceSort} disabled={loading}>
+                  <SelectTrigger className="font-body">
+                    <SelectValue placeholder="Sort by price" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">
+                      <div className="flex items-center">
+                        <SortAsc className="h-4 w-4 mr-2" />
+                        Price: Low to High
+                      </div>
                     </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    <SelectItem value="desc">
+                      <div className="flex items-center">
+                        <SortDesc className="h-4 w-4 mr-2" />
+                        Price: High to Low
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
 
-              <Select value={priceSort} onValueChange={setPriceSort} disabled={loading}>
-                <SelectTrigger className="font-body">
-                  <SelectValue placeholder="Sort by price" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="asc">
-                    <div className="flex items-center">
-                      <SortAsc className="h-4 w-4 mr-2" />
-                      Price: Low to High
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="desc">
-                    <div className="flex items-center">
-                      <SortDesc className="h-4 w-4 mr-2" />
-                      Price: High to Low
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-
-              <div className="flex items-center justify-between md:col-span-2 lg:col-span-1">
-                <span className="font-body text-sm text-foreground/70">
-                  {loading ? (
-                    <Skeleton className="h-4 w-20" />
-                  ) : (
-                    `${filteredTickets.length} flights found`
-                  )}
-                </span>
+                <div className="flex items-center justify-between md:col-span-2 lg:col-span-1">
+                  <span className="font-body text-sm text-foreground/70">
+                    {loading ? (
+                      <Skeleton className="h-4 w-20" />
+                    ) : (
+                      `${filteredTickets.length} flights found`
+                    )}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Clear Filters */}
+            {/* Mobile Filters */}
+            <div className="md:hidden">
+              <div className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-foreground/40" />
+                  <Input
+                    placeholder="Search flights..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 font-body"
+                    disabled={loading}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" size="sm" className="font-body">
+                        <Filter className="h-4 w-4 mr-2" />
+                        Filters
+                        {(statusFilter !== "all" || airlineFilter !== "all") && (
+                          <Badge className="ml-2 h-5 w-5 p-0 text-xs bg-primary text-primary-foreground">
+                            {[statusFilter !== "all", airlineFilter !== "all"].filter(Boolean).length}
+                          </Badge>
+                        )}
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <SheetHeader>
+                        <SheetTitle>Filter Options</SheetTitle>
+                        <SheetDescription>
+                          Customize your flight search
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="space-y-4 mt-6">
+                        <div>
+                          <label className="text-sm font-medium">Status</label>
+                          <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
+                            <SelectTrigger className="font-body mt-1">
+                              <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Status</SelectItem>
+                              <SelectItem value="available">Available</SelectItem>
+                              <SelectItem value="booked">Booked</SelectItem>
+                              <SelectItem value="locked">Locked</SelectItem>
+                              <SelectItem value="sold">Sold</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium">Airline</label>
+                          <Select value={airlineFilter} onValueChange={setAirlineFilter} disabled={loading}>
+                            <SelectTrigger className="font-body mt-1">
+                              <SelectValue placeholder="Filter by airline" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Airlines</SelectItem>
+                              {airlines.map((airline) => (
+                                <SelectItem key={airline} value={airline}>
+                                  {airline}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium">Sort by Price</label>
+                          <Select value={priceSort} onValueChange={setPriceSort} disabled={loading}>
+                            <SelectTrigger className="font-body mt-1">
+                              <SelectValue placeholder="Sort by price" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="asc">
+                                <div className="flex items-center">
+                                  <SortAsc className="h-4 w-4 mr-2" />
+                                  Price: Low to High
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="desc">
+                                <div className="flex items-center">
+                                  <SortDesc className="h-4 w-4 mr-2" />
+                                  Price: High to Low
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {(searchTerm || statusFilter !== "all" || airlineFilter !== "all") && (
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setSearchTerm("");
+                              setStatusFilter("all");
+                              setAirlineFilter("all");
+                              setMobileFiltersOpen(false);
+                            }}
+                            className="w-full font-body"
+                          >
+                            Clear All Filters
+                          </Button>
+                        )}
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+
+                  <span className="font-body text-sm text-foreground/70">
+                    {loading ? (
+                      <Skeleton className="h-4 w-20" />
+                    ) : (
+                      `${filteredTickets.length} found`
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Clear Filters - Desktop Only */}
             {(searchTerm || statusFilter !== "all" || airlineFilter !== "all") && (
-              <div className="mt-4 pt-4 border-t">
+              <div className="hidden md:block mt-4 pt-4 border-t">
                 <Button
                   variant="outline"
                   size="sm"
@@ -719,7 +883,8 @@ export default function CountryTickets() {
                       className={`${viewMode === "list" ? "" : "flex-1"} font-body hover:scale-105 transform transition-all duration-200`}
                     >
                       <Eye className="h-4 w-4 mr-2" />
-                      Details
+                      <span className="hidden sm:inline">Details</span>
+                      <span className="sm:hidden">View</span>
                     </Button>
                     {ticket.status === "available" && (
                       <Button
@@ -728,7 +893,8 @@ export default function CountryTickets() {
                         className={`${viewMode === "list" ? "" : "flex-1"} velvet-button text-primary-foreground font-body hover:scale-105 transform transition-all duration-200`}
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />
-                        Book Now
+                        <span className="hidden sm:inline">Book Now</span>
+                        <span className="sm:hidden">Book</span>
                       </Button>
                     )}
                     {ticket.status === "sold" && (
@@ -775,6 +941,190 @@ export default function CountryTickets() {
           )}
         </motion.div>
       )}
+
+      {/* Ticket Details Dialog */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading velvet-text">
+              Flight Details
+            </DialogTitle>
+            <DialogDescription>
+              Complete information about this flight ticket
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedTicket && (
+            <div className="space-y-6">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-cream-100 to-cream-200 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-white rounded-full">
+                    <Plane className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading text-lg font-bold">
+                      {selectedTicket.batch.airline_name}
+                    </h3>
+                    <p className="text-sm text-foreground/70">
+                      {selectedTicket.flight_number}
+                    </p>
+                  </div>
+                </div>
+                {getStatusBadge(selectedTicket.status)}
+              </div>
+
+              {/* Flight Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-heading font-semibold text-lg">Flight Information</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <Calendar className="h-4 w-4 text-foreground/40" />
+                      <div>
+                        <p className="text-sm text-foreground/60">Departure Date</p>
+                        <p className="font-medium">{formatDate(selectedTicket.batch.flight_date)}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Clock className="h-4 w-4 text-foreground/40" />
+                      <div>
+                        <p className="text-sm text-foreground/60">Departure Time</p>
+                        <p className="font-medium">{formatTime(selectedTicket.batch.flight_time)}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <MapPin className="h-4 w-4 text-foreground/40" />
+                      <div>
+                        <p className="text-sm text-foreground/60">Terminal</p>
+                        <p className="font-medium">{selectedTicket.terminal || "Terminal 1"}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <BadgeIcon className="h-4 w-4 text-foreground/40" />
+                      <div>
+                        <p className="text-sm text-foreground/60">Aircraft</p>
+                        <p className="font-medium">{selectedTicket.aircraft || "Boeing 737"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-heading font-semibold text-lg">Pricing & Availability</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <DollarSign className="h-4 w-4 text-green-600" />
+                      <div>
+                        <p className="text-sm text-foreground/60">Selling Price</p>
+                        <p className="font-medium text-green-600 text-lg">
+                          ৳{selectedTicket.selling_price.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                    {showBuyingPrice && selectedTicket.batch.buying_price && (
+                      <div className="flex items-center space-x-3">
+                        <DollarSign className="h-4 w-4 text-orange-600" />
+                        <div>
+                          <p className="text-sm text-foreground/60">Buying Price</p>
+                          <p className="font-medium text-orange-600">
+                            ৳{selectedTicket.batch.buying_price.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex items-center space-x-3">
+                      <Users className="h-4 w-4 text-blue-600" />
+                      <div>
+                        <p className="text-sm text-foreground/60">Seat Availability</p>
+                        <p className="font-medium">
+                          {selectedTicket.available_seats} of {selectedTicket.total_seats} available
+                        </p>
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
+                            style={{
+                              width: `${getAvailabilityPercentage(selectedTicket.available_seats, selectedTicket.total_seats)}%`
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Route Information */}
+              <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                <h4 className="font-heading font-semibold text-lg mb-3">Route</h4>
+                <div className="flex justify-between items-center">
+                  <div className="text-center">
+                    <p className="font-bold text-lg">DAC</p>
+                    <p className="text-sm text-foreground/60">Dhaka</p>
+                    <p className="text-sm text-foreground/60">Bangladesh</p>
+                  </div>
+                  <div className="flex items-center space-x-2 text-foreground/60">
+                    <div className="w-12 border-t border-foreground/30"></div>
+                    <Plane className="h-5 w-5" />
+                    <div className="w-12 border-t border-foreground/30"></div>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-lg">{currentCountry.code}</p>
+                    <p className="text-sm text-foreground/60">{currentCountry.name}</p>
+                    <p className="text-sm text-foreground/60">{selectedTicket.duration || "4h 15m"}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Agent Information */}
+              <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg">
+                <h4 className="font-heading font-semibold text-lg mb-3">Agent Information</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-foreground/60">Agent Name</p>
+                    <p className="font-medium">{selectedTicket.batch.agent_name}</p>
+                  </div>
+                  {selectedTicket.batch.agent_contact && (
+                    <div>
+                      <p className="text-sm text-foreground/60">Contact</p>
+                      <p className="font-medium">{selectedTicket.batch.agent_contact}</p>
+                    </div>
+                  )}
+                  {selectedTicket.batch.agent_address && (
+                    <div className="md:col-span-2">
+                      <p className="text-sm text-foreground/60">Address</p>
+                      <p className="font-medium">{selectedTicket.batch.agent_address}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-3 pt-4 border-t">
+                {selectedTicket.status === "available" && (
+                  <Button
+                    onClick={() => {
+                      handleBookTicket(selectedTicket.id);
+                      setDetailsOpen(false);
+                    }}
+                    className="flex-1 velvet-button text-primary-foreground font-body"
+                  >
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    Book This Flight
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => setDetailsOpen(false)}
+                  className="font-body"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
