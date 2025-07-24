@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -34,51 +34,69 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
     agentName: "",
     agentPhone: "",
     agentEmail: "",
-    
+
     // Passenger Information
     passengerName: "",
     passportNo: "",
     passengerPhone: "",
     passengerEmail: "",
     paxCount: 1,
-    
+
     // Payment Information
     sellingPrice: ticket?.selling_price || 0,
     paymentType: "full",
     partialAmount: 0,
     paymentMethod: "cash",
     paymentDetails: "",
-    
+
     // Additional Information
     comments: "",
     emergencyContact: "",
     specialRequests: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Reset form when ticket changes
+  useEffect(() => {
+    if (ticket) {
+      setFormData(prev => ({
+        ...prev,
+        sellingPrice: ticket.selling_price || 0
+      }));
+    }
+  }, [ticket]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
-      ticketId: ticket?.id,
-      agentInfo: {
-        name: formData.agentName,
-        phone: formData.agentPhone,
-        email: formData.agentEmail,
-      },
-      passengerInfo: {
-        name: formData.passengerName,
-        passportNo: formData.passportNo,
-        phone: formData.passengerPhone,
-        email: formData.passengerEmail,
-        paxCount: formData.paxCount,
-      },
-      sellingPrice: formData.sellingPrice,
-      paymentType: formData.paymentType,
-      partialAmount: formData.partialAmount,
-      paymentMethod: formData.paymentMethod,
-      paymentDetails: formData.paymentDetails,
-      comments: `${formData.comments} | Emergency: ${formData.emergencyContact} | Special: ${formData.specialRequests}`,
-    });
-    onClose();
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit({
+        ticketId: ticket?.id,
+        agentInfo: {
+          name: formData.agentName,
+          phone: formData.agentPhone,
+          email: formData.agentEmail,
+        },
+        passengerInfo: {
+          name: formData.passengerName,
+          passportNo: formData.passportNo,
+          phone: formData.passengerPhone,
+          email: formData.passengerEmail,
+          paxCount: formData.paxCount,
+        },
+        sellingPrice: formData.sellingPrice,
+        paymentType: formData.paymentType,
+        partialAmount: formData.partialAmount,
+        paymentMethod: formData.paymentMethod,
+        paymentDetails: formData.paymentDetails,
+        comments: `${formData.comments} | Emergency: ${formData.emergencyContact} | Special: ${formData.specialRequests}`,
+      });
+    } catch (error) {
+      console.error('Booking submission failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateFormData = (field: string, value: any) => {
@@ -337,11 +355,11 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
           </div>
 
           <div className="flex justify-end gap-4 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit">
-              Create Booking
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creating Booking..." : "Create Booking"}
             </Button>
           </div>
         </form>
