@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Package,
@@ -79,12 +80,21 @@ const paymentColors = {
 
 export default function Bookings() {
   const { user, hasPermission } = useAuth();
+  const [searchParams] = useSearchParams();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+
+  // Set initial filter from URL params
+  useEffect(() => {
+    const statusParam = searchParams.get('status');
+    if (statusParam && ['pending', 'confirmed', 'cancelled', 'locked'].includes(statusParam)) {
+      setStatusFilter(statusParam);
+    }
+  }, [searchParams]);
 
   const loadBookings = async () => {
     try {
