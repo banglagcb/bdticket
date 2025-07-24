@@ -23,6 +23,7 @@ import {
 import { Button } from "../components/ui/button";
 import { apiClient } from "../services/api";
 import { DashboardStats } from "@shared/api";
+import { useToast } from "../hooks/use-toast";
 
 interface DashboardTileProps {
   title: string;
@@ -85,6 +86,7 @@ function DashboardTile({
 export default function Dashboard() {
   const { user, hasPermission } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -145,6 +147,14 @@ export default function Dashboard() {
     );
   }
 
+  const handleCardClick = (title: string, route: string) => {
+    toast({
+      title: "Navigating",
+      description: `Opening ${title} section`,
+    });
+    navigate(route);
+  };
+
   const commonTiles = [
     {
       title: "Today's Sales",
@@ -153,7 +163,7 @@ export default function Dashboard() {
       icon: <DollarSign className="h-4 w-4 text-white" />,
       color: "bg-green-500",
       clickable: true,
-      onClick: () => navigate("/reports"),
+      onClick: () => handleCardClick("Reports", "/reports"),
     },
     {
       title: "Total Bookings",
@@ -162,7 +172,7 @@ export default function Dashboard() {
       icon: <Ticket className="h-4 w-4 text-white" />,
       color: "bg-blue-500",
       clickable: true,
-      onClick: () => navigate("/bookings"),
+      onClick: () => handleCardClick("Bookings", "/bookings"),
     },
     {
       title: "Locked Tickets",
@@ -171,7 +181,7 @@ export default function Dashboard() {
       icon: <Lock className="h-4 w-4 text-white" />,
       color: "bg-yellow-500",
       clickable: true,
-      onClick: () => navigate("/bookings?status=locked"),
+      onClick: () => handleCardClick("Locked Tickets", "/bookings?status=locked"),
     },
     {
       title: "Total Inventory",
@@ -180,7 +190,7 @@ export default function Dashboard() {
       icon: <Package className="h-4 w-4 text-white" />,
       color: "bg-purple-500",
       clickable: true,
-      onClick: () => navigate("/countries"),
+      onClick: () => handleCardClick("Countries & Inventory", "/countries"),
     },
   ];
 
@@ -193,7 +203,7 @@ export default function Dashboard() {
           icon: <TrendingUp className="h-4 w-4 text-white" />,
           color: "bg-teal-primary",
           clickable: true,
-          onClick: () => navigate("/reports"),
+          onClick: () => handleCardClick("Profit Reports", "/reports"),
         },
       ]
     : [];
