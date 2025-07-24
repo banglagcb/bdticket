@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { UserRepository, ActivityLogRepository } from "../database/models";
-import { generateToken } from "../middleware/auth";
+import { generateToken, authenticate } from "../middleware/auth";
 import { z } from "zod";
 
 const router = Router();
