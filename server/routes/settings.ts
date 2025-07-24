@@ -52,8 +52,8 @@ router.get("/", async (req: Request, res: Response) => {
         "timezone",
         "language",
       ];
-      filteredSettings = settings.filter((setting) =>
-        allowedKeys.includes(setting.key),
+      filteredSettings = Object.fromEntries(
+        Object.entries(settings).filter(([key]) => allowedKeys.includes(key))
       );
     }
 
