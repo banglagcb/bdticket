@@ -489,6 +489,7 @@ export function seedDatabase() {
           ticketId,
           batch.id,
           flightNumber,
+          "available", // Set status as available
           sellingPrice,
           batch.airline === "Air Arabia"
             ? "Airbus A320"
