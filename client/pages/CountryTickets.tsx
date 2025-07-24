@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
@@ -15,6 +15,12 @@ import {
   Search,
   Users,
   Badge as BadgeIcon,
+  SortAsc,
+  SortDesc,
+  RefreshCw,
+  Download,
+  Grid,
+  List,
 } from "lucide-react";
 import {
   Card,
@@ -33,31 +39,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { Skeleton } from "../components/ui/skeleton";
+import { getTicketsByCountry } from "../services/api";
+import { useToast } from "../hooks/use-toast";
 
 interface TicketData {
   id: string;
-  airline: string;
-  flightNumber: string;
-  departureDate: string;
-  departureTime: string;
-  arrivalTime: string;
-  duration: string;
-  sellingPrice: number;
-  buyingPrice?: number;
+  batch_id: string;
+  flight_number: string;
   status: "available" | "booked" | "locked" | "sold";
-  availableSeats: number;
-  totalSeats: number;
-  aircraft: string;
-  terminal: string;
+  selling_price: number;
+  aircraft?: string;
+  terminal?: string;
+  arrival_time?: string;
+  duration?: string;
+  available_seats: number;
+  total_seats: number;
+  locked_until?: string;
+  sold_by?: string;
+  sold_at?: string;
+  created_at: string;
+  updated_at: string;
+  batch: {
+    id: string;
+    country_code: string;
+    airline_name: string;
+    flight_date: string;
+    flight_time: string;
+    buying_price?: number;
+    quantity: number;
+    agent_name: string;
+    agent_contact?: string;
+    agent_address?: string;
+    remarks?: string;
+    document_url?: string;
+    created_by: string;
+    created_at: string;
+  };
 }
 
 export default function CountryTickets() {
   const { country } = useParams<{ country: string }>();
   const { hasPermission } = useAuth();
+  const { toast } = useToast();
+  const [tickets, setTickets] = useState<TicketData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [airlineFilter, setAirlineFilter] = useState("all");
   const [priceSort, setPriceSort] = useState("asc");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [refreshing, setRefreshing] = useState(false);
 
   const showBuyingPrice = hasPermission("view_buying_price");
 
@@ -76,108 +109,108 @@ export default function CountryTickets() {
   const currentCountry =
     countryInfo[country?.toLowerCase() as keyof typeof countryInfo];
 
-  // Mock ticket data for the specific country
-  const tickets: TicketData[] = [
-    {
-      id: "1",
-      airline: "Air Arabia",
-      flightNumber: "G9 123",
-      departureDate: "Dec 25, 2024",
-      departureTime: "14:30",
-      arrivalTime: "18:45",
-      duration: "4h 15m",
-      sellingPrice: 22000,
-      buyingPrice: 18000,
-      status: "available",
-      availableSeats: 15,
-      totalSeats: 20,
-      aircraft: "Airbus A320",
-      terminal: "Terminal 1",
-    },
-    {
-      id: "2",
-      airline: "Emirates",
-      flightNumber: "EK 582",
-      departureDate: "Dec 26, 2024",
-      departureTime: "09:15",
-      arrivalTime: "13:30",
-      duration: "4h 15m",
-      sellingPrice: 45000,
-      buyingPrice: 38000,
-      status: "available",
-      availableSeats: 8,
-      totalSeats: 12,
-      aircraft: "Boeing 777",
-      terminal: "Terminal 3",
-    },
-    {
-      id: "3",
-      airline: "Flydubai",
-      flightNumber: "FZ 571",
-      departureDate: "Dec 27, 2024",
-      departureTime: "16:45",
-      arrivalTime: "21:00",
-      duration: "4h 15m",
-      sellingPrice: 28000,
-      buyingPrice: 23000,
-      status: "locked",
-      availableSeats: 3,
-      totalSeats: 8,
-      aircraft: "Boeing 737",
-      terminal: "Terminal 2",
-    },
-    {
-      id: "4",
-      airline: "Saudi Airlines",
-      flightNumber: "SV 803",
-      departureDate: "Dec 28, 2024",
-      departureTime: "11:20",
-      arrivalTime: "15:35",
-      duration: "4h 15m",
-      sellingPrice: 19500,
-      buyingPrice: 16000,
-      status: "sold",
-      availableSeats: 0,
-      totalSeats: 5,
-      aircraft: "Airbus A321",
-      terminal: "Terminal 1",
-    },
-    {
-      id: "5",
-      airline: "Qatar Airways",
-      flightNumber: "QR 639",
-      departureDate: "Dec 29, 2024",
-      departureTime: "20:10",
-      arrivalTime: "00:25",
-      duration: "4h 15m",
-      sellingPrice: 52000,
-      buyingPrice: 44000,
-      status: "available",
-      availableSeats: 6,
-      totalSeats: 10,
-      aircraft: "Boeing 787",
-      terminal: "Terminal 3",
-    },
-  ];
+  // Load tickets data
+  useEffect(() => {
+    if (country) {
+      loadTickets();
+    }
+  }, [country]);
 
-  const airlines = [...new Set(tickets.map((t) => t.airline))];
+  const loadTickets = async (showLoading = true) => {
+    if (!country) return;
+
+    try {
+      if (showLoading) {
+        setLoading(true);
+        setRefreshing(false);
+      } else {
+        setRefreshing(true);
+      }
+      setError(null);
+
+      const countryCode = country.toUpperCase();
+      const response = await getTicketsByCountry(countryCode);
+      setTickets(response.tickets || []);
+    } catch (err: any) {
+      console.error("Error loading tickets:", err);
+      setError(err.message || "Failed to load tickets");
+      toast({
+        title: "Error",
+        description: "Failed to load tickets. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const handleRefresh = () => {
+    loadTickets(false);
+  };
+
+  const airlines = [...new Set(tickets.map((t) => t.batch.airline_name))];
 
   const filteredTickets = tickets
     .filter((ticket) => {
       const matchesSearch =
-        ticket.airline.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ticket.flightNumber.toLowerCase().includes(searchTerm.toLowerCase());
+        ticket.batch.airline_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.flight_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.batch.agent_name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus =
         statusFilter === "all" || ticket.status === statusFilter;
       const matchesAirline =
-        airlineFilter === "all" || ticket.airline === airlineFilter;
+        airlineFilter === "all" || ticket.batch.airline_name === airlineFilter;
 
       return matchesSearch && matchesStatus && matchesAirline;
     })
     .sort((a, b) => {
-      if (priceSort === "asc") return a.sellingPrice - b.sellingPrice;
-      return b.sellingPrice - a.sellingPrice;
+      if (priceSort === "asc") return a.selling_price - b.selling_price;
+      return b.selling_price - a.selling_price;
     });
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return "--:--";
+    return timeString;
+  };
+
+  const exportTickets = () => {
+    const csvContent = [
+      ["Flight Number", "Airline", "Date", "Time", "Status", "Price", "Available Seats"],
+      ...filteredTickets.map(ticket => [
+        ticket.flight_number,
+        ticket.batch.airline_name,
+        ticket.batch.flight_date,
+        ticket.batch.flight_time,
+        ticket.status,
+        ticket.selling_price,
+        ticket.available_seats
+      ])
+    ].map(row => row.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${currentCountry?.name || 'country'}_tickets.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -259,7 +292,7 @@ export default function CountryTickets() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div className="flex items-center space-x-4">
             <Link to="/countries">
               <Button variant="outline" size="sm" className="font-body">
@@ -270,38 +303,84 @@ export default function CountryTickets() {
             <div className="flex items-center space-x-3">
               <div className="text-4xl">{currentCountry.flag}</div>
               <div>
-                <h1 className="text-3xl font-heading font-bold velvet-text">
+                <h1 className="text-2xl lg:text-3xl font-heading font-bold velvet-text">
                   {currentCountry.name} Flights
                 </h1>
-                <p className="text-foreground/70 font-body">
+                <p className="text-foreground/70 font-body text-sm lg:text-base">
                   Available flights to {currentCountry.name}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Quick Stats */}
-          <div className="hidden lg:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0">
-            <div className="text-center">
-              <p className="text-xl font-heading font-bold text-green-600 velvet-text">
-                {filteredTickets.filter((t) => t.status === "available").length}
-              </p>
-              <p className="text-xs font-body text-foreground/60">Available</p>
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-2">
+            <Button
+              onClick={handleRefresh}
+              variant="outline"
+              size="sm"
+              disabled={refreshing}
+              className="font-body"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button
+              onClick={exportTickets}
+              variant="outline"
+              size="sm"
+              className="font-body"
+              disabled={filteredTickets.length === 0}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+            <div className="flex items-center space-x-1 border rounded-md p-1">
+              <Button
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+                className="h-8 w-8 p-0"
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className="h-8 w-8 p-0"
+              >
+                <List className="h-4 w-4" />
+              </Button>
             </div>
-            <div className="text-center">
-              <p className="text-xl font-heading font-bold text-blue-600 velvet-text">
-                {filteredTickets.reduce((sum, t) => sum + t.availableSeats, 0)}
-              </p>
-              <p className="text-xs font-body text-foreground/60">
-                Total Seats
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-xl font-heading font-bold text-primary velvet-text">
-                {airlines.length}
-              </p>
-              <p className="text-xs font-body text-foreground/60">Airlines</p>
-            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="luxury-card p-4 rounded-lg border-0 text-center">
+            <p className="text-xl font-heading font-bold text-green-600 velvet-text">
+              {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : filteredTickets.filter((t) => t.status === "available").length}
+            </p>
+            <p className="text-xs font-body text-foreground/60">Available</p>
+          </div>
+          <div className="luxury-card p-4 rounded-lg border-0 text-center">
+            <p className="text-xl font-heading font-bold text-blue-600 velvet-text">
+              {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : filteredTickets.reduce((sum, t) => sum + t.available_seats, 0)}
+            </p>
+            <p className="text-xs font-body text-foreground/60">Total Seats</p>
+          </div>
+          <div className="luxury-card p-4 rounded-lg border-0 text-center">
+            <p className="text-xl font-heading font-bold text-primary velvet-text">
+              {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : airlines.length}
+            </p>
+            <p className="text-xs font-body text-foreground/60">Airlines</p>
+          </div>
+          <div className="luxury-card p-4 rounded-lg border-0 text-center">
+            <p className="text-xl font-heading font-bold text-orange-600 velvet-text">
+              {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : tickets.length}
+            </p>
+            <p className="text-xs font-body text-foreground/60">Total Tickets</p>
           </div>
         </div>
       </motion.div>
@@ -320,18 +399,19 @@ export default function CountryTickets() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div className="relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="relative md:col-span-2 lg:col-span-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-foreground/40" />
                 <Input
-                  placeholder="Search flights..."
+                  placeholder="Search flights, airlines, agents..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 font-body"
+                  disabled={loading}
                 />
               </div>
 
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
                 <SelectTrigger className="font-body">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
@@ -344,7 +424,7 @@ export default function CountryTickets() {
                 </SelectContent>
               </Select>
 
-              <Select value={airlineFilter} onValueChange={setAirlineFilter}>
+              <Select value={airlineFilter} onValueChange={setAirlineFilter} disabled={loading}>
                 <SelectTrigger className="font-body">
                   <SelectValue placeholder="Filter by airline" />
                 </SelectTrigger>
@@ -358,178 +438,319 @@ export default function CountryTickets() {
                 </SelectContent>
               </Select>
 
-              <Select value={priceSort} onValueChange={setPriceSort}>
+              <Select value={priceSort} onValueChange={setPriceSort} disabled={loading}>
                 <SelectTrigger className="font-body">
                   <SelectValue placeholder="Sort by price" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="asc">Price: Low to High</SelectItem>
-                  <SelectItem value="desc">Price: High to Low</SelectItem>
+                  <SelectItem value="asc">
+                    <div className="flex items-center">
+                      <SortAsc className="h-4 w-4 mr-2" />
+                      Price: Low to High
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="desc">
+                    <div className="flex items-center">
+                      <SortDesc className="h-4 w-4 mr-2" />
+                      Price: High to Low
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-between md:col-span-2 lg:col-span-1">
                 <span className="font-body text-sm text-foreground/70">
-                  {filteredTickets.length} flights found
+                  {loading ? (
+                    <Skeleton className="h-4 w-20" />
+                  ) : (
+                    `${filteredTickets.length} flights found`
+                  )}
                 </span>
               </div>
             </div>
+
+            {/* Clear Filters */}
+            {(searchTerm || statusFilter !== "all" || airlineFilter !== "all") && (
+              <div className="mt-4 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setStatusFilter("all");
+                    setAirlineFilter("all");
+                  }}
+                  className="font-body"
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* Flight Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-        className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
-      >
-        {filteredTickets.map((ticket, index) => (
-          <motion.div
-            key={ticket.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, duration: 0.3 }}
-          >
-            <Card
-              className={`luxury-card border-0 h-full ${ticket.status === "sold" ? "opacity-75" : ""} hover:shadow-2xl transition-all duration-300 group`}
-            >
-              <CardHeader className="pb-3">
+      {/* Loading State */}
+      {loading && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className={viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-4"}
+        >
+          {[...Array(6)].map((_, index) => (
+            <Card key={index} className="luxury-card border-0">
+              <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-luxury-gold/20 to-luxury-bronze/20 rounded-full">
-                      <Plane className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="font-heading text-lg velvet-text">
-                        {ticket.airline}
-                      </CardTitle>
-                      <CardDescription className="font-body text-sm">
-                        {ticket.flightNumber}
-                      </CardDescription>
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-3 w-16" />
                     </div>
                   </div>
-                  {getStatusBadge(ticket.status)}
+                  <Skeleton className="h-6 w-16" />
                 </div>
               </CardHeader>
-
-              <CardContent className="space-y-4">
-                {/* Flight Details */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-foreground/40" />
-                      <span className="font-body text-sm text-foreground">
-                        {ticket.departureDate}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-foreground/40" />
-                      <span className="font-body text-sm text-foreground">
-                        {ticket.departureTime}
-                      </span>
-                    </div>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4 text-foreground/40" />
-                      <span className="font-body text-sm text-foreground">
-                        {ticket.terminal}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <BadgeIcon className="h-4 w-4 text-foreground/40" />
-                      <span className="font-body text-sm text-foreground">
-                        {ticket.aircraft}
-                      </span>
-                    </div>
+                  <Skeleton className="h-16 w-full" />
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-6 w-24" />
                   </div>
-                </div>
-
-                {/* Journey Info */}
-                <div className="bg-gradient-to-r from-cream-100 to-cream-200 rounded-lg p-3">
-                  <div className="flex justify-between items-center text-sm font-body">
-                    <span className="text-foreground">Dhaka (DAC)</span>
-                    <div className="flex items-center space-x-2 text-foreground/60">
-                      <div className="w-8 border-t border-foreground/30"></div>
-                      <Plane className="h-4 w-4" />
-                      <div className="w-8 border-t border-foreground/30"></div>
-                    </div>
-                    <span className="text-foreground">
-                      {currentCountry.code}
-                    </span>
+                  <div className="flex space-x-2">
+                    <Skeleton className="h-8 flex-1" />
+                    <Skeleton className="h-8 flex-1" />
                   </div>
-                  <div className="text-center mt-1">
-                    <span className="text-xs text-foreground/60 font-body">
-                      {ticket.duration}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Seats and Pricing */}
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4 text-foreground/40" />
-                    <span className="font-body text-sm text-foreground">
-                      {ticket.availableSeats}/{ticket.totalSeats} seats
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center space-x-2">
-                      <DollarSign className="h-4 w-4 text-green-600" />
-                      <span className="font-heading font-bold text-lg text-green-600">
-                        ৳{ticket.sellingPrice.toLocaleString()}
-                      </span>
-                    </div>
-                    {showBuyingPrice && (
-                      <div className="text-xs text-foreground/60 font-body">
-                        Cost: ৳{ticket.buyingPrice?.toLocaleString()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex space-x-2 pt-2">
-                  <Button
-                    onClick={() => handleViewDetails(ticket.id)}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 font-body hover:scale-105 transform transition-all duration-200"
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    Details
-                  </Button>
-                  {ticket.status === "available" && (
-                    <Button
-                      onClick={() => handleBookTicket(ticket.id)}
-                      size="sm"
-                      className="flex-1 velvet-button text-primary-foreground font-body hover:scale-105 transform transition-all duration-200"
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Book Now
-                    </Button>
-                  )}
-                  {ticket.status === "sold" && (
-                    <Button
-                      disabled
-                      size="sm"
-                      className="flex-1 font-body"
-                      variant="outline"
-                    >
-                      Sold Out
-                    </Button>
-                  )}
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
-        ))}
-      </motion.div>
+          ))}
+        </motion.div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="text-center py-12"
+        >
+          <div className="text-6xl mb-4">⚠️</div>
+          <h3 className="text-xl font-heading font-bold text-foreground mb-2">
+            Error Loading Flights
+          </h3>
+          <p className="text-foreground/60 font-body mb-4">
+            {error}
+          </p>
+          <Button onClick={() => loadTickets()} className="velvet-button">
+            Try Again
+          </Button>
+        </motion.div>
+      )}
+
+      {/* Flight Cards/List */}
+      {!loading && !error && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className={viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-4"}
+        >
+          {filteredTickets.map((ticket, index) => (
+            <motion.div
+              key={ticket.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
+            >
+              <Card
+                className={`luxury-card border-0 ${viewMode === "list" ? "" : "h-full"} ${
+                  ticket.status === "sold" ? "opacity-75" : ""
+                } hover:shadow-2xl transition-all duration-300 group`}
+              >
+                <CardHeader className="pb-3">
+                  <div className={`flex items-center justify-between ${viewMode === "list" ? "flex-row" : ""}`}>
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-gradient-to-br from-luxury-gold/20 to-luxury-bronze/20 rounded-full">
+                        <Plane className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="font-heading text-lg velvet-text">
+                          {ticket.batch.airline_name}
+                        </CardTitle>
+                        <CardDescription className="font-body text-sm">
+                          {ticket.flight_number}
+                        </CardDescription>
+                      </div>
+                    </div>
+                    {getStatusBadge(ticket.status)}
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Flight Details */}
+                  <div className={`grid ${viewMode === "list" ? "grid-cols-4" : "grid-cols-2"} gap-4`}>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4 text-foreground/40" />
+                        <span className="font-body text-sm text-foreground">
+                          {formatDate(ticket.batch.flight_date)}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-foreground/40" />
+                        <span className="font-body text-sm text-foreground">
+                          {formatTime(ticket.batch.flight_time)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-4 w-4 text-foreground/40" />
+                        <span className="font-body text-sm text-foreground">
+                          {ticket.terminal || "Terminal 1"}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <BadgeIcon className="h-4 w-4 text-foreground/40" />
+                        <span className="font-body text-sm text-foreground">
+                          {ticket.aircraft || "Boeing 737"}
+                        </span>
+                      </div>
+                    </div>
+                    {viewMode === "list" && (
+                      <>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <Users className="h-4 w-4 text-foreground/40" />
+                            <span className="font-body text-sm text-foreground">
+                              {ticket.available_seats}/{ticket.total_seats} seats
+                            </span>
+                          </div>
+                          <div className="text-xs text-foreground/60 font-body">
+                            Agent: {ticket.batch.agent_name}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <DollarSign className="h-4 w-4 text-green-600" />
+                            <span className="font-heading font-bold text-lg text-green-600">
+                              ৳{ticket.selling_price.toLocaleString()}
+                            </span>
+                          </div>
+                          {showBuyingPrice && ticket.batch.buying_price && (
+                            <div className="text-xs text-foreground/60 font-body">
+                              Cost: ৳{ticket.batch.buying_price.toLocaleString()}
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {viewMode === "grid" && (
+                    <>
+                      {/* Journey Info */}
+                      <div className="bg-gradient-to-r from-cream-100 to-cream-200 rounded-lg p-3">
+                        <div className="flex justify-between items-center text-sm font-body">
+                          <span className="text-foreground">Dhaka (DAC)</span>
+                          <div className="flex items-center space-x-2 text-foreground/60">
+                            <div className="w-8 border-t border-foreground/30"></div>
+                            <Plane className="h-4 w-4" />
+                            <div className="w-8 border-t border-foreground/30"></div>
+                          </div>
+                          <span className="text-foreground">
+                            {currentCountry.code}
+                          </span>
+                        </div>
+                        <div className="text-center mt-1">
+                          <span className="text-xs text-foreground/60 font-body">
+                            {ticket.duration || "4h 15m"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Seats and Pricing */}
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center space-x-2">
+                          <Users className="h-4 w-4 text-foreground/40" />
+                          <span className="font-body text-sm text-foreground">
+                            {ticket.available_seats}/{ticket.total_seats} seats
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <div className="flex items-center space-x-2">
+                            <DollarSign className="h-4 w-4 text-green-600" />
+                            <span className="font-heading font-bold text-lg text-green-600">
+                              ৳{ticket.selling_price.toLocaleString()}
+                            </span>
+                          </div>
+                          {showBuyingPrice && ticket.batch.buying_price && (
+                            <div className="text-xs text-foreground/60 font-body">
+                              Cost: ৳{ticket.batch.buying_price.toLocaleString()}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Agent Info */}
+                      <div className="text-xs text-foreground/60 font-body border-t pt-2">
+                        Agent: {ticket.batch.agent_name}
+                        {ticket.batch.agent_contact && (
+                          <span className="ml-2">• {ticket.batch.agent_contact}</span>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className={`flex space-x-2 pt-2 ${viewMode === "list" ? "justify-end" : ""}`}>
+                    <Button
+                      onClick={() => handleViewDetails(ticket.id)}
+                      variant="outline"
+                      size="sm"
+                      className={`${viewMode === "list" ? "" : "flex-1"} font-body hover:scale-105 transform transition-all duration-200`}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Details
+                    </Button>
+                    {ticket.status === "available" && (
+                      <Button
+                        onClick={() => handleBookTicket(ticket.id)}
+                        size="sm"
+                        className={`${viewMode === "list" ? "" : "flex-1"} velvet-button text-primary-foreground font-body hover:scale-105 transform transition-all duration-200`}
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        Book Now
+                      </Button>
+                    )}
+                    {ticket.status === "sold" && (
+                      <Button
+                        disabled
+                        size="sm"
+                        className={`${viewMode === "list" ? "" : "flex-1"} font-body`}
+                        variant="outline"
+                      >
+                        Sold Out
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
 
       {/* No Results */}
-      {filteredTickets.length === 0 && (
+      {!loading && !error && filteredTickets.length === 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -538,11 +759,20 @@ export default function CountryTickets() {
         >
           <div className="text-6xl mb-4">✈️</div>
           <h3 className="text-xl font-heading font-bold text-foreground mb-2">
-            No flights found
+            {tickets.length === 0 ? "No flights available" : "No flights found"}
           </h3>
-          <p className="text-foreground/60 font-body">
-            Try adjusting your filters to see more results
+          <p className="text-foreground/60 font-body mb-4">
+            {tickets.length === 0
+              ? `No tickets are currently available for ${currentCountry.name}`
+              : "Try adjusting your filters to see more results"
+            }
           </p>
+          {tickets.length === 0 && (
+            <Button onClick={() => loadTickets()} variant="outline" className="font-body">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          )}
         </motion.div>
       )}
     </div>
