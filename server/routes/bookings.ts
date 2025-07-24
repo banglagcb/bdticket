@@ -243,6 +243,7 @@ router.post("/", async (req: Request, res: Response) => {
 // Update booking status
 router.patch("/:id/status", async (req: Request, res: Response) => {
   try {
+    console.log("Updating booking status:", { id: req.params.id, status: req.body.status });
     const { id } = req.params;
     const { status } = req.body;
 
