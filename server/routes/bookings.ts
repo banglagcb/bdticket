@@ -255,13 +255,16 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
       });
     }
 
+    console.log("Finding booking with ID:", id);
     const booking = BookingRepository.findById(id);
     if (!booking) {
+      console.log("Booking not found:", id);
       return res.status(404).json({
         success: false,
         message: "Booking not found",
       });
     }
+    console.log("Found booking:", { id: booking.id, current_status: booking.status });
 
     // Check permissions
     const canViewAllBookings = hasPermission(
