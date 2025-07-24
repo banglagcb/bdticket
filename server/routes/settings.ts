@@ -9,6 +9,9 @@ import {
   hasPermission,
 } from "../middleware/auth";
 import { z } from "zod";
+import * as os from "os";
+import * as fs from "fs";
+import * as path from "path";
 
 const router = Router();
 
