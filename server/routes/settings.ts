@@ -85,7 +85,7 @@ router.get("/:key", async (req: Request, res: Response) => {
       "booking_timeout",
     ];
 
-    if (!publicSettings.includes(key) && !req.user!.role === "admin") {
+    if (!publicSettings.includes(key) && req.user!.role !== "admin") {
       return res.status(403).json({
         success: false,
         message: "Access denied",
