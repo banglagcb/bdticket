@@ -116,7 +116,10 @@ export default function Countries() {
     try {
       setLoading(true);
       setError(null);
+      console.log("Loading countries data...");
       const data = await apiClient.getCountries();
+      console.log("Countries API response:", data);
+      console.log("Countries array:", data.countries);
       setCountries(data.countries || []);
     } catch (err) {
       console.error("Failed to load countries:", err);
