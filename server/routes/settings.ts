@@ -18,6 +18,16 @@ const router = Router();
 // Apply authentication to all routes
 router.use(authenticate);
 
+// Test endpoint to verify routing works
+router.get("/test", (req: Request, res: Response) => {
+  console.log("Test endpoint called successfully!");
+  res.json({
+    success: true,
+    message: "Settings route test successful",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Schema for updating system settings
 const updateSettingsSchema = z.object({
   company_name: z.string().min(1).optional(),
