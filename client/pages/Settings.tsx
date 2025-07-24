@@ -280,51 +280,50 @@ export default function Settings() {
   // Save handlers
   const handleSaveProfile = async () => {
     setSaving(true);
-    try {
-      // Validate passwords if changing
-      if (userProfile.newPassword) {
-        if (userProfile.newPassword !== userProfile.confirmPassword) {
-          throw new Error("New passwords do not match!");
-        }
-        if (userProfile.newPassword.length < 6) {
-          throw new Error("Password must be at least 6 characters long!");
-        }
+    // Validate passwords if changing
+    if (userProfile.newPassword) {
+      if (userProfile.newPassword !== userProfile.confirmPassword) {
+        alert("New passwords do not match!");
+        setSaving(false);
+        return;
       }
-
-      const updateData: any = {
-        name: userProfile.name,
-        email: userProfile.email,
-        phone: userProfile.phone,
-      };
-
-      if (userProfile.newPassword) {
-        updateData.currentPassword = userProfile.currentPassword;
-        updateData.newPassword = userProfile.newPassword;
+      if (userProfile.newPassword.length < 6) {
+        alert("Password must be at least 6 characters long!");
+        setSaving(false);
+        return;
       }
-
-      await apiClient.updateUser(user!.id, updateData);
-
-      // Update auth context
-      updateUser({
-        name: userProfile.name,
-        email: userProfile.email,
-        phone: userProfile.phone,
-      });
-
-      // Clear password fields
-      setUserProfile(prev => ({
-        ...prev,
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      }));
-
-      alert("Profile updated successfully!");
-    } catch (error: any) {
-      alert(error.message || "Failed to update profile");
-    } finally {
-      setSaving(false);
     }
+
+    const updateData: any = {
+      name: userProfile.name,
+      email: userProfile.email,
+      phone: userProfile.phone,
+    };
+
+    if (userProfile.newPassword) {
+      updateData.currentPassword = userProfile.currentPassword;
+      updateData.newPassword = userProfile.newPassword;
+    }
+
+    await apiClient.updateUser(user!.id, updateData);
+
+    // Update auth context
+    updateUser({
+      name: userProfile.name,
+      email: userProfile.email,
+      phone: userProfile.phone,
+    });
+
+    // Clear password fields
+    setUserProfile(prev => ({
+      ...prev,
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    }));
+
+    alert("Profile updated successfully!");
+    setSaving(false);
   };
 
   const handleSaveSystemSettings = async () => {
