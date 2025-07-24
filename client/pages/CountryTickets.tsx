@@ -504,13 +504,13 @@ export default function CountryTickets() {
                 </Select>
 
                 <div className="flex items-center justify-between md:col-span-2 lg:col-span-1">
-                  <span className="font-body text-sm text-foreground/70">
+                  <div className="font-body text-sm text-foreground/70">
                     {loading ? (
                       <Skeleton className="h-4 w-20" />
                     ) : (
                       `${filteredTickets.length} flights found`
                     )}
-                  </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -624,13 +624,13 @@ export default function CountryTickets() {
                     </SheetContent>
                   </Sheet>
 
-                  <span className="font-body text-sm text-foreground/70">
+                  <div className="font-body text-sm text-foreground/70">
                     {loading ? (
                       <Skeleton className="h-4 w-20" />
                     ) : (
                       `${filteredTickets.length} found`
                     )}
-                  </span>
+                  </div>
                 </div>
               </div>
             </div>
