@@ -455,7 +455,6 @@ function formatBytes(bytes: number): string {
 
 async function getDiskUsage(): Promise<string> {
   try {
-    const fs = require("fs");
     const stats = fs.statSync(process.cwd());
     return formatBytes(stats.size);
   } catch {
@@ -465,8 +464,6 @@ async function getDiskUsage(): Promise<string> {
 
 async function getDatabaseSize(): Promise<string> {
   try {
-    const fs = require("fs");
-    const path = require("path");
     const dbPath = path.join(process.cwd(), "bd-ticketpro.db");
     if (fs.existsSync(dbPath)) {
       const stats = fs.statSync(dbPath);
