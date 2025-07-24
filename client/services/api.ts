@@ -433,6 +433,28 @@ class APIClient {
     }
     throw new Error(result.message || "Failed to get activity logs");
   }
+
+  // System information methods
+  async getSystemInfo(): Promise<any> {
+    const result = await this.request<any>("/settings/system-info");
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get system information");
+  }
+
+  // Backup methods
+  async createBackup(): Promise<any> {
+    const result = await this.request<any>("/settings/backup", {
+      method: "POST",
+    });
+
+    if (result.success) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to create backup");
+  }
 }
 
 // Create and export API client instance
