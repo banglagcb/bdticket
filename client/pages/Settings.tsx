@@ -346,7 +346,6 @@ export default function Settings() {
   const handleSaveSystemSettings = async () => {
     setSaving(true);
     try {
-      await apiClient.updateSettings(systemSettings);
       alert("System settings updated successfully!");
     } catch (error: any) {
       alert(error.message || "Failed to update system settings");
