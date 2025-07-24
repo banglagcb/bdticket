@@ -303,8 +303,9 @@ export function seedDatabase() {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    // Sample data
+    // Sample data - More comprehensive data for all countries
     const sampleBatches = [
+      // Saudi Arabia (KSA)
       {
         id: uuidv4(),
         countryCode: "KSA",
@@ -312,10 +313,23 @@ export function seedDatabase() {
         flightDate: "2024-12-25",
         flightTime: "14:30",
         buyingPrice: 18000,
-        quantity: 20,
+        quantity: 25,
         agentName: "Ahmed Travel",
         agentContact: "+8801234567890",
       },
+      {
+        id: uuidv4(),
+        countryCode: "KSA",
+        airline: "Saudi Airlines",
+        flightDate: "2024-12-28",
+        flightTime: "16:45",
+        buyingPrice: 22000,
+        quantity: 30,
+        agentName: "Mecca Tours",
+        agentContact: "+8801345678901",
+      },
+
+      // UAE
       {
         id: uuidv4(),
         countryCode: "UAE",
@@ -323,10 +337,23 @@ export function seedDatabase() {
         flightDate: "2024-12-26",
         flightTime: "09:15",
         buyingPrice: 38000,
-        quantity: 15,
+        quantity: 20,
         agentName: "Gulf Air Agency",
         agentContact: "+8801987654321",
       },
+      {
+        id: uuidv4(),
+        countryCode: "UAE",
+        airline: "Flydubai",
+        flightDate: "2024-12-29",
+        flightTime: "11:30",
+        buyingPrice: 28000,
+        quantity: 35,
+        agentName: "Dubai Express",
+        agentContact: "+8801456789012",
+      },
+
+      // Qatar (QAT)
       {
         id: uuidv4(),
         countryCode: "QAT",
@@ -334,9 +361,107 @@ export function seedDatabase() {
         flightDate: "2024-12-27",
         flightTime: "20:10",
         buyingPrice: 44000,
-        quantity: 10,
+        quantity: 15,
         agentName: "Royal Travel",
         agentContact: "+8801555666777",
+      },
+      {
+        id: uuidv4(),
+        countryCode: "QAT",
+        airline: "Qatar Airways",
+        flightDate: "2024-12-30",
+        flightTime: "22:30",
+        buyingPrice: 42000,
+        quantity: 18,
+        agentName: "Doha Business Travel",
+        agentContact: "+8801567890123",
+      },
+
+      // Kuwait (KWT)
+      {
+        id: uuidv4(),
+        countryCode: "KWT",
+        airline: "Kuwait Airways",
+        flightDate: "2024-12-26",
+        flightTime: "13:45",
+        buyingPrice: 24000,
+        quantity: 22,
+        agentName: "Kuwait Tours",
+        agentContact: "+8801678901234",
+      },
+      {
+        id: uuidv4(),
+        countryCode: "KWT",
+        airline: "Air Arabia",
+        flightDate: "2024-12-31",
+        flightTime: "15:20",
+        buyingPrice: 20000,
+        quantity: 28,
+        agentName: "Kuwait Express",
+        agentContact: "+8801789012345",
+      },
+
+      // Oman (OMN)
+      {
+        id: uuidv4(),
+        countryCode: "OMN",
+        airline: "Oman Air",
+        flightDate: "2024-12-28",
+        flightTime: "17:30",
+        buyingPrice: 26000,
+        quantity: 16,
+        agentName: "Muscat Travel",
+        agentContact: "+8801890123456",
+      },
+
+      // Bahrain (BHR)
+      {
+        id: uuidv4(),
+        countryCode: "BHR",
+        airline: "Gulf Air",
+        flightDate: "2024-12-29",
+        flightTime: "12:15",
+        buyingPrice: 21000,
+        quantity: 20,
+        agentName: "Bahrain Gateway",
+        agentContact: "+8801901234567",
+      },
+      {
+        id: uuidv4(),
+        countryCode: "BHR",
+        airline: "Air Arabia",
+        flightDate: "2025-01-02",
+        flightTime: "19:45",
+        buyingPrice: 19000,
+        quantity: 25,
+        agentName: "Manama Tours",
+        agentContact: "+8801012345678",
+      },
+
+      // Jordan (JOR)
+      {
+        id: uuidv4(),
+        countryCode: "JOR",
+        airline: "Royal Jordanian",
+        flightDate: "2024-12-30",
+        flightTime: "14:20",
+        buyingPrice: 32000,
+        quantity: 12,
+        agentName: "Amman Travel Hub",
+        agentContact: "+8801123456789",
+      },
+
+      // Lebanon (LBN)
+      {
+        id: uuidv4(),
+        countryCode: "LBN",
+        airline: "Middle East Airlines",
+        flightDate: "2025-01-01",
+        flightTime: "16:30",
+        buyingPrice: 35000,
+        quantity: 14,
+        agentName: "Beirut Express",
+        agentContact: "+8801234567890",
       },
     ];
 
