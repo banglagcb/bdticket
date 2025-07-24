@@ -302,27 +302,53 @@ export default function CountryTickets() {
 
   const handleBookingSubmit = async (bookingData: any) => {
     try {
-      setLoading(true);
-      await apiClient.createBooking(bookingData);
+      console.log('Creating booking with data:', bookingData);
+
+      const response = await apiClient.createBooking(bookingData);
 
       toast({
-        title: "Booking Created",
-        description: "Booking has been created successfully!",
+        title: "Booking Created Successfully! 🎉",
+        description: `Booking ID: ${response.bookingId} | Passenger: ${bookingData.passengerInfo.name}`,
       });
 
       // Refresh tickets to update status
       await loadTickets(false);
       setBookingOpen(false);
       setBookingTicket(null);
+
+      // Show detailed success information
+      setTimeout(() => {
+        toast({
+          title: "Next Steps",
+          description: "Check the Bookings section to manage this booking and process payments.",
+        });
+      }, 2000);
+
     } catch (err: any) {
       console.error("Error creating booking:", err);
+
+      let errorMessage = "Failed to create booking. Please try again.";
+
+      if (err.message) {
+        if (err.message.includes('not available')) {
+          errorMessage = "This ticket is no longer available for booking.";
+        } else if (err.message.includes('validation')) {
+          errorMessage = "Please check all required fields and try again.";
+        } else {
+          errorMessage = err.message;
+        }
+      }
+
       toast({
-        title: "Booking Failed",
-        description: err.message || "Failed to create booking. Please try again.",
+        title: "Booking Failed ❌",
+        description: errorMessage,
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+
+      // If ticket is no longer available, refresh the list
+      if (errorMessage.includes('not available')) {
+        await loadTickets(false);
+      }
     }
   };
 
@@ -1012,7 +1038,7 @@ export default function CountryTickets() {
                       <span className="hidden sm:inline">Details</span>
                       <span className="sm:hidden">View</span>
                     </Button>
-                    {ticket.status === "available" && (
+                    {ticket.status === "available" && ticket.available_seats > 0 && (
                       <Button
                         onClick={() => handleBookTicket(ticket.id)}
                         size="sm"
@@ -1021,6 +1047,16 @@ export default function CountryTickets() {
                         <ShoppingCart className="h-4 w-4 mr-2" />
                         <span className="hidden sm:inline">Book Now</span>
                         <span className="sm:hidden">Book</span>
+                      </Button>
+                    )}
+                    {ticket.status === "available" && ticket.available_seats === 0 && (
+                      <Button
+                        disabled
+                        size="sm"
+                        className={`${viewMode === "list" ? "" : "flex-1"} font-body`}
+                        variant="outline"
+                      >
+                        No Seats
                       </Button>
                     )}
                     {ticket.status === "sold" && (
