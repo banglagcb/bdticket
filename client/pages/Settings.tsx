@@ -252,13 +252,8 @@ export default function Settings() {
   };
 
   const loadUsers = async () => {
-    try {
-      const data = await apiClient.getUsers();
-      setUsers(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Failed to load users:", error);
-      setUsers([]); // Ensure users is always an array
-    }
+    const data = await apiClient.getUsers();
+    setUsers(Array.isArray(data) ? data : []);
   };
 
   const loadActivityLogs = async () => {
