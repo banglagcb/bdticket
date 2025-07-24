@@ -19,7 +19,14 @@ import {
 } from "./ui/select";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
-import { CalendarDays, Phone, Mail, User, CreditCard, Plane } from "lucide-react";
+import {
+  CalendarDays,
+  Phone,
+  Mail,
+  User,
+  CreditCard,
+  Plane,
+} from "lucide-react";
 
 interface BookingDialogProps {
   isOpen: boolean;
@@ -28,7 +35,12 @@ interface BookingDialogProps {
   onSubmit: (bookingData: any) => void;
 }
 
-export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDialogProps) {
+export function BookingDialog({
+  isOpen,
+  onClose,
+  ticket,
+  onSubmit,
+}: BookingDialogProps) {
   const [formData, setFormData] = useState({
     // Agent Information
     agentName: "",
@@ -59,9 +71,9 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
   // Reset form when ticket changes
   useEffect(() => {
     if (ticket) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        sellingPrice: ticket.selling_price || 0
+        sellingPrice: ticket.selling_price || 0,
       }));
     }
   }, [ticket]);
@@ -93,14 +105,14 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
         comments: `${formData.comments} | Emergency: ${formData.emergencyContact} | Special: ${formData.specialRequests}`,
       });
     } catch (error) {
-      console.error('Booking submission failed:', error);
+      console.error("Booking submission failed:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const updateFormData = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -129,11 +141,15 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
               </div>
               <div>
                 <Label className="text-xs text-gray-500">Date</Label>
-                <p className="font-medium">{new Date(ticket.batch?.flight_date).toLocaleDateString()}</p>
+                <p className="font-medium">
+                  {new Date(ticket.batch?.flight_date).toLocaleDateString()}
+                </p>
               </div>
               <div>
                 <Label className="text-xs text-gray-500">Base Price</Label>
-                <p className="font-medium">৳{ticket.selling_price?.toLocaleString()}</p>
+                <p className="font-medium">
+                  ৳{ticket.selling_price?.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
@@ -193,7 +209,9 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
                 <Input
                   id="passengerName"
                   value={formData.passengerName}
-                  onChange={(e) => updateFormData("passengerName", e.target.value)}
+                  onChange={(e) =>
+                    updateFormData("passengerName", e.target.value)
+                  }
                   placeholder="Full name as in passport"
                   required
                 />
@@ -213,7 +231,9 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
                 <Input
                   id="passengerPhone"
                   value={formData.passengerPhone}
-                  onChange={(e) => updateFormData("passengerPhone", e.target.value)}
+                  onChange={(e) =>
+                    updateFormData("passengerPhone", e.target.value)
+                  }
                   placeholder="+880-XXX-XXXXXX"
                   required
                 />
@@ -224,7 +244,9 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
                   id="passengerEmail"
                   type="email"
                   value={formData.passengerEmail}
-                  onChange={(e) => updateFormData("passengerEmail", e.target.value)}
+                  onChange={(e) =>
+                    updateFormData("passengerEmail", e.target.value)
+                  }
                   placeholder="passenger@example.com"
                 />
               </div>
@@ -235,7 +257,9 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
                   type="number"
                   min="1"
                   value={formData.paxCount}
-                  onChange={(e) => updateFormData("paxCount", parseInt(e.target.value))}
+                  onChange={(e) =>
+                    updateFormData("paxCount", parseInt(e.target.value))
+                  }
                 />
               </div>
               <div>
@@ -243,7 +267,9 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
                 <Input
                   id="emergencyContact"
                   value={formData.emergencyContact}
-                  onChange={(e) => updateFormData("emergencyContact", e.target.value)}
+                  onChange={(e) =>
+                    updateFormData("emergencyContact", e.target.value)
+                  }
                   placeholder="Emergency contact number"
                 />
               </div>
@@ -266,13 +292,20 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
                   type="number"
                   min="0"
                   value={formData.sellingPrice}
-                  onChange={(e) => updateFormData("sellingPrice", parseFloat(e.target.value))}
+                  onChange={(e) =>
+                    updateFormData("sellingPrice", parseFloat(e.target.value))
+                  }
                   required
                 />
               </div>
               <div>
                 <Label htmlFor="paymentType">Payment Type *</Label>
-                <Select value={formData.paymentType} onValueChange={(value) => updateFormData("paymentType", value)}>
+                <Select
+                  value={formData.paymentType}
+                  onValueChange={(value) =>
+                    updateFormData("paymentType", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -282,7 +315,7 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {formData.paymentType === "partial" && (
                 <div>
                   <Label htmlFor="partialAmount">Advance Amount (৳)</Label>
@@ -292,33 +325,47 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
                     min="0"
                     max={formData.sellingPrice}
                     value={formData.partialAmount}
-                    onChange={(e) => updateFormData("partialAmount", parseFloat(e.target.value))}
+                    onChange={(e) =>
+                      updateFormData(
+                        "partialAmount",
+                        parseFloat(e.target.value),
+                      )
+                    }
                   />
                 </div>
               )}
-              
+
               <div>
                 <Label htmlFor="paymentMethod">Payment Method</Label>
-                <Select value={formData.paymentMethod} onValueChange={(value) => updateFormData("paymentMethod", value)}>
+                <Select
+                  value={formData.paymentMethod}
+                  onValueChange={(value) =>
+                    updateFormData("paymentMethod", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="cash">Cash</SelectItem>
                     <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                    <SelectItem value="mobile_banking">Mobile Banking</SelectItem>
+                    <SelectItem value="mobile_banking">
+                      Mobile Banking
+                    </SelectItem>
                     <SelectItem value="credit_card">Credit Card</SelectItem>
                     <SelectItem value="check">Check</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="md:col-span-2">
                 <Label htmlFor="paymentDetails">Payment Details</Label>
                 <Input
                   id="paymentDetails"
                   value={formData.paymentDetails}
-                  onChange={(e) => updateFormData("paymentDetails", e.target.value)}
+                  onChange={(e) =>
+                    updateFormData("paymentDetails", e.target.value)
+                  }
                   placeholder="Transaction ID, check number, etc."
                 />
               </div>
@@ -329,14 +376,18 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
 
           {/* Additional Information */}
           <div>
-            <h3 className="text-lg font-semibold mb-3">Additional Information</h3>
+            <h3 className="text-lg font-semibold mb-3">
+              Additional Information
+            </h3>
             <div className="space-y-4">
               <div>
                 <Label htmlFor="specialRequests">Special Requests</Label>
                 <Textarea
                   id="specialRequests"
                   value={formData.specialRequests}
-                  onChange={(e) => updateFormData("specialRequests", e.target.value)}
+                  onChange={(e) =>
+                    updateFormData("specialRequests", e.target.value)
+                  }
                   placeholder="Meal preferences, wheelchair assistance, etc."
                   rows={2}
                 />
@@ -355,7 +406,12 @@ export function BookingDialog({ isOpen, onClose, ticket, onSubmit }: BookingDial
           </div>
 
           <div className="flex justify-end gap-4 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>

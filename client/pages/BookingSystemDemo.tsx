@@ -33,7 +33,7 @@ export default function BookingSystemDemo() {
       icon: <User className="h-5 w-5" />,
       details: [
         "Admin: Full system access (admin/admin123)",
-        "Manager: Booking management (manager/manager123)", 
+        "Manager: Booking management (manager/manager123)",
         "Staff: Basic booking operations (staff/staff123)",
       ],
       color: "bg-blue-500",
@@ -115,22 +115,26 @@ export default function BookingSystemDemo() {
   const features = [
     {
       title: "Complete Booking Workflow",
-      description: "From login to ticket sales with customer information collection",
+      description:
+        "From login to ticket sales with customer information collection",
       icon: <Users className="h-6 w-6" />,
     },
     {
-      title: "Real-time Notifications", 
-      description: "Bell notifications for bookings, payments, and system updates",
+      title: "Real-time Notifications",
+      description:
+        "Bell notifications for bookings, payments, and system updates",
       icon: <Bell className="h-6 w-6" />,
     },
     {
       title: "Clickable Dashboard Cards",
-      description: "Navigate directly to relevant sections from dashboard statistics",
+      description:
+        "Navigate directly to relevant sections from dashboard statistics",
       icon: <Package className="h-6 w-6" />,
     },
     {
       title: "Role-based Permissions",
-      description: "Different access levels for admin, manager, and staff users",
+      description:
+        "Different access levels for admin, manager, and staff users",
       icon: <User className="h-6 w-6" />,
     },
   ];
@@ -148,8 +152,9 @@ export default function BookingSystemDemo() {
           BD TicketPro Booking System Demo
         </h1>
         <p className="text-lg text-foreground/70 font-body max-w-3xl mx-auto">
-          Complete end-to-end booking system for international flight tickets with customer information collection,
-          payment processing, and real-time notifications.
+          Complete end-to-end booking system for international flight tickets
+          with customer information collection, payment processing, and
+          real-time notifications.
         </p>
       </motion.div>
 
@@ -216,8 +221,10 @@ export default function BookingSystemDemo() {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 * index, duration: 0.5 }}
-                  className={`relative flex items-start space-x-4 p-6 rounded-lg border-l-4 ${ 
-                    currentStep >= index ? 'bg-green-50 border-green-500' : 'bg-gray-50 border-gray-300'
+                  className={`relative flex items-start space-x-4 p-6 rounded-lg border-l-4 ${
+                    currentStep >= index
+                      ? "bg-green-50 border-green-500"
+                      : "bg-gray-50 border-gray-300"
                   } hover:shadow-md transition-all duration-300 cursor-pointer`}
                   onClick={() => setCurrentStep(index)}
                 >
@@ -241,7 +248,10 @@ export default function BookingSystemDemo() {
                     </p>
                     <ul className="space-y-1">
                       {step.details.map((detail, idx) => (
-                        <li key={idx} className="text-sm text-foreground/60 font-body flex items-center">
+                        <li
+                          key={idx}
+                          className="text-sm text-foreground/60 font-body flex items-center"
+                        >
                           <ArrowRight className="h-3 w-3 mr-2 text-primary" />
                           {detail}
                         </li>
@@ -273,12 +283,32 @@ export default function BookingSystemDemo() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { role: "Admin", username: "admin", password: "admin123", color: "bg-red-500" },
-                { role: "Manager", username: "manager", password: "manager123", color: "bg-blue-500" },
-                { role: "Staff", username: "staff", password: "staff123", color: "bg-green-500" },
+                {
+                  role: "Admin",
+                  username: "admin",
+                  password: "admin123",
+                  color: "bg-red-500",
+                },
+                {
+                  role: "Manager",
+                  username: "manager",
+                  password: "manager123",
+                  color: "bg-blue-500",
+                },
+                {
+                  role: "Staff",
+                  username: "staff",
+                  password: "staff123",
+                  color: "bg-green-500",
+                },
               ].map((cred) => (
-                <div key={cred.role} className={`p-4 rounded-lg text-white ${cred.color}`}>
-                  <h3 className="font-heading font-semibold mb-2">{cred.role} Access</h3>
+                <div
+                  key={cred.role}
+                  className={`p-4 rounded-lg text-white ${cred.color}`}
+                >
+                  <h3 className="font-heading font-semibold mb-2">
+                    {cred.role} Access
+                  </h3>
                   <p className="font-body text-sm opacity-90">
                     Username: <span className="font-mono">{cred.username}</span>
                   </p>
@@ -304,14 +334,14 @@ export default function BookingSystemDemo() {
         </h2>
         <div className="flex flex-wrap justify-center gap-4">
           <Button
-            onClick={() => window.location.href = '/login'}
+            onClick={() => (window.location.href = "/login")}
             className="velvet-button text-primary-foreground font-body"
           >
             <User className="h-4 w-4 mr-2" />
             Go to Login
           </Button>
           <Button
-            onClick={() => window.location.href = '/countries-demo'}
+            onClick={() => (window.location.href = "/countries-demo")}
             variant="outline"
             className="font-body"
           >

@@ -302,7 +302,7 @@ export default function CountryTickets() {
 
   const handleBookingSubmit = async (bookingData: any) => {
     try {
-      console.log('Creating booking with data:', bookingData);
+      console.log("Creating booking with data:", bookingData);
 
       const response = await apiClient.createBooking(bookingData);
 
@@ -320,19 +320,19 @@ export default function CountryTickets() {
       setTimeout(() => {
         toast({
           title: "Next Steps",
-          description: "Check the Bookings section to manage this booking and process payments.",
+          description:
+            "Check the Bookings section to manage this booking and process payments.",
         });
       }, 2000);
-
     } catch (err: any) {
       console.error("Error creating booking:", err);
 
       let errorMessage = "Failed to create booking. Please try again.";
 
       if (err.message) {
-        if (err.message.includes('not available')) {
+        if (err.message.includes("not available")) {
           errorMessage = "This ticket is no longer available for booking.";
-        } else if (err.message.includes('validation')) {
+        } else if (err.message.includes("validation")) {
           errorMessage = "Please check all required fields and try again.";
         } else {
           errorMessage = err.message;
@@ -346,7 +346,7 @@ export default function CountryTickets() {
       });
 
       // If ticket is no longer available, refresh the list
-      if (errorMessage.includes('not available')) {
+      if (errorMessage.includes("not available")) {
         await loadTickets(false);
       }
     }
@@ -1038,27 +1038,29 @@ export default function CountryTickets() {
                       <span className="hidden sm:inline">Details</span>
                       <span className="sm:hidden">View</span>
                     </Button>
-                    {ticket.status === "available" && ticket.available_seats > 0 && (
-                      <Button
-                        onClick={() => handleBookTicket(ticket.id)}
-                        size="sm"
-                        className={`${viewMode === "list" ? "" : "flex-1"} velvet-button text-primary-foreground font-body hover:scale-105 transform transition-all duration-200`}
-                      >
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        <span className="hidden sm:inline">Book Now</span>
-                        <span className="sm:hidden">Book</span>
-                      </Button>
-                    )}
-                    {ticket.status === "available" && ticket.available_seats === 0 && (
-                      <Button
-                        disabled
-                        size="sm"
-                        className={`${viewMode === "list" ? "" : "flex-1"} font-body`}
-                        variant="outline"
-                      >
-                        No Seats
-                      </Button>
-                    )}
+                    {ticket.status === "available" &&
+                      ticket.available_seats > 0 && (
+                        <Button
+                          onClick={() => handleBookTicket(ticket.id)}
+                          size="sm"
+                          className={`${viewMode === "list" ? "" : "flex-1"} velvet-button text-primary-foreground font-body hover:scale-105 transform transition-all duration-200`}
+                        >
+                          <ShoppingCart className="h-4 w-4 mr-2" />
+                          <span className="hidden sm:inline">Book Now</span>
+                          <span className="sm:hidden">Book</span>
+                        </Button>
+                      )}
+                    {ticket.status === "available" &&
+                      ticket.available_seats === 0 && (
+                        <Button
+                          disabled
+                          size="sm"
+                          className={`${viewMode === "list" ? "" : "flex-1"} font-body`}
+                          variant="outline"
+                        >
+                          No Seats
+                        </Button>
+                      )}
                     {ticket.status === "sold" && (
                       <Button
                         disabled
