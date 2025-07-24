@@ -31,6 +31,8 @@ interface DashboardTileProps {
   icon: React.ReactNode;
   color: string;
   delay?: number;
+  onClick?: () => void;
+  clickable?: boolean;
 }
 
 function DashboardTile({
@@ -40,6 +42,8 @@ function DashboardTile({
   icon,
   color,
   delay = 0,
+  onClick,
+  clickable = false,
 }: DashboardTileProps) {
   return (
     <motion.div
@@ -47,9 +51,13 @@ function DashboardTile({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay, duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
       whileHover={{ scale: 1.05, y: -5 }}
+      whileTap={clickable ? { scale: 0.95 } : {}}
       className="transform-gpu"
+      onClick={clickable ? onClick : undefined}
     >
-      <Card className="luxury-card hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden relative group">
+      <Card className={`luxury-card hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden relative group ${
+        clickable ? 'cursor-pointer hover:ring-2 hover:ring-primary/20' : ''
+      }`}>
         <div className="absolute inset-0 bg-gradient-to-br from-luxury-gold/5 to-luxury-bronze/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
           <CardTitle className="text-sm font-heading font-medium velvet-text">
@@ -144,6 +152,8 @@ export default function Dashboard() {
       description: `${stats?.todaysSales?.count || 0} tickets sold today`,
       icon: <DollarSign className="h-4 w-4 text-white" />,
       color: "bg-green-500",
+      clickable: true,
+      onClick: () => navigate("/reports"),
     },
     {
       title: "Total Bookings",
@@ -151,6 +161,8 @@ export default function Dashboard() {
       description: "Active booking requests",
       icon: <Ticket className="h-4 w-4 text-white" />,
       color: "bg-blue-500",
+      clickable: true,
+      onClick: () => navigate("/bookings"),
     },
     {
       title: "Locked Tickets",
@@ -158,6 +170,8 @@ export default function Dashboard() {
       description: "Temporarily reserved",
       icon: <Lock className="h-4 w-4 text-white" />,
       color: "bg-yellow-500",
+      clickable: true,
+      onClick: () => navigate("/bookings?status=locked"),
     },
     {
       title: "Total Inventory",
@@ -165,6 +179,8 @@ export default function Dashboard() {
       description: "Available tickets",
       icon: <Package className="h-4 w-4 text-white" />,
       color: "bg-purple-500",
+      clickable: true,
+      onClick: () => navigate("/countries"),
     },
   ];
 
@@ -176,6 +192,8 @@ export default function Dashboard() {
           description: "Based on current sales",
           icon: <TrendingUp className="h-4 w-4 text-white" />,
           color: "bg-teal-primary",
+          clickable: true,
+          onClick: () => navigate("/reports"),
         },
       ]
     : [];
