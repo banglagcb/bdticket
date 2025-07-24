@@ -378,13 +378,13 @@ export function seedDatabase() {
       }
     }
 
-    // Add sample bookings
+    // Add sample bookings using correct schema
     const insertBooking = db.prepare(`
       INSERT INTO bookings (
-        id, ticket_id, status, agent_info, passenger_info,
-        selling_price, payment_type, payment_method,
-        created_by, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        id, ticket_id, agent_name, agent_phone, agent_email,
+        passenger_name, passenger_passport, passenger_phone, passenger_email, pax_count,
+        selling_price, payment_type, payment_method, status, created_by, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     // Get first few tickets to create bookings for
@@ -394,78 +394,74 @@ export function seedDatabase() {
       {
         id: uuidv4(),
         ticketId: sampleTickets[0]?.id,
-        status: "pending",
-        agentInfo: JSON.stringify({
-          name: "Rahman Travel Agency",
-          phone: "+8801712345678",
-          email: "rahman@travelagency.com",
-        }),
-        passengerInfo: JSON.stringify({
-          name: "Mohammed Abdul Rahman",
-          passportNo: "EB1234567",
-          phone: "+8801987654321",
-          paxCount: 1,
-          email: "mohammed@email.com",
-        }),
+        agentName: "Rahman Travel Agency",
+        agentPhone: "+8801712345678",
+        agentEmail: "rahman@travelagency.com",
+        passengerName: "Mohammed Abdul Rahman",
+        passengerPassport: "EB1234567",
+        passengerPhone: "+8801987654321",
+        passengerEmail: "mohammed@email.com",
+        paxCount: 1,
         sellingPrice: 22000,
         paymentType: "partial",
         paymentMethod: "bank_transfer",
+        status: "pending",
       },
       {
         id: uuidv4(),
         ticketId: sampleTickets[1]?.id,
-        status: "confirmed",
-        agentInfo: JSON.stringify({
-          name: "Dhaka Express Travel",
-          phone: "+8801555777888",
-          email: "info@dhakaexpress.com",
-        }),
-        passengerInfo: JSON.stringify({
-          name: "Fatima Begum",
-          passportNo: "EB2345678",
-          phone: "+8801666888999",
-          paxCount: 1,
-          email: "fatima@email.com",
-        }),
+        agentName: "Dhaka Express Travel",
+        agentPhone: "+8801555777888",
+        agentEmail: "info@dhakaexpress.com",
+        passengerName: "Fatima Begum",
+        passengerPassport: "EB2345678",
+        passengerPhone: "+8801666888999",
+        passengerEmail: "fatima@email.com",
+        paxCount: 1,
         sellingPrice: 45600,
         paymentType: "full",
         paymentMethod: "cash",
+        status: "confirmed",
       },
       {
         id: uuidv4(),
         ticketId: sampleTickets[2]?.id,
-        status: "pending",
-        agentInfo: JSON.stringify({
-          name: "Golden Wings Travel",
-          phone: "+8801888999000",
-          email: "contact@goldenwings.com",
-        }),
-        passengerInfo: JSON.stringify({
-          name: "Ahmed Hassan",
-          passportNo: "EB3456789",
-          phone: "+8801444555666",
-          paxCount: 1,
-          email: "ahmed@email.com",
-        }),
+        agentName: "Golden Wings Travel",
+        agentPhone: "+8801888999000",
+        agentEmail: "contact@goldenwings.com",
+        passengerName: "Ahmed Hassan",
+        passengerPassport: "EB3456789",
+        passengerPhone: "+8801444555666",
+        passengerEmail: "ahmed@email.com",
+        paxCount: 1,
         sellingPrice: 52800,
         paymentType: "full",
         paymentMethod: "bkash",
+        status: "pending",
       },
     ];
 
     for (const booking of sampleBookings) {
       if (booking.ticketId) {
+        const now = new Date().toISOString();
         insertBooking.run(
           booking.id,
           booking.ticketId,
-          booking.status,
-          booking.agentInfo,
-          booking.passengerInfo,
+          booking.agentName,
+          booking.agentPhone,
+          booking.agentEmail,
+          booking.passengerName,
+          booking.passengerPassport,
+          booking.passengerPhone,
+          booking.passengerEmail,
+          booking.paxCount,
           booking.sellingPrice,
           booking.paymentType,
           booking.paymentMethod,
+          booking.status,
           adminUser.id,
-          new Date().toISOString(),
+          now,
+          now,
         );
       }
     }
