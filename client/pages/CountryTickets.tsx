@@ -57,6 +57,7 @@ import {
 } from "../components/ui/sheet";
 import { apiClient } from "../services/api";
 import { useToast } from "../hooks/use-toast";
+import { BookingDialog } from "../components/BookingDialog";
 
 interface TicketData {
   id: string;
@@ -109,6 +110,8 @@ export default function CountryTickets() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingTicket, setBookingTicket] = useState<TicketData | null>(null);
 
   const showBuyingPrice = hasPermission("view_buying_price");
 
@@ -290,8 +293,37 @@ export default function CountryTickets() {
   };
 
   const handleBookTicket = (ticketId: string) => {
-    console.log("Booking ticket:", ticketId);
-    // This would open the booking dialog
+    const ticket = tickets.find((t) => t.id === ticketId);
+    if (ticket) {
+      setBookingTicket(ticket);
+      setBookingOpen(true);
+    }
+  };
+
+  const handleBookingSubmit = async (bookingData: any) => {
+    try {
+      setLoading(true);
+      await apiClient.createBooking(bookingData);
+
+      toast({
+        title: "Booking Created",
+        description: "Booking has been created successfully!",
+      });
+
+      // Refresh tickets to update status
+      await loadTickets(false);
+      setBookingOpen(false);
+      setBookingTicket(null);
+    } catch (err: any) {
+      console.error("Error creating booking:", err);
+      toast({
+        title: "Booking Failed",
+        description: err.message || "Failed to create booking. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleViewDetails = (ticketId: string) => {
@@ -1260,6 +1292,17 @@ export default function CountryTickets() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Booking Dialog */}
+      <BookingDialog
+        isOpen={bookingOpen}
+        onClose={() => {
+          setBookingOpen(false);
+          setBookingTicket(null);
+        }}
+        ticket={bookingTicket}
+        onSubmit={handleBookingSubmit}
+      />
     </div>
   );
 }
