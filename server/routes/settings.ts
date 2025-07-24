@@ -477,8 +477,6 @@ async function getDatabaseSize(): Promise<string> {
 
 function getLastBackupTime(): string {
   try {
-    const fs = require("fs");
-    const path = require("path");
     const backupDir = path.join(process.cwd(), "backups");
 
     if (!fs.existsSync(backupDir)) {
