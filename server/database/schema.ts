@@ -289,8 +289,8 @@ export function seedDatabase() {
 
     // Create sample ticket batches and tickets
     const adminUser = db
-      .prepare('SELECT id FROM users WHERE role = "admin" LIMIT 1')
-      .get() as { id: string };
+      .prepare("SELECT id FROM users WHERE role = ? LIMIT 1")
+      .get("admin") as { id: string };
 
     const insertBatch = db.prepare(`
       INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, created_by)
