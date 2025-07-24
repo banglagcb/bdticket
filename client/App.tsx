@@ -21,6 +21,7 @@ import CountryTickets from "./pages/CountryTickets";
 import AdminBuying from "./pages/AdminBuying";
 import Bookings from "./pages/Bookings";
 import Settings from "./pages/Settings";
+import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
 
 // Placeholder components for routes not yet implemented
