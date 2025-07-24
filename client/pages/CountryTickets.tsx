@@ -55,7 +55,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../components/ui/sheet";
-import { getTicketsByCountry } from "../services/api";
+import { apiClient } from "../services/api";
 import { useToast } from "../hooks/use-toast";
 
 interface TicketData {
@@ -147,7 +147,9 @@ export default function CountryTickets() {
       setError(null);
 
       const countryCode = country.toUpperCase();
-      const response = await getTicketsByCountry(countryCode);
+
+      // Use the apiClient directly instead of the destructured method
+      const response = await apiClient.getTicketsByCountry(countryCode);
       setTickets(response.tickets || []);
     } catch (err: any) {
       console.error("Error loading tickets:", err);
@@ -400,27 +402,27 @@ export default function CountryTickets() {
         {/* Quick Stats */}
         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="luxury-card p-4 rounded-lg border-0 text-center">
-            <p className="text-xl font-heading font-bold text-green-600 velvet-text">
+            <div className="text-xl font-heading font-bold text-green-600 velvet-text">
               {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : filteredTickets.filter((t) => t.status === "available").length}
-            </p>
+            </div>
             <p className="text-xs font-body text-foreground/60">Available</p>
           </div>
           <div className="luxury-card p-4 rounded-lg border-0 text-center">
-            <p className="text-xl font-heading font-bold text-blue-600 velvet-text">
+            <div className="text-xl font-heading font-bold text-blue-600 velvet-text">
               {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : filteredTickets.reduce((sum, t) => sum + t.available_seats, 0)}
-            </p>
+            </div>
             <p className="text-xs font-body text-foreground/60">Total Seats</p>
           </div>
           <div className="luxury-card p-4 rounded-lg border-0 text-center">
-            <p className="text-xl font-heading font-bold text-primary velvet-text">
+            <div className="text-xl font-heading font-bold text-primary velvet-text">
               {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : airlines.length}
-            </p>
+            </div>
             <p className="text-xs font-body text-foreground/60">Airlines</p>
           </div>
           <div className="luxury-card p-4 rounded-lg border-0 text-center">
-            <p className="text-xl font-heading font-bold text-orange-600 velvet-text">
+            <div className="text-xl font-heading font-bold text-orange-600 velvet-text">
               {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : tickets.length}
-            </p>
+            </div>
             <p className="text-xs font-body text-foreground/60">Total Tickets</p>
           </div>
         </div>
