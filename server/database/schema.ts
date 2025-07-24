@@ -261,6 +261,7 @@ export function seedDatabase() {
         user.email,
         user.phone,
         user.role,
+        "active", // Explicitly set status to active
       );
     }
 
