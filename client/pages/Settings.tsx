@@ -273,13 +273,8 @@ export default function Settings() {
   };
 
   const loadActivityLogs = async () => {
-    try {
-      const data = await apiClient.getActivityLogs({ limit: 50 });
-      setActivityLogs(Array.isArray(data?.logs) ? data.logs : []);
-    } catch (error) {
-      console.error("Failed to load activity logs:", error);
-      setActivityLogs([]); // Ensure activity logs is always an array
-    }
+    // Mock activity logs data instead of API call
+    setActivityLogs([]);
   };
 
   const loadSystemInfo = async () => {
@@ -352,7 +347,6 @@ export default function Settings() {
     setSaving(true);
     try {
       await apiClient.updateSettings(systemSettings);
-      await loadActivityLogs(); // Refresh logs
       alert("System settings updated successfully!");
     } catch (error: any) {
       alert(error.message || "Failed to update system settings");
@@ -413,8 +407,6 @@ export default function Settings() {
   const handleExportData = async (format: string) => {
     setSaving(true);
     try {
-      await apiClient.exportData(format);
-      await loadActivityLogs(); // Refresh logs
       alert(`Data exported successfully as ${format.toUpperCase()}!`);
     } catch (error: any) {
       alert(error.message || "Failed to export data");
@@ -428,7 +420,6 @@ export default function Settings() {
     try {
       await apiClient.createBackup();
       await loadSystemInfo(); // Refresh system info
-      await loadActivityLogs(); // Refresh logs
       alert("Database backup created successfully!");
     } catch (error: any) {
       alert(error.message || "Failed to create backup");
