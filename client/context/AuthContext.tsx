@@ -93,8 +93,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    apiClient.logout().catch(console.error);
     setUser(null);
+    // Clear all authentication data
+    localStorage.removeItem("bd_ticket_pro_token");
+    localStorage.removeItem("bd_ticket_pro_user");
+    // Clear token from API client
+    (apiClient as any).authToken = null;
+    apiClient.logout().catch(console.error);
   };
 
   const hasPermission = (permission: string): boolean => {
