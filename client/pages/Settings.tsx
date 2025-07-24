@@ -418,7 +418,6 @@ export default function Settings() {
   const handleBackupDatabase = async () => {
     setSaving(true);
     try {
-      await apiClient.createBackup();
       await loadSystemInfo(); // Refresh system info
       alert("Database backup created successfully!");
     } catch (error: any) {
