@@ -63,11 +63,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
 
-        // Optionally verify token with server
-        // apiClient.getCurrentUser().then(setUser).catch(() => {
-        //   localStorage.removeItem('bd_ticket_pro_token');
-        //   localStorage.removeItem('bd_ticket_pro_user');
-        // });
+        // Verify token with server to ensure user still exists
+        apiClient.getCurrentUser().then((currentUser) => {
+          setUser(currentUser);
+        }).catch((error) => {
+          console.warn("Token verification failed:", error.message);
+          localStorage.removeItem('bd_ticket_pro_token');
+          localStorage.removeItem('bd_ticket_pro_user');
+          setUser(null);
+        });
       } catch (error) {
         console.error("Error parsing stored user data:", error);
         localStorage.removeItem("bd_ticket_pro_token");
