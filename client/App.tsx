@@ -121,6 +121,15 @@ const App = () => (
                 }
               />
 
+              <Route
+                path="/reports"
+                element={
+                  <Layout>
+                    <Reports />
+                  </Layout>
+                }
+              />
+
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
