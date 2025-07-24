@@ -335,4 +335,173 @@ router.get(
   },
 );
 
+// Get system information (admin only)
+router.get(
+  "/system-info",
+  requirePermission("system_settings"),
+  async (req: Request, res: Response) => {
+    try {
+      const os = require("os");
+      const fs = require("fs");
+      const path = require("path");
+
+      // Get system information
+      const systemInfo = {
+        version: "1.0.0",
+        uptime: formatUptime(os.uptime()),
+        memory_usage: formatBytes(process.memoryUsage().heapUsed),
+        cpu_usage: `${os.loadavg()[0].toFixed(2)}%`,
+        disk_usage: await getDiskUsage(),
+        active_sessions: 1, // You can implement session tracking
+        total_users: 3, // Get from database
+        total_bookings: 0, // Get from database
+        database_size: await getDatabaseSize(),
+        last_backup: getLastBackupTime(),
+      };
+
+      res.json({
+        success: true,
+        message: "System information retrieved successfully",
+        data: systemInfo,
+      });
+    } catch (error) {
+      console.error("Get system info error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  },
+);
+
+// Create backup (admin only)
+router.post(
+  "/backup",
+  requirePermission("system_settings"),
+  async (req: Request, res: Response) => {
+    try {
+      const fs = require("fs");
+      const path = require("path");
+
+      // Create backup directory if it doesn't exist
+      const backupDir = path.join(process.cwd(), "backups");
+      if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
+      }
+
+      // Create backup filename with timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const backupFile = path.join(backupDir, `backup-${timestamp}.db`);
+
+      // Copy the database file
+      const dbPath = path.join(process.cwd(), "bd-ticketpro.db");
+      if (fs.existsSync(dbPath)) {
+        fs.copyFileSync(dbPath, backupFile);
+
+        // Log activity
+        ActivityLogRepository.create({
+          user_id: req.user!.id,
+          action: "create_backup",
+          entity_type: "system",
+          entity_id: "backup",
+          details: `Database backup created: ${backupFile}`,
+          ip_address: req.ip,
+          user_agent: req.get("User-Agent") || "",
+        });
+
+        res.json({
+          success: true,
+          message: "Backup created successfully",
+          data: {
+            backup_file: backupFile,
+            timestamp,
+            size: fs.statSync(backupFile).size,
+          },
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          message: "Database file not found",
+        });
+      }
+    } catch (error) {
+      console.error("Create backup error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to create backup",
+      });
+    }
+  },
+);
+
+// Helper functions
+function formatUptime(uptime: number): string {
+  const days = Math.floor(uptime / 86400);
+  const hours = Math.floor((uptime % 86400) / 3600);
+  const minutes = Math.floor((uptime % 3600) / 60);
+  return `${days}d ${hours}h ${minutes}m`;
+}
+
+function formatBytes(bytes: number): string {
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  if (bytes === 0) return "0 Bytes";
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + " " + sizes[i];
+}
+
+async function getDiskUsage(): Promise<string> {
+  try {
+    const fs = require("fs");
+    const stats = fs.statSync(process.cwd());
+    return formatBytes(stats.size);
+  } catch {
+    return "Unknown";
+  }
+}
+
+async function getDatabaseSize(): Promise<string> {
+  try {
+    const fs = require("fs");
+    const path = require("path");
+    const dbPath = path.join(process.cwd(), "bd-ticketpro.db");
+    if (fs.existsSync(dbPath)) {
+      const stats = fs.statSync(dbPath);
+      return formatBytes(stats.size);
+    }
+    return "Unknown";
+  } catch {
+    return "Unknown";
+  }
+}
+
+function getLastBackupTime(): string {
+  try {
+    const fs = require("fs");
+    const path = require("path");
+    const backupDir = path.join(process.cwd(), "backups");
+
+    if (!fs.existsSync(backupDir)) {
+      return "Never";
+    }
+
+    const files = fs.readdirSync(backupDir)
+      .filter((file: string) => file.startsWith("backup-") && file.endsWith(".db"))
+      .map((file: string) => {
+        const filePath = path.join(backupDir, file);
+        return {
+          file,
+          time: fs.statSync(filePath).mtime,
+        };
+      })
+      .sort((a: any, b: any) => b.time - a.time);
+
+    if (files.length > 0) {
+      return files[0].time.toLocaleString();
+    }
+    return "Never";
+  } catch {
+    return "Unknown";
+  }
+}
+
 export default router;
