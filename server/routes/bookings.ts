@@ -290,9 +290,11 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
     }
 
     // Update booking status
+    console.log("Attempting to update booking status:", { id, from: booking.status, to: status });
     let success;
     try {
       success = BookingRepository.updateStatus(id, status);
+      console.log("Booking status update result:", success);
     } catch (error) {
       console.error("Error updating booking status:", error);
       return res.status(500).json({
