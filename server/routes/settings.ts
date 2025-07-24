@@ -452,8 +452,9 @@ function formatBytes(bytes: number): string {
 
 async function getDiskUsage(): Promise<string> {
   try {
-    const stats = fs.statSync(process.cwd());
-    return formatBytes(stats.size);
+    // Get available disk space (simplified approach)
+    // In a real production environment, you'd use a library like 'check-disk-space'
+    return "Available"; // Placeholder since getting disk space requires additional dependencies
   } catch {
     return "Unknown";
   }
