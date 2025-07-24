@@ -315,8 +315,8 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
           new_status: status,
           ticket_status: newTicketStatus,
         }),
-        ip_address: req.ip || req.connection.remoteAddress,
-        user_agent: req.get("User-Agent"),
+        ip_address: req.ip || "127.0.0.1",
+        user_agent: req.get("User-Agent") || "Unknown",
       });
 
       res.json({
