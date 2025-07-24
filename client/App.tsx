@@ -1,9 +1,9 @@
 import "./global.css";
 
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "./components/ui/toaster";
 import { createRoot } from "react-dom/client";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster as Sonner } from "./components/ui/sonner";
+import { TooltipProvider } from "./components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -23,6 +23,7 @@ import Bookings from "./pages/Bookings";
 import Settings from "./pages/Settings";
 import Reports from "./pages/Reports";
 import CountriesDemo from "./pages/CountriesDemo";
+import BookingSystemDemo from "./pages/BookingSystemDemo";
 import NotFound from "./pages/NotFound";
 
 // Placeholder components for routes not yet implemented
@@ -52,6 +53,7 @@ const App = () => (
               {/* Public Routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/countries-demo" element={<CountriesDemo />} />
+              <Route path="/booking-demo" element={<BookingSystemDemo />} />
 
               {/* Protected Routes with Layout */}
               <Route
