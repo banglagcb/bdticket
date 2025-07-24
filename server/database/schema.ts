@@ -299,8 +299,8 @@ export function seedDatabase() {
     `);
 
     const insertTicket = db.prepare(`
-      INSERT INTO tickets (id, batch_id, flight_number, selling_price, aircraft, terminal, arrival_time, duration, available_seats, total_seats)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO tickets (id, batch_id, flight_number, status, selling_price, aircraft, terminal, arrival_time, duration, available_seats, total_seats)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     // Sample data - More comprehensive data for all countries
