@@ -18,6 +18,12 @@ const router = Router();
 // Apply authentication to all routes
 router.use(authenticate);
 
+// Add middleware to log all requests to settings routes
+router.use((req, res, next) => {
+  console.log(`Settings route accessed: ${req.method} ${req.path}`);
+  next();
+});
+
 // Test endpoint to verify routing works
 router.get("/test", (req: Request, res: Response) => {
   console.log("Test endpoint called successfully!");
