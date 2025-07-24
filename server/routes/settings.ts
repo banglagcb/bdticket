@@ -344,9 +344,10 @@ router.get(
   },
 );
 
-// Get system information (admin only)
+// Get system information (authenticated users)
 router.get(
   "/system-info",
+  authenticate,
   async (req: Request, res: Response) => {
     try {
       // Get system information
