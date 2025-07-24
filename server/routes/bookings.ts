@@ -301,16 +301,21 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
       // Update associated ticket status
       let newTicketStatus: "available" | "sold" | "locked" = "available";
 
-      if (status === "confirmed") {
-        newTicketStatus = "sold";
-        TicketRepository.updateStatus(
-          booking.ticket_id,
-          newTicketStatus,
-          req.user!.id,
-        );
-      } else if (status === "cancelled" || status === "expired") {
-        newTicketStatus = "available";
-        TicketRepository.updateStatus(booking.ticket_id, newTicketStatus);
+      try {
+        if (status === "confirmed") {
+          newTicketStatus = "sold";
+          TicketRepository.updateStatus(
+            booking.ticket_id,
+            newTicketStatus,
+            req.user!.id,
+          );
+        } else if (status === "cancelled" || status === "expired") {
+          newTicketStatus = "available";
+          TicketRepository.updateStatus(booking.ticket_id, newTicketStatus);
+        }
+      } catch (error) {
+        console.error("Error updating ticket status:", error);
+        // Continue anyway, booking status was already updated
       }
 
       // Log activity
