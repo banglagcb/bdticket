@@ -349,10 +349,6 @@ router.get(
   "/system-info",
   async (req: Request, res: Response) => {
     try {
-      const os = require("os");
-      const fs = require("fs");
-      const path = require("path");
-
       // Get system information
       const systemInfo = {
         version: "1.0.0",
