@@ -286,7 +286,16 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
     }
 
     // Update booking status
-    const success = BookingRepository.updateStatus(id, status);
+    let success;
+    try {
+      success = BookingRepository.updateStatus(id, status);
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Database error updating booking status",
+      });
+    }
 
     if (success) {
       // Update associated ticket status
