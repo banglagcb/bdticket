@@ -517,6 +517,30 @@ export class BookingRepository {
       .all() as Booking[];
   }
 
+  // Transform booking data for frontend compatibility
+  static transformForFrontend(booking: Booking) {
+    return {
+      ...booking,
+      agentInfo: {
+        name: booking.agent_name,
+        phone: booking.agent_phone,
+        email: booking.agent_email,
+      },
+      passengerInfo: {
+        name: booking.passenger_name,
+        passportNo: booking.passenger_passport,
+        phone: booking.passenger_phone,
+        email: booking.passenger_email,
+        paxCount: booking.pax_count,
+      },
+    };
+  }
+
+  static findAllForFrontend() {
+    const bookings = this.findAll();
+    return bookings.map(booking => this.transformForFrontend(booking));
+  }
+
   static findById(id: string): Booking | undefined {
     return db.prepare("SELECT * FROM bookings WHERE id = ?").get(id) as Booking;
   }
