@@ -237,23 +237,17 @@ export default function Settings() {
   };
 
   const loadSystemSettings = async () => {
-    try {
-      const data = await apiClient.getSettings();
-      if (data?.settings && Array.isArray(data.settings)) {
-        const settingsMap = data.settings.reduce((acc: any, setting: any) => {
-          acc[setting.key] = setting.value;
-          return acc;
-        }, {});
+    const data = await apiClient.getSettings();
+    if (data?.settings && Array.isArray(data.settings)) {
+      const settingsMap = data.settings.reduce((acc: any, setting: any) => {
+        acc[setting.key] = setting.value;
+        return acc;
+      }, {});
 
-        setSystemSettings(prev => ({
-          ...prev,
-          ...settingsMap,
-        }));
-      }
-    } catch (error) {
-      console.error("Failed to load system settings:", error);
-      // Set default settings on error
-      setSystemSettings(prev => prev);
+      setSystemSettings(prev => ({
+        ...prev,
+        ...settingsMap,
+      }));
     }
   };
 
