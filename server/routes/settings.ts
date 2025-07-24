@@ -348,7 +348,10 @@ router.get(
 router.get(
   "/system-info",
   async (req: Request, res: Response) => {
+    console.log("System info route called");
     try {
+      console.log("Building system info...");
+
       // Get system information
       const systemInfo = {
         version: "1.0.0",
@@ -363,6 +366,8 @@ router.get(
         last_backup: getLastBackupTime(),
       };
 
+      console.log("System info built successfully:", systemInfo);
+
       res.json({
         success: true,
         message: "System information retrieved successfully",
@@ -373,6 +378,7 @@ router.get(
       res.status(500).json({
         success: false,
         message: "Internal server error",
+        error: error.message,
       });
     }
   },
