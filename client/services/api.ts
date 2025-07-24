@@ -68,6 +68,12 @@ class APIClient {
       }
 
       if (!response.ok) {
+        // If unauthorized, clear authentication data
+        if (response.status === 401) {
+          this.authToken = null;
+          localStorage.removeItem("bd_ticket_pro_token");
+          localStorage.removeItem("bd_ticket_pro_user");
+        }
         throw new Error(
           result.message || `HTTP error! status: ${response.status}`,
         );
