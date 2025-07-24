@@ -36,10 +36,16 @@ const updateSettingsSchema = z.object({
 // Get system settings (basic info for all users, full settings for admins)
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const settings = SystemSettingsRepository.findAll();
+    const settingsRecord = SystemSettingsRepository.findAll();
+
+    // Convert Record to array format expected by client
+    const settingsArray = Object.entries(settingsRecord).map(([key, value]) => ({
+      key,
+      value,
+    }));
 
     // Filter settings based on user permissions
-    let filteredSettings = settings;
+    let filteredSettings = settingsArray;
 
     // If user doesn't have system_settings permission, only return basic company info
     if (!req.user || !hasPermission(req.user.role, "system_settings")) {
@@ -52,8 +58,8 @@ router.get("/", async (req: Request, res: Response) => {
         "timezone",
         "language",
       ];
-      filteredSettings = Object.fromEntries(
-        Object.entries(settings).filter(([key]) => allowedKeys.includes(key))
+      filteredSettings = settingsArray.filter((setting) =>
+        allowedKeys.includes(setting.key),
       );
     }
 
