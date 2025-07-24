@@ -229,16 +229,11 @@ export default function Settings() {
 
   const loadAllData = async () => {
     setLoading(true);
-    try {
-      await Promise.all([
-        loadSystemSettings(),
-        hasPermission("manage_users") && loadUsers(),
-      ]);
-    } catch (error) {
-      console.error("Failed to load settings data:", error);
-    } finally {
-      setLoading(false);
-    }
+    await Promise.all([
+      loadSystemSettings(),
+      hasPermission("manage_users") && loadUsers(),
+    ]);
+    setLoading(false);
   };
 
   const loadSystemSettings = async () => {
