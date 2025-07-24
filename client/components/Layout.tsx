@@ -139,6 +139,8 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* User Profile and Actions */}
           <div className="flex items-center space-x-4">
+            <NotificationCenter />
+
             <div className="hidden sm:flex items-center space-x-2 animate-luxury-fade">
               <div className="p-2 bg-gradient-to-br from-cream-200 to-cream-300 rounded-full">
                 <User className="h-4 w-4 text-foreground/70" />
