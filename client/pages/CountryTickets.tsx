@@ -174,9 +174,13 @@ export default function CountryTickets() {
   const filteredTickets = tickets
     .filter((ticket) => {
       const matchesSearch =
-        ticket.batch.airline_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.batch.airline_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
         ticket.flight_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ticket.batch.agent_name.toLowerCase().includes(searchTerm.toLowerCase());
+        ticket.batch.agent_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
       const matchesStatus =
         statusFilter === "all" || ticket.status === statusFilter;
       const matchesAirline =
@@ -192,10 +196,10 @@ export default function CountryTickets() {
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
       });
     } catch {
       return dateString;
@@ -209,23 +213,33 @@ export default function CountryTickets() {
 
   const exportTickets = () => {
     const csvContent = [
-      ["Flight Number", "Airline", "Date", "Time", "Status", "Price", "Available Seats"],
-      ...filteredTickets.map(ticket => [
+      [
+        "Flight Number",
+        "Airline",
+        "Date",
+        "Time",
+        "Status",
+        "Price",
+        "Available Seats",
+      ],
+      ...filteredTickets.map((ticket) => [
         ticket.flight_number,
         ticket.batch.airline_name,
         ticket.batch.flight_date,
         ticket.batch.flight_time,
         ticket.status,
         ticket.selling_price,
-        ticket.available_seats
-      ])
-    ].map(row => row.join(",")).join("\n");
+        ticket.available_seats,
+      ]),
+    ]
+      .map((row) => row.join(","))
+      .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${currentCountry?.name || 'country'}_tickets.csv`;
+    a.download = `${currentCountry?.name || "country"}_tickets.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -281,7 +295,7 @@ export default function CountryTickets() {
   };
 
   const handleViewDetails = (ticketId: string) => {
-    const ticket = tickets.find(t => t.id === ticketId);
+    const ticket = tickets.find((t) => t.id === ticketId);
     if (ticket) {
       setSelectedTicket(ticket);
       setDetailsOpen(true);
@@ -365,7 +379,9 @@ export default function CountryTickets() {
               disabled={refreshing}
               className="font-body"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
+              />
               Refresh
             </Button>
             <Button
@@ -403,27 +419,45 @@ export default function CountryTickets() {
         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="luxury-card p-4 rounded-lg border-0 text-center">
             <div className="text-xl font-heading font-bold text-green-600 velvet-text">
-              {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : filteredTickets.filter((t) => t.status === "available").length}
+              {loading ? (
+                <Skeleton className="h-6 w-8 mx-auto" />
+              ) : (
+                filteredTickets.filter((t) => t.status === "available").length
+              )}
             </div>
             <p className="text-xs font-body text-foreground/60">Available</p>
           </div>
           <div className="luxury-card p-4 rounded-lg border-0 text-center">
             <div className="text-xl font-heading font-bold text-blue-600 velvet-text">
-              {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : filteredTickets.reduce((sum, t) => sum + t.available_seats, 0)}
+              {loading ? (
+                <Skeleton className="h-6 w-8 mx-auto" />
+              ) : (
+                filteredTickets.reduce((sum, t) => sum + t.available_seats, 0)
+              )}
             </div>
             <p className="text-xs font-body text-foreground/60">Total Seats</p>
           </div>
           <div className="luxury-card p-4 rounded-lg border-0 text-center">
             <div className="text-xl font-heading font-bold text-primary velvet-text">
-              {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : airlines.length}
+              {loading ? (
+                <Skeleton className="h-6 w-8 mx-auto" />
+              ) : (
+                airlines.length
+              )}
             </div>
             <p className="text-xs font-body text-foreground/60">Airlines</p>
           </div>
           <div className="luxury-card p-4 rounded-lg border-0 text-center">
             <div className="text-xl font-heading font-bold text-orange-600 velvet-text">
-              {loading ? <Skeleton className="h-6 w-8 mx-auto" /> : tickets.length}
+              {loading ? (
+                <Skeleton className="h-6 w-8 mx-auto" />
+              ) : (
+                tickets.length
+              )}
             </div>
-            <p className="text-xs font-body text-foreground/60">Total Tickets</p>
+            <p className="text-xs font-body text-foreground/60">
+              Total Tickets
+            </p>
           </div>
         </div>
       </motion.div>
@@ -456,7 +490,11 @@ export default function CountryTickets() {
                   />
                 </div>
 
-                <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
+                <Select
+                  value={statusFilter}
+                  onValueChange={setStatusFilter}
+                  disabled={loading}
+                >
                   <SelectTrigger className="font-body">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
@@ -469,7 +507,11 @@ export default function CountryTickets() {
                   </SelectContent>
                 </Select>
 
-                <Select value={airlineFilter} onValueChange={setAirlineFilter} disabled={loading}>
+                <Select
+                  value={airlineFilter}
+                  onValueChange={setAirlineFilter}
+                  disabled={loading}
+                >
                   <SelectTrigger className="font-body">
                     <SelectValue placeholder="Filter by airline" />
                   </SelectTrigger>
@@ -483,7 +525,11 @@ export default function CountryTickets() {
                   </SelectContent>
                 </Select>
 
-                <Select value={priceSort} onValueChange={setPriceSort} disabled={loading}>
+                <Select
+                  value={priceSort}
+                  onValueChange={setPriceSort}
+                  disabled={loading}
+                >
                   <SelectTrigger className="font-body">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
@@ -530,14 +576,23 @@ export default function CountryTickets() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+                  <Sheet
+                    open={mobileFiltersOpen}
+                    onOpenChange={setMobileFiltersOpen}
+                  >
                     <SheetTrigger asChild>
                       <Button variant="outline" size="sm" className="font-body">
                         <Filter className="h-4 w-4 mr-2" />
                         Filters
-                        {(statusFilter !== "all" || airlineFilter !== "all") && (
+                        {(statusFilter !== "all" ||
+                          airlineFilter !== "all") && (
                           <Badge className="ml-2 h-5 w-5 p-0 text-xs bg-primary text-primary-foreground">
-                            {[statusFilter !== "all", airlineFilter !== "all"].filter(Boolean).length}
+                            {
+                              [
+                                statusFilter !== "all",
+                                airlineFilter !== "all",
+                              ].filter(Boolean).length
+                            }
                           </Badge>
                         )}
                       </Button>
@@ -552,13 +607,19 @@ export default function CountryTickets() {
                       <div className="space-y-4 mt-6">
                         <div>
                           <label className="text-sm font-medium">Status</label>
-                          <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
+                          <Select
+                            value={statusFilter}
+                            onValueChange={setStatusFilter}
+                            disabled={loading}
+                          >
                             <SelectTrigger className="font-body mt-1">
                               <SelectValue placeholder="Filter by status" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="all">All Status</SelectItem>
-                              <SelectItem value="available">Available</SelectItem>
+                              <SelectItem value="available">
+                                Available
+                              </SelectItem>
                               <SelectItem value="booked">Booked</SelectItem>
                               <SelectItem value="locked">Locked</SelectItem>
                               <SelectItem value="sold">Sold</SelectItem>
@@ -568,7 +629,11 @@ export default function CountryTickets() {
 
                         <div>
                           <label className="text-sm font-medium">Airline</label>
-                          <Select value={airlineFilter} onValueChange={setAirlineFilter} disabled={loading}>
+                          <Select
+                            value={airlineFilter}
+                            onValueChange={setAirlineFilter}
+                            disabled={loading}
+                          >
                             <SelectTrigger className="font-body mt-1">
                               <SelectValue placeholder="Filter by airline" />
                             </SelectTrigger>
@@ -584,8 +649,14 @@ export default function CountryTickets() {
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium">Sort by Price</label>
-                          <Select value={priceSort} onValueChange={setPriceSort} disabled={loading}>
+                          <label className="text-sm font-medium">
+                            Sort by Price
+                          </label>
+                          <Select
+                            value={priceSort}
+                            onValueChange={setPriceSort}
+                            disabled={loading}
+                          >
                             <SelectTrigger className="font-body mt-1">
                               <SelectValue placeholder="Sort by price" />
                             </SelectTrigger>
@@ -606,7 +677,9 @@ export default function CountryTickets() {
                           </Select>
                         </div>
 
-                        {(searchTerm || statusFilter !== "all" || airlineFilter !== "all") && (
+                        {(searchTerm ||
+                          statusFilter !== "all" ||
+                          airlineFilter !== "all") && (
                           <Button
                             variant="outline"
                             onClick={() => {
@@ -636,7 +709,9 @@ export default function CountryTickets() {
             </div>
 
             {/* Clear Filters - Desktop Only */}
-            {(searchTerm || statusFilter !== "all" || airlineFilter !== "all") && (
+            {(searchTerm ||
+              statusFilter !== "all" ||
+              airlineFilter !== "all") && (
               <div className="hidden md:block mt-4 pt-4 border-t">
                 <Button
                   variant="outline"
@@ -662,7 +737,11 @@ export default function CountryTickets() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className={viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-4"}
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
+              : "space-y-4"
+          }
         >
           {[...Array(6)].map((_, index) => (
             <Card key={index} className="luxury-card border-0">
@@ -712,9 +791,7 @@ export default function CountryTickets() {
           <h3 className="text-xl font-heading font-bold text-foreground mb-2">
             Error Loading Flights
           </h3>
-          <p className="text-foreground/60 font-body mb-4">
-            {error}
-          </p>
+          <p className="text-foreground/60 font-body mb-4">{error}</p>
           <Button onClick={() => loadTickets()} className="velvet-button">
             Try Again
           </Button>
@@ -727,7 +804,11 @@ export default function CountryTickets() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className={viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-4"}
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
+              : "space-y-4"
+          }
         >
           {filteredTickets.map((ticket, index) => (
             <motion.div
@@ -742,7 +823,9 @@ export default function CountryTickets() {
                 } hover:shadow-2xl transition-all duration-300 group`}
               >
                 <CardHeader className="pb-3">
-                  <div className={`flex items-center justify-between ${viewMode === "list" ? "flex-row" : ""}`}>
+                  <div
+                    className={`flex items-center justify-between ${viewMode === "list" ? "flex-row" : ""}`}
+                  >
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-gradient-to-br from-luxury-gold/20 to-luxury-bronze/20 rounded-full">
                         <Plane className="h-5 w-5 text-primary" />
@@ -762,7 +845,9 @@ export default function CountryTickets() {
 
                 <CardContent className="space-y-4">
                   {/* Flight Details */}
-                  <div className={`grid ${viewMode === "list" ? "grid-cols-4" : "grid-cols-2"} gap-4`}>
+                  <div
+                    className={`grid ${viewMode === "list" ? "grid-cols-4" : "grid-cols-2"} gap-4`}
+                  >
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4 text-foreground/40" />
@@ -797,7 +882,8 @@ export default function CountryTickets() {
                           <div className="flex items-center space-x-2">
                             <Users className="h-4 w-4 text-foreground/40" />
                             <span className="font-body text-sm text-foreground">
-                              {ticket.available_seats}/{ticket.total_seats} seats
+                              {ticket.available_seats}/{ticket.total_seats}{" "}
+                              seats
                             </span>
                           </div>
                           <div className="text-xs text-foreground/60 font-body">
@@ -813,7 +899,8 @@ export default function CountryTickets() {
                           </div>
                           {showBuyingPrice && ticket.batch.buying_price && (
                             <div className="text-xs text-foreground/60 font-body">
-                              Cost: ৳{ticket.batch.buying_price.toLocaleString()}
+                              Cost: ৳
+                              {ticket.batch.buying_price.toLocaleString()}
                             </div>
                           )}
                         </div>
@@ -860,7 +947,8 @@ export default function CountryTickets() {
                           </div>
                           {showBuyingPrice && ticket.batch.buying_price && (
                             <div className="text-xs text-foreground/60 font-body">
-                              Cost: ৳{ticket.batch.buying_price.toLocaleString()}
+                              Cost: ৳
+                              {ticket.batch.buying_price.toLocaleString()}
                             </div>
                           )}
                         </div>
@@ -870,14 +958,18 @@ export default function CountryTickets() {
                       <div className="text-xs text-foreground/60 font-body border-t pt-2">
                         Agent: {ticket.batch.agent_name}
                         {ticket.batch.agent_contact && (
-                          <span className="ml-2">• {ticket.batch.agent_contact}</span>
+                          <span className="ml-2">
+                            • {ticket.batch.agent_contact}
+                          </span>
                         )}
                       </div>
                     </>
                   )}
 
                   {/* Action Buttons */}
-                  <div className={`flex space-x-2 pt-2 ${viewMode === "list" ? "justify-end" : ""}`}>
+                  <div
+                    className={`flex space-x-2 pt-2 ${viewMode === "list" ? "justify-end" : ""}`}
+                  >
                     <Button
                       onClick={() => handleViewDetails(ticket.id)}
                       variant="outline"
@@ -932,11 +1024,14 @@ export default function CountryTickets() {
           <p className="text-foreground/60 font-body mb-4">
             {tickets.length === 0
               ? `No tickets are currently available for ${currentCountry.name}`
-              : "Try adjusting your filters to see more results"
-            }
+              : "Try adjusting your filters to see more results"}
           </p>
           {tickets.length === 0 && (
-            <Button onClick={() => loadTickets()} variant="outline" className="font-body">
+            <Button
+              onClick={() => loadTickets()}
+              variant="outline"
+              className="font-body"
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
@@ -979,46 +1074,64 @@ export default function CountryTickets() {
               {/* Flight Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h4 className="font-heading font-semibold text-lg">Flight Information</h4>
+                  <h4 className="font-heading font-semibold text-lg">
+                    Flight Information
+                  </h4>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
                       <Calendar className="h-4 w-4 text-foreground/40" />
                       <div>
-                        <p className="text-sm text-foreground/60">Departure Date</p>
-                        <p className="font-medium">{formatDate(selectedTicket.batch.flight_date)}</p>
+                        <p className="text-sm text-foreground/60">
+                          Departure Date
+                        </p>
+                        <p className="font-medium">
+                          {formatDate(selectedTicket.batch.flight_date)}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Clock className="h-4 w-4 text-foreground/40" />
                       <div>
-                        <p className="text-sm text-foreground/60">Departure Time</p>
-                        <p className="font-medium">{formatTime(selectedTicket.batch.flight_time)}</p>
+                        <p className="text-sm text-foreground/60">
+                          Departure Time
+                        </p>
+                        <p className="font-medium">
+                          {formatTime(selectedTicket.batch.flight_time)}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <MapPin className="h-4 w-4 text-foreground/40" />
                       <div>
                         <p className="text-sm text-foreground/60">Terminal</p>
-                        <p className="font-medium">{selectedTicket.terminal || "Terminal 1"}</p>
+                        <p className="font-medium">
+                          {selectedTicket.terminal || "Terminal 1"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <BadgeIcon className="h-4 w-4 text-foreground/40" />
                       <div>
                         <p className="text-sm text-foreground/60">Aircraft</p>
-                        <p className="font-medium">{selectedTicket.aircraft || "Boeing 737"}</p>
+                        <p className="font-medium">
+                          {selectedTicket.aircraft || "Boeing 737"}
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-heading font-semibold text-lg">Pricing & Availability</h4>
+                  <h4 className="font-heading font-semibold text-lg">
+                    Pricing & Availability
+                  </h4>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
                       <DollarSign className="h-4 w-4 text-green-600" />
                       <div>
-                        <p className="text-sm text-foreground/60">Selling Price</p>
+                        <p className="text-sm text-foreground/60">
+                          Selling Price
+                        </p>
                         <p className="font-medium text-green-600 text-lg">
                           ৳{selectedTicket.selling_price.toLocaleString()}
                         </p>
@@ -1028,9 +1141,12 @@ export default function CountryTickets() {
                       <div className="flex items-center space-x-3">
                         <DollarSign className="h-4 w-4 text-orange-600" />
                         <div>
-                          <p className="text-sm text-foreground/60">Buying Price</p>
+                          <p className="text-sm text-foreground/60">
+                            Buying Price
+                          </p>
                           <p className="font-medium text-orange-600">
-                            ৳{selectedTicket.batch.buying_price.toLocaleString()}
+                            ৳
+                            {selectedTicket.batch.buying_price.toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -1038,15 +1154,18 @@ export default function CountryTickets() {
                     <div className="flex items-center space-x-3">
                       <Users className="h-4 w-4 text-blue-600" />
                       <div>
-                        <p className="text-sm text-foreground/60">Seat Availability</p>
+                        <p className="text-sm text-foreground/60">
+                          Seat Availability
+                        </p>
                         <p className="font-medium">
-                          {selectedTicket.available_seats} of {selectedTicket.total_seats} available
+                          {selectedTicket.available_seats} of{" "}
+                          {selectedTicket.total_seats} available
                         </p>
                         <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
                           <div
                             className="bg-blue-600 h-2 rounded-full"
                             style={{
-                              width: `${getAvailabilityPercentage(selectedTicket.available_seats, selectedTicket.total_seats)}%`
+                              width: `${getAvailabilityPercentage(selectedTicket.available_seats, selectedTicket.total_seats)}%`,
                             }}
                           ></div>
                         </div>
@@ -1058,7 +1177,9 @@ export default function CountryTickets() {
 
               {/* Route Information */}
               <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                <h4 className="font-heading font-semibold text-lg mb-3">Route</h4>
+                <h4 className="font-heading font-semibold text-lg mb-3">
+                  Route
+                </h4>
                 <div className="flex justify-between items-center">
                   <div className="text-center">
                     <p className="font-bold text-lg">DAC</p>
@@ -1072,30 +1193,42 @@ export default function CountryTickets() {
                   </div>
                   <div className="text-center">
                     <p className="font-bold text-lg">{currentCountry.code}</p>
-                    <p className="text-sm text-foreground/60">{currentCountry.name}</p>
-                    <p className="text-sm text-foreground/60">{selectedTicket.duration || "4h 15m"}</p>
+                    <p className="text-sm text-foreground/60">
+                      {currentCountry.name}
+                    </p>
+                    <p className="text-sm text-foreground/60">
+                      {selectedTicket.duration || "4h 15m"}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Agent Information */}
               <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg">
-                <h4 className="font-heading font-semibold text-lg mb-3">Agent Information</h4>
+                <h4 className="font-heading font-semibold text-lg mb-3">
+                  Agent Information
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-foreground/60">Agent Name</p>
-                    <p className="font-medium">{selectedTicket.batch.agent_name}</p>
+                    <p className="font-medium">
+                      {selectedTicket.batch.agent_name}
+                    </p>
                   </div>
                   {selectedTicket.batch.agent_contact && (
                     <div>
                       <p className="text-sm text-foreground/60">Contact</p>
-                      <p className="font-medium">{selectedTicket.batch.agent_contact}</p>
+                      <p className="font-medium">
+                        {selectedTicket.batch.agent_contact}
+                      </p>
                     </div>
                   )}
                   {selectedTicket.batch.agent_address && (
                     <div className="md:col-span-2">
                       <p className="text-sm text-foreground/60">Address</p>
-                      <p className="font-medium">{selectedTicket.batch.agent_address}</p>
+                      <p className="font-medium">
+                        {selectedTicket.batch.agent_address}
+                      </p>
                     </div>
                   )}
                 </div>

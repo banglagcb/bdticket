@@ -11,11 +11,7 @@ import {
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { ScrollArea } from "./ui/scroll-area";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "./ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import {
   Bell,
   Check,
@@ -35,7 +31,14 @@ import { useToast } from "../hooks/use-toast";
 
 export interface Notification {
   id: string;
-  type: "info" | "success" | "warning" | "error" | "booking" | "payment" | "system";
+  type:
+    | "info"
+    | "success"
+    | "warning"
+    | "error"
+    | "booking"
+    | "payment"
+    | "system";
   title: string;
   message: string;
   timestamp: string;
@@ -62,7 +65,7 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
       // Get real data from various endpoints to create notifications
       const [dashboardStats, bookings] = await Promise.all([
         apiClient.getDashboardStats().catch(() => null),
-        apiClient.getBookings({ limit: 5 }).catch(() => [])
+        apiClient.getBookings({ limit: 5 }).catch(() => []),
       ]);
 
       const realNotifications: Notification[] = [];
@@ -105,12 +108,14 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
             type: "booking",
             title: "New Booking",
             message: `Booking for ${booking.passenger_name} - ${booking.agent_name}`,
-            timestamp: new Date(Date.now() - (index + 1) * 15 * 60 * 1000).toISOString(),
+            timestamp: new Date(
+              Date.now() - (index + 1) * 15 * 60 * 1000,
+            ).toISOString(),
             isRead: false,
             isImportant: true,
             actionUrl: "/bookings",
             actionLabel: "View Booking",
-            data: { bookingId: booking.id }
+            data: { bookingId: booking.id },
           });
         });
       }
@@ -156,7 +161,8 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
         id: "1",
         type: "booking",
         title: "New Booking Confirmed",
-        message: "Rahman Travel Agency has confirmed a booking for Dubai flight DXB-123",
+        message:
+          "Rahman Travel Agency has confirmed a booking for Dubai flight DXB-123",
         timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
         isRead: false,
         isImportant: true,
@@ -167,7 +173,8 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
         id: "2",
         type: "payment",
         title: "Payment Received",
-        message: "Received ৳25,000 payment from Golden Travel for booking GT-456",
+        message:
+          "Received ৳25,000 payment from Golden Travel for booking GT-456",
         timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
         isRead: false,
         isImportant: false,
@@ -219,31 +226,31 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
   }, []);
 
   const updateUnreadCount = (notifs: Notification[]) => {
-    const unread = notifs.filter(n => !n.isRead).length;
+    const unread = notifs.filter((n) => !n.isRead).length;
     setUnreadCount(unread);
   };
 
   const markAsRead = (id: string) => {
-    const updated = notifications.map(notification =>
-      notification.id === id 
-        ? { ...notification, isRead: true }
-        : notification
+    const updated = notifications.map((notification) =>
+      notification.id === id ? { ...notification, isRead: true } : notification,
     );
     setNotifications(updated);
     updateUnreadCount(updated);
   };
 
   const markAllAsRead = () => {
-    const updated = notifications.map(notification => ({
+    const updated = notifications.map((notification) => ({
       ...notification,
-      isRead: true
+      isRead: true,
     }));
     setNotifications(updated);
     updateUnreadCount(updated);
   };
 
   const deleteNotification = (id: string) => {
-    const updated = notifications.filter(notification => notification.id !== id);
+    const updated = notifications.filter(
+      (notification) => notification.id !== id,
+    );
     setNotifications(updated);
     updateUnreadCount(updated);
   };
@@ -294,19 +301,23 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date();
     const time = new Date(timestamp);
-    const diffInMinutes = Math.floor((now.getTime() - time.getTime()) / (1000 * 60));
+    const diffInMinutes = Math.floor(
+      (now.getTime() - time.getTime()) / (1000 * 60),
+    );
 
     if (diffInMinutes < 1) return "Just now";
     if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    
+
     const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) return `${diffInHours}h ago`;
-    
+
     const diffInDays = Math.floor(diffInHours / 24);
     return `${diffInDays}d ago`;
   };
 
-  const displayNotifications = showAll ? notifications : notifications.slice(0, 5);
+  const displayNotifications = showAll
+    ? notifications
+    : notifications.slice(0, 5);
 
   return (
     <Popover>
@@ -365,48 +376,52 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
                       <div className="flex-shrink-0 mt-0.5">
                         {getNotificationIcon(notification.type)}
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="font-medium text-sm truncate">
                             {notification.title}
                           </h4>
                           {notification.isImportant && (
-                            <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                            <Badge
+                              variant="destructive"
+                              className="text-xs px-1.5 py-0.5"
+                            >
                               Important
                             </Badge>
                           )}
                         </div>
-                        
+
                         <p className="text-sm text-gray-600 mb-2">
                           {notification.message}
                         </p>
-                        
+
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-gray-500">
                             {formatTimeAgo(notification.timestamp)}
                           </span>
-                          
+
                           <div className="flex items-center gap-1">
-                            {notification.actionUrl && notification.actionLabel && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-xs h-6 hover:bg-primary hover:text-primary-foreground"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(notification.actionUrl!);
-                                  markAsRead(notification.id);
-                                  toast({
-                                    title: "Navigating",
-                                    description: `Opening ${notification.actionLabel}`,
-                                  });
-                                }}
-                              >
-                                {notification.actionLabel}
-                              </Button>
-                            )}
-                            
+                            {notification.actionUrl &&
+                              notification.actionLabel && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-xs h-6 hover:bg-primary hover:text-primary-foreground"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(notification.actionUrl!);
+                                    markAsRead(notification.id);
+                                    toast({
+                                      title: "Navigating",
+                                      description: `Opening ${notification.actionLabel}`,
+                                    });
+                                  }}
+                                >
+                                  {notification.actionLabel}
+                                </Button>
+                              )}
+
                             {!notification.isRead && (
                               <Button
                                 variant="ghost"
@@ -417,12 +432,14 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
                                 <Check className="h-3 w-3" />
                               </Button>
                             )}
-                            
+
                             <Button
                               variant="ghost"
                               size="sm"
                               className="h-6 w-6 p-0"
-                              onClick={() => deleteNotification(notification.id)}
+                              onClick={() =>
+                                deleteNotification(notification.id)
+                              }
                             >
                               <X className="h-3 w-3" />
                             </Button>
@@ -450,7 +467,9 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
               className="w-full text-sm"
               onClick={() => setShowAll(!showAll)}
             >
-              {showAll ? "Show less" : `View all ${notifications.length} notifications`}
+              {showAll
+                ? "Show less"
+                : `View all ${notifications.length} notifications`}
             </Button>
           </div>
         )}
@@ -461,7 +480,9 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
 
 // Hook for managing notifications
 export function useNotifications() {
-  const addNotification = (notification: Omit<Notification, "id" | "timestamp">) => {
+  const addNotification = (
+    notification: Omit<Notification, "id" | "timestamp">,
+  ) => {
     // In a real app, this would dispatch to a global state or API
     console.log("Adding notification:", notification);
   };

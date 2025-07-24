@@ -56,9 +56,11 @@ function DashboardTile({
       className="transform-gpu"
       onClick={clickable ? onClick : undefined}
     >
-      <Card className={`luxury-card hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden relative group ${
-        clickable ? 'cursor-pointer hover:ring-2 hover:ring-primary/20' : ''
-      }`}>
+      <Card
+        className={`luxury-card hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden relative group ${
+          clickable ? "cursor-pointer hover:ring-2 hover:ring-primary/20" : ""
+        }`}
+      >
         <div className="absolute inset-0 bg-gradient-to-br from-luxury-gold/5 to-luxury-bronze/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
           <CardTitle className="text-sm font-heading font-medium velvet-text">
@@ -181,7 +183,8 @@ export default function Dashboard() {
       icon: <Lock className="h-4 w-4 text-white" />,
       color: "bg-yellow-500",
       clickable: true,
-      onClick: () => handleCardClick("Locked Tickets", "/bookings?status=locked"),
+      onClick: () =>
+        handleCardClick("Locked Tickets", "/bookings?status=locked"),
     },
     {
       title: "Total Inventory",

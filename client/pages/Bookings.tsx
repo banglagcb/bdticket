@@ -90,8 +90,11 @@ export default function Bookings() {
 
   // Set initial filter from URL params
   useEffect(() => {
-    const statusParam = searchParams.get('status');
-    if (statusParam && ['pending', 'confirmed', 'cancelled', 'locked'].includes(statusParam)) {
+    const statusParam = searchParams.get("status");
+    if (
+      statusParam &&
+      ["pending", "confirmed", "cancelled", "locked"].includes(statusParam)
+    ) {
       setStatusFilter(statusParam);
     }
   }, [searchParams]);
