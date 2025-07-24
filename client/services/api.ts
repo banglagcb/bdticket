@@ -385,7 +385,7 @@ class APIClient {
   async getSettings(): Promise<any> {
     const result = await this.request<any>("/settings");
     if (result.success && result.data) {
-      return result.data;
+      return { settings: result.data.settings || [] };
     }
     throw new Error(result.message || "Failed to get settings");
   }
