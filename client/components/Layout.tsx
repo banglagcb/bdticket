@@ -10,6 +10,7 @@ import {
   Package,
   ShoppingCart,
   Settings,
+  BarChart3,
   LogOut,
   User,
   Menu,
