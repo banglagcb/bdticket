@@ -334,13 +334,8 @@ export default function Settings() {
 
   const handleSaveSystemSettings = async () => {
     setSaving(true);
-    try {
-      alert("System settings updated successfully!");
-    } catch (error: any) {
-      alert(error.message || "Failed to update system settings");
-    } finally {
-      setSaving(false);
-    }
+    alert("System settings updated successfully!");
+    setSaving(false);
   };
 
   const handleAddUser = async () => {
