@@ -395,14 +395,9 @@ export default function Settings() {
 
   const handleBackupDatabase = async () => {
     setSaving(true);
-    try {
-      await loadSystemInfo(); // Refresh system info
-      alert("Database backup created successfully!");
-    } catch (error: any) {
-      alert(error.message || "Failed to create backup");
-    } finally {
-      setSaving(false);
-    }
+    await loadSystemInfo(); // Refresh system info
+    alert("Database backup created successfully!");
+    setSaving(false);
   };
 
   if (loading) {
