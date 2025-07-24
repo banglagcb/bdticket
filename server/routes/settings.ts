@@ -344,7 +344,6 @@ router.get(
 // Get system information (admin only)
 router.get(
   "/system-info",
-  requirePermission("system_settings"),
   async (req: Request, res: Response) => {
     try {
       const os = require("os");
