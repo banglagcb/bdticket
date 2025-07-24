@@ -319,7 +319,7 @@ class APIClient {
   async getUsers(): Promise<any> {
     const result = await this.request<any>("/users");
     if (result.success && result.data) {
-      return result.data;
+      return result.data.users || [];
     }
     throw new Error(result.message || "Failed to get users");
   }
