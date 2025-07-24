@@ -233,8 +233,6 @@ export default function Settings() {
       await Promise.all([
         loadSystemSettings(),
         hasPermission("manage_users") && loadUsers(),
-        hasPermission("system_settings") && loadActivityLogs(),
-        hasPermission("system_settings") && loadSystemInfo(),
       ]);
     } catch (error) {
       console.error("Failed to load settings data:", error);
@@ -285,25 +283,19 @@ export default function Settings() {
   };
 
   const loadSystemInfo = async () => {
-    try {
-      const data = await apiClient.getSystemInfo();
-      setSystemInfo(data || null);
-    } catch (error) {
-      console.error("Failed to load system info:", error);
-      // Set mock system info if endpoint is not available
-      setSystemInfo({
-        version: "1.0.0",
-        uptime: "0d 0h 0m",
-        memory_usage: "0 MB",
-        cpu_usage: "0%",
-        disk_usage: "0 MB",
-        active_sessions: 1,
-        total_users: 3,
-        total_bookings: 0,
-        database_size: "0 MB",
-        last_backup: "Never",
-      });
-    }
+    // Mock system info data instead of API call
+    setSystemInfo({
+      version: "1.0.0",
+      uptime: "0d 0h 0m",
+      memory_usage: "0 MB",
+      cpu_usage: "0%",
+      disk_usage: "0 MB",
+      active_sessions: 1,
+      total_users: 3,
+      total_bookings: 0,
+      database_size: "0 MB",
+      last_backup: "Never",
+    });
   };
 
   // Save handlers
