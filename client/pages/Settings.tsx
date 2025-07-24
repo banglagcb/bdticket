@@ -389,13 +389,8 @@ export default function Settings() {
 
   const handleExportData = async (format: string) => {
     setSaving(true);
-    try {
-      alert(`Data exported successfully as ${format.toUpperCase()}!`);
-    } catch (error: any) {
-      alert(error.message || "Failed to export data");
-    } finally {
-      setSaving(false);
-    }
+    alert(`Data exported successfully as ${format.toUpperCase()}!`);
+    setSaving(false);
   };
 
   const handleBackupDatabase = async () => {
