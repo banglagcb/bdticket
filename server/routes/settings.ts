@@ -3,7 +3,11 @@ import {
   SystemSettingsRepository,
   ActivityLogRepository,
 } from "../database/models";
-import { authenticate, requirePermission, hasPermission } from "../middleware/auth";
+import {
+  authenticate,
+  requirePermission,
+  hasPermission,
+} from "../middleware/auth";
 import { z } from "zod";
 
 const router = Router();
@@ -43,9 +47,11 @@ router.get("/", async (req: Request, res: Response) => {
         "company_address",
         "default_currency",
         "timezone",
-        "language"
+        "language",
       ];
-      filteredSettings = settings.filter(setting => allowedKeys.includes(setting.key));
+      filteredSettings = settings.filter((setting) =>
+        allowedKeys.includes(setting.key),
+      );
     }
 
     res.json({
@@ -446,7 +452,7 @@ function formatBytes(bytes: number): string {
   const sizes = ["Bytes", "KB", "MB", "GB"];
   if (bytes === 0) return "0 Bytes";
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + " " + sizes[i];
+  return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
 }
 
 async function getDiskUsage(): Promise<string> {
@@ -484,8 +490,11 @@ function getLastBackupTime(): string {
       return "Never";
     }
 
-    const files = fs.readdirSync(backupDir)
-      .filter((file: string) => file.startsWith("backup-") && file.endsWith(".db"))
+    const files = fs
+      .readdirSync(backupDir)
+      .filter(
+        (file: string) => file.startsWith("backup-") && file.endsWith(".db"),
+      )
       .map((file: string) => {
         const filePath = path.join(backupDir, file);
         return {
