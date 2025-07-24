@@ -334,36 +334,33 @@ export default function Settings() {
 
   const handleAddUser = async () => {
     setSaving(true);
-    try {
-      if (newUser.password !== newUser.confirmPassword) {
-        throw new Error("Passwords do not match!");
-      }
-
-      await apiClient.createUser({
-        name: newUser.name,
-        email: newUser.email,
-        phone: newUser.phone,
-        role: newUser.role,
-        password: newUser.password,
-      });
-
-      setNewUser({
-        name: "",
-        email: "",
-        phone: "",
-        role: "staff",
-        password: "",
-        confirmPassword: "",
-      });
-
-      setShowAddUser(false);
-      await loadUsers();
-      alert("User created successfully!");
-    } catch (error: any) {
-      alert(error.message || "Failed to create user");
-    } finally {
+    if (newUser.password !== newUser.confirmPassword) {
+      alert("Passwords do not match!");
       setSaving(false);
+      return;
     }
+
+    await apiClient.createUser({
+      name: newUser.name,
+      email: newUser.email,
+      phone: newUser.phone,
+      role: newUser.role,
+      password: newUser.password,
+    });
+
+    setNewUser({
+      name: "",
+      email: "",
+      phone: "",
+      role: "staff",
+      password: "",
+      confirmPassword: "",
+    });
+
+    setShowAddUser(false);
+    await loadUsers();
+    alert("User created successfully!");
+    setSaving(false);
   };
 
   const handleDeleteUser = async (userId: string) => {
@@ -372,13 +369,9 @@ export default function Settings() {
       return;
     }
 
-    try {
-      await apiClient.deleteUser(userId);
-      await loadUsers();
-      alert("User deleted successfully!");
-    } catch (error: any) {
-      alert(error.message || "Failed to delete user");
-    }
+    await apiClient.deleteUser(userId);
+    await loadUsers();
+    alert("User deleted successfully!");
   };
 
   const handleExportData = async (format: string) => {
