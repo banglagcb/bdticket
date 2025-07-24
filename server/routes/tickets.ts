@@ -283,7 +283,9 @@ router.get("/countries/stats", async (req: Request, res: Response) => {
         totalTickets: countryStats?.total_tickets || 0,
         availableTickets: countryStats?.available_tickets || 0,
       };
-      console.log(`🏁 ${country.name}: ${result.totalTickets} total, ${result.availableTickets} available`);
+      console.log(
+        `🏁 ${country.name}: ${result.totalTickets} total, ${result.availableTickets} available`,
+      );
       return result;
     });
 

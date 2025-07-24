@@ -64,7 +64,9 @@ function CountryCard({ country, index }: CountryCardProps) {
       className="transform-gpu"
     >
       <Link to={`/tickets/${country.code}`}>
-        <Card className={`luxury-card hover:shadow-2xl transition-all duration-500 ${getCardStyle()}`}>
+        <Card
+          className={`luxury-card hover:shadow-2xl transition-all duration-500 ${getCardStyle()}`}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
@@ -149,22 +151,70 @@ export default function CountriesDemo() {
 
   const loadCountries = async () => {
     setLoading(true);
-    
+
     // Simulate loading delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     // Demo data with comprehensive realistic numbers
     const demoCountries: Country[] = [
-      { code: "KSA", name: "Saudi Arabia", flag: "🇸🇦", totalTickets: 55, availableTickets: 45 },
-      { code: "UAE", name: "United Arab Emirates", flag: "🇦🇪", totalTickets: 55, availableTickets: 48 },
-      { code: "QAT", name: "Qatar", flag: "🇶🇦", totalTickets: 33, availableTickets: 28 },
-      { code: "KWT", name: "Kuwait", flag: "🇰🇼", totalTickets: 50, availableTickets: 42 },
-      { code: "OMN", name: "Oman", flag: "🇴����", totalTickets: 16, availableTickets: 14 },
-      { code: "BHR", name: "Bahrain", flag: "🇧🇭", totalTickets: 45, availableTickets: 38 },
-      { code: "JOR", name: "Jordan", flag: "🇯🇴", totalTickets: 12, availableTickets: 10 },
-      { code: "LBN", name: "Lebanon", flag: "🇱🇧", totalTickets: 14, availableTickets: 12 },
+      {
+        code: "KSA",
+        name: "Saudi Arabia",
+        flag: "🇸🇦",
+        totalTickets: 55,
+        availableTickets: 45,
+      },
+      {
+        code: "UAE",
+        name: "United Arab Emirates",
+        flag: "🇦🇪",
+        totalTickets: 55,
+        availableTickets: 48,
+      },
+      {
+        code: "QAT",
+        name: "Qatar",
+        flag: "🇶🇦",
+        totalTickets: 33,
+        availableTickets: 28,
+      },
+      {
+        code: "KWT",
+        name: "Kuwait",
+        flag: "🇰🇼",
+        totalTickets: 50,
+        availableTickets: 42,
+      },
+      {
+        code: "OMN",
+        name: "Oman",
+        flag: "🇴����",
+        totalTickets: 16,
+        availableTickets: 14,
+      },
+      {
+        code: "BHR",
+        name: "Bahrain",
+        flag: "🇧🇭",
+        totalTickets: 45,
+        availableTickets: 38,
+      },
+      {
+        code: "JOR",
+        name: "Jordan",
+        flag: "🇯🇴",
+        totalTickets: 12,
+        availableTickets: 10,
+      },
+      {
+        code: "LBN",
+        name: "Lebanon",
+        flag: "🇱🇧",
+        totalTickets: 14,
+        availableTickets: 12,
+      },
     ];
-    
+
     setCountries(demoCountries);
     setLoading(false);
   };
@@ -214,7 +264,7 @@ export default function CountriesDemo() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <Button
                 onClick={loadCountries}
@@ -259,9 +309,7 @@ export default function CountriesDemo() {
               <p className="text-2xl font-heading font-bold text-primary">
                 {totalAvailable}
               </p>
-              <p className="text-xs font-body text-foreground/60">
-                Available
-              </p>
+              <p className="text-xs font-body text-foreground/60">Available</p>
             </div>
             <div className="w-px h-8 bg-border/30"></div>
             <div className="text-center">
@@ -275,9 +323,7 @@ export default function CountriesDemo() {
               <p className="text-2xl font-heading font-bold text-foreground">
                 {countries.length}
               </p>
-              <p className="text-xs font-body text-foreground/60">
-                Countries
-              </p>
+              <p className="text-xs font-body text-foreground/60">Countries</p>
             </div>
           </div>
         </motion.div>
@@ -292,7 +338,9 @@ export default function CountriesDemo() {
             <Card className="luxury-card">
               <CardContent className="p-6 text-center">
                 <TrendingUp className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-foreground">{totalAvailable}</h3>
+                <h3 className="text-2xl font-bold text-foreground">
+                  {totalAvailable}
+                </h3>
                 <p className="text-sm text-foreground/60">Available Tickets</p>
               </CardContent>
             </Card>
@@ -306,7 +354,9 @@ export default function CountriesDemo() {
             <Card className="luxury-card">
               <CardContent className="p-6 text-center">
                 <Ticket className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-foreground">{totalTickets}</h3>
+                <h3 className="text-2xl font-bold text-foreground">
+                  {totalTickets}
+                </h3>
                 <p className="text-sm text-foreground/60">Total Inventory</p>
               </CardContent>
             </Card>
@@ -320,7 +370,9 @@ export default function CountriesDemo() {
             <Card className="luxury-card">
               <CardContent className="p-6 text-center">
                 <Globe className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-foreground">{countries.length}</h3>
+                <h3 className="text-2xl font-bold text-foreground">
+                  {countries.length}
+                </h3>
                 <p className="text-sm text-foreground/60">Destinations</p>
               </CardContent>
             </Card>
@@ -362,8 +414,8 @@ export default function CountriesDemo() {
               <div className="flex items-center space-x-2">
                 <AlertCircle className="h-5 w-5 text-blue-500" />
                 <p className="text-sm text-blue-700">
-                  <strong>Demo Mode:</strong> This page shows sample data for demonstration. 
-                  Login to access real inventory data.
+                  <strong>Demo Mode:</strong> This page shows sample data for
+                  demonstration. Login to access real inventory data.
                 </p>
               </div>
             </CardContent>
