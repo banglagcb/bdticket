@@ -117,9 +117,9 @@ class APIClient {
   }
 
   async getCurrentUser(): Promise<User> {
-    const result = await this.request<{ user: User }>("/auth/me");
+    const result = await this.request<User>("/auth/me");
     if (result.success && result.data) {
-      return result.data.user;
+      return result.data;
     }
     throw new Error(result.message || "Failed to get user");
   }
