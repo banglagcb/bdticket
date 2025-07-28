@@ -2,8 +2,8 @@ import "./global.css";
 
 // Handle HMR errors gracefully
 if (import.meta.hot) {
-  import.meta.hot.on('vite:error', (err) => {
-    console.warn('HMR Error caught:', err);
+  import.meta.hot.on("vite:error", (err) => {
+    console.warn("HMR Error caught:", err);
   });
 }
 
