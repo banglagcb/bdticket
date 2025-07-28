@@ -8,6 +8,10 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    hmr: {
+      overlay: false, // Disable error overlay to prevent HMR connection issues
+      clientPort: 8080,
+    },
   },
   build: {
     outDir: "dist/spa",
