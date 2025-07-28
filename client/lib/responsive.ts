@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 // Responsive design utilities and helpers
 export const breakpoints = {
   xs: 320,
