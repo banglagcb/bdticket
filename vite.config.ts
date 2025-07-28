@@ -74,12 +74,6 @@ export default defineConfig(({ mode }) => ({
   plugins: [react({
     // Enable Fast Refresh for better development experience
     fastRefresh: true,
-    // Optimize JSX transform
-    jsxImportSource: '@emotion/react',
-    plugins: [
-      // Add plugins for performance
-      ["@swc/plugin-emotion", {}],
-    ],
   }), expressPlugin()],
   resolve: {
     alias: {
