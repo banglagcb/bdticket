@@ -1,5 +1,12 @@
 import "./global.css";
 
+// Handle HMR errors gracefully
+if (import.meta.hot) {
+  import.meta.hot.on('vite:error', (err) => {
+    console.warn('HMR Error caught:', err);
+  });
+}
+
 import { Toaster } from "./components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "./components/ui/sonner";
