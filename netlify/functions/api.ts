@@ -5,9 +5,9 @@ import { createServer } from "../../server";
 const app = createServer();
 
 // Configure for serverless environment
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   // Production optimizations
-  app.set('trust proxy', true);
+  app.set("trust proxy", true);
 }
 
 // Export the serverless handler

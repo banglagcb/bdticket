@@ -3,6 +3,7 @@
 ## Pre-Deployment Setup
 
 ### ✅ Repository Preparation
+
 - [ ] All code committed and pushed to GitHub
 - [ ] `netlify.toml` configuration file present
 - [ ] Build scripts added to `package.json`
@@ -10,6 +11,7 @@
 - [ ] Deployment documentation complete
 
 ### ✅ Dependencies & Build
+
 - [ ] All dependencies installed (`npm install`)
 - [ ] Build process works locally (`npm run build:netlify`)
 - [ ] No TypeScript errors (`npm run typecheck`)
@@ -18,6 +20,7 @@
 ## Netlify Configuration
 
 ### ✅ Site Setup
+
 - [ ] Netlify account created/logged in
 - [ ] New site created from GitHub repository
 - [ ] Build settings configured:
@@ -26,6 +29,7 @@
   - Functions directory: `netlify/functions`
 
 ### ✅ Environment Variables
+
 Set in Netlify Dashboard → Site Settings → Environment Variables:
 
 - [ ] `NODE_ENV` = `production`
@@ -33,6 +37,7 @@ Set in Netlify Dashboard → Site Settings → Environment Variables:
 - [ ] `DATABASE_PATH` = `/.netlify/functions/data/bd-ticketpro.db`
 
 ### ✅ Domain & SSL
+
 - [ ] Custom domain configured (if desired)
 - [ ] SSL certificate active (automatic)
 - [ ] DNS settings updated (if custom domain)
@@ -40,12 +45,14 @@ Set in Netlify Dashboard → Site Settings → Environment Variables:
 ## Post-Deployment Verification
 
 ### ✅ Basic Functionality
+
 - [ ] Site loads at Netlify URL
 - [ ] Homepage displays correctly
 - [ ] All pages accessible via navigation
 - [ ] Mobile responsiveness verified
 
 ### ✅ Authentication System
+
 - [ ] Login page loads
 - [ ] Admin login works (`admin` / `admin123`)
 - [ ] Manager login works (`manager` / `manager123`)
@@ -54,6 +61,7 @@ Set in Netlify Dashboard → Site Settings → Environment Variables:
 - [ ] Role-based permissions enforced
 
 ### ✅ Core Features
+
 - [ ] Dashboard loads with real data
 - [ ] Countries page displays countries
 - [ ] Tickets page shows available tickets
@@ -62,12 +70,14 @@ Set in Netlify Dashboard → Site Settings → Environment Variables:
 - [ ] Settings page functions correctly
 
 ### ✅ API Endpoints
+
 - [ ] Health check: `/.netlify/functions/health`
 - [ ] API routes work: `/api/*`
 - [ ] Database initialization: `/.netlify/functions/init-db`
 - [ ] Authentication endpoints respond correctly
 
 ### ✅ Performance & Security
+
 - [ ] Page load speed < 3 seconds
 - [ ] Security headers present
 - [ ] HTTPS enforced
@@ -77,11 +87,13 @@ Set in Netlify Dashboard → Site Settings → Environment Variables:
 ## Monitoring Setup
 
 ### ✅ Health Monitoring
+
 - [ ] Health check endpoint responding
 - [ ] Uptime monitoring configured (optional)
 - [ ] Error tracking set up (optional)
 
 ### ✅ Analytics (Optional)
+
 - [ ] Google Analytics configured
 - [ ] Netlify Analytics enabled
 - [ ] Performance monitoring active
@@ -89,11 +101,13 @@ Set in Netlify Dashboard → Site Settings → Environment Variables:
 ## Backup & Maintenance
 
 ### ✅ Data Management
+
 - [ ] Database backup strategy documented
 - [ ] User data protection measures in place
 - [ ] GDPR compliance considered (if applicable)
 
 ### ✅ Maintenance Plan
+
 - [ ] Update schedule established
 - [ ] Security patch process defined
 - [ ] Performance monitoring ongoing
@@ -123,16 +137,19 @@ curl https://your-site.netlify.app/.netlify/functions/health
 ## Demo Credentials for Testing
 
 **Administrator:**
+
 - Username: `admin`
 - Password: `admin123`
 - Access: Full system access
 
 **Manager:**
-- Username: `manager` 
+
+- Username: `manager`
 - Password: `manager123`
 - Access: Booking management
 
 **Staff:**
+
 - Username: `staff`
 - Password: `staff123`
 - Access: Basic operations
@@ -140,6 +157,7 @@ curl https://your-site.netlify.app/.netlify/functions/health
 ## Troubleshooting
 
 ### Build Issues
+
 ```bash
 # Clear cache and rebuild
 rm -rf node_modules dist
@@ -148,12 +166,14 @@ npm run build:netlify
 ```
 
 ### Function Issues
+
 ```bash
 # Test function locally
 netlify dev
 ```
 
 ### Database Issues
+
 ```bash
 # Reinitialize database
 curl -X POST https://your-site.netlify.app/.netlify/functions/init-db
@@ -170,6 +190,7 @@ curl -X POST https://your-site.netlify.app/.netlify/functions/init-db
 ## 🎉 Deployment Complete!
 
 Once all items are checked, your BD TicketPro application is:
+
 - ✅ **Fully Deployed** on Netlify
 - ✅ **Production Ready** with all features
 - ✅ **Secure** with proper authentication
