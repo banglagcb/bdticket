@@ -12,6 +12,8 @@ export default defineConfig(({ mode }) => ({
       overlay: false, // Disable error overlay to prevent HMR connection issues
       clientPort: 8080,
     },
+    // Add middleware to handle HMR connection issues
+    middlewareMode: false,
   },
   build: {
     outDir: "dist/spa",
