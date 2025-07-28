@@ -295,11 +295,11 @@ export function getSpacing(
 export function useResponsiveValue<T>(
   values: Partial<Record<Breakpoint, T>>,
 ): T | undefined {
-  const [currentValue, setCurrentValue] = React.useState<T | undefined>(() =>
+  const [currentValue, setCurrentValue] = useState<T | undefined>(() =>
     responsive(values),
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       setCurrentValue(responsive(values));
     };
