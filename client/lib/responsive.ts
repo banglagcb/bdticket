@@ -16,11 +16,11 @@ export type Breakpoint = keyof typeof breakpoints;
 export function useMediaQuery(query: string): boolean {
   if (typeof window === "undefined") return false;
 
-  const [matches, setMatches] = React.useState(() => {
+  const [matches, setMatches] = useState(() => {
     return window.matchMedia(query).matches;
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const mediaQuery = window.matchMedia(query);
     const handler = (event: MediaQueryListEvent) => setMatches(event.matches);
 
