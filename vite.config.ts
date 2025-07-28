@@ -19,27 +19,46 @@ export default defineConfig(({ mode }) => ({
     // Chunk splitting for better caching
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks: (id) => {
           // Vendor chunks
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-toast',
-            '@radix-ui/react-scroll-area',
-            '@radix-ui/react-alert-dialog',
-            '@radix-ui/react-switch',
-            '@radix-ui/react-label',
-            '@radix-ui/react-avatar',
-            '@radix-ui/react-separator',
-          ],
-          utils: ['clsx', 'tailwind-merge', 'class-variance-authority'],
-          animations: ['framer-motion'],
-          icons: ['lucide-react'],
-          forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('react-router')) {
+              return 'vendor-router';
+            }
+            if (id.includes('@radix-ui')) {
+              return 'vendor-ui';
+            }
+            if (id.includes('framer-motion')) {
+              return 'vendor-animation';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('react-hook-form') || id.includes('zod')) {
+              return 'vendor-forms';
+            }
+            // All other vendor dependencies
+            return 'vendor-misc';
+          }
+
+          // Split pages into separate chunks
+          if (id.includes('/pages/')) {
+            const pageName = id.split('/pages/')[1].split('.')[0];
+            return `page-${pageName.toLowerCase()}`;
+          }
+
+          // Components chunk
+          if (id.includes('/components/')) {
+            return 'components';
+          }
+
+          // Utilities chunk
+          if (id.includes('/lib/') || id.includes('/services/')) {
+            return 'utils';
+          }
         },
         // Optimize chunk names
         chunkFileNames: (chunkInfo) => {
