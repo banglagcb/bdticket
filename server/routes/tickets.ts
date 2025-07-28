@@ -80,6 +80,88 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+// Get all tickets from all countries
+router.get("/all", async (req: Request, res: Response) => {
+  try {
+    const { status, airline, limit = 200, offset = 0 } = req.query;
+
+    let tickets = TicketRepository.findAll();
+
+    // Apply filters
+    if (status) {
+      tickets = tickets.filter((ticket) => ticket.status === status);
+    }
+
+    if (airline) {
+      tickets = tickets.filter((ticket) =>
+        ticket.batch.airline_name
+          .toLowerCase()
+          .includes((airline as string).toLowerCase()),
+      );
+    }
+
+    // Apply pagination
+    const startIndex = parseInt(offset as string);
+    const endIndex = startIndex + parseInt(limit as string);
+    const paginatedTickets = tickets.slice(startIndex, endIndex);
+
+    // Get country information for each ticket
+    const countries = CountryRepository.findAll();
+    const ticketsWithCountryInfo = paginatedTickets.map((ticket) => {
+      const country = countries.find(c => c.code === ticket.batch.country_code);
+      return {
+        ...ticket,
+        country: country ? {
+          code: country.code,
+          name: country.name,
+          flag: country.flag
+        } : null,
+        batch: {
+          ...ticket.batch,
+          airline: ticket.batch.airline_name,
+          flight_date: ticket.batch.departure_date,
+          departure_time: ticket.batch.departure_time,
+          arrival_time: ticket.batch.arrival_time,
+          origin: ticket.batch.origin_city || "Dhaka",
+          destination: country?.name || "Unknown",
+          flight_number: ticket.batch.flight_number || `${ticket.batch.airline_name}-${Math.floor(Math.random() * 1000)}`
+        }
+      };
+    });
+
+    // Remove buying price if user doesn't have permission
+    const userCanViewBuyingPrice = hasPermission(
+      req.user!.role,
+      "view_buying_price",
+    );
+    if (!userCanViewBuyingPrice) {
+      ticketsWithCountryInfo.forEach((ticket) => {
+        if (ticket.batch) {
+          delete ticket.batch.buying_price;
+        }
+        delete ticket.buying_price;
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "All tickets retrieved successfully",
+      data: {
+        tickets: ticketsWithCountryInfo,
+        total: tickets.length,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      },
+    });
+  } catch (error) {
+    console.error("Get all tickets error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
 // Get tickets by country
 router.get("/country/:countryCode", async (req: Request, res: Response) => {
   try {
