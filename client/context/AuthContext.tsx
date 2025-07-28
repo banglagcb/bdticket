@@ -146,7 +146,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     // During HMR, context might be temporarily undefined
-    if (import.meta.hot) {
+    if (import.meta.hot && typeof window !== 'undefined') {
       console.warn(
         "AuthContext undefined during hot reload, returning default values",
       );
