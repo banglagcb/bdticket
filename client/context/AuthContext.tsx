@@ -46,11 +46,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Handle HMR properly
+  // Handle HMR properly - only after initial mount
   useEffect(() => {
-    if (import.meta.hot) {
-      import.meta.hot.accept();
-    }
+    const handleHMR = () => {
+      if (import.meta.hot && import.meta.hot.data) {
+        try {
+          import.meta.hot.accept();
+        } catch (error) {
+          console.warn('HMR accept failed:', error);
+        }
+      }
+    };
+
+    // Delay HMR setup to ensure connection is ready
+    const timer = setTimeout(handleHMR, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
