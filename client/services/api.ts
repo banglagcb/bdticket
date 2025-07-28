@@ -197,6 +197,30 @@ class APIClient {
     throw new Error(result.message || "Failed to get country tickets");
   }
 
+  async getAllTickets(filters?: {
+    status?: string;
+    airline?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<any[]> {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) {
+          params.append(key, value.toString());
+        }
+      });
+    }
+
+    const endpoint = `/tickets/all${params.toString() ? `?${params.toString()}` : ""}`;
+    const result = await this.request<any>(endpoint);
+
+    if (result.success && result.data) {
+      return result.data.tickets || [];
+    }
+    throw new Error(result.message || "Failed to get all tickets");
+  }
+
   async getTicketById(id: string): Promise<any> {
     const result = await this.request<any>(`/tickets/${id}`);
     if (result.success && result.data) {
