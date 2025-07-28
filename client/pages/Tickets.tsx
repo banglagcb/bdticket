@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import {
@@ -12,6 +12,13 @@ import {
   CheckCircle,
   Search,
   Filter,
+  ShoppingCart,
+  RefreshCw,
+  FileText,
+  Download,
+  Users,
+  MapPin,
+  AlertCircle,
 } from "lucide-react";
 import {
   Card,
@@ -30,32 +37,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { Skeleton } from "../components/ui/skeleton";
+import { BookingDialog } from "../components/BookingDialog";
+import { apiClient } from "../services/api";
+import { useToast } from "../hooks/use-toast";
+
+interface Ticket {
+  id: string;
+  sl?: number;
+  airline?: string;
+  departure_date?: string;
+  departure_time?: string;
+  arrival_date?: string;
+  arrival_time?: string;
+  selling_price: number;
+  buying_price?: number;
+  available_seats: number;
+  total_seats: number;
+  status: "available" | "booked" | "locked" | "sold";
+  ticket_type?: string;
+  route?: string;
+  batch?: {
+    id: string;
+    airline: string;
+    flight_date: string;
+    departure_time: string;
+    arrival_time: string;
+    origin: string;
+    destination: string;
+    flight_number: string;
+  };
+  country?: {
+    code: string;
+    name: string;
+    flag: string;
+  };
+}
 
 interface TicketRowProps {
-  ticket: {
-    id: string;
-    sl: number;
-    airline: string;
-    departureDate: string;
-    departureDay: string;
-    departureTime: string;
-    sellingPrice: number;
-    buyingPrice?: number;
-    status: "available" | "booked" | "locked" | "sold";
-    lockStatus?: string;
-  };
+  ticket: Ticket;
+  index: number;
   showBuyingPrice: boolean;
-  onView: (ticketId: string) => void;
-  onBook: (ticketId: string) => void;
+  onView: (ticket: Ticket) => void;
+  onBook: (ticket: Ticket) => void;
 }
 
 function TicketRow({
   ticket,
+  index,
   showBuyingPrice,
   onView,
   onBook,
 }: TicketRowProps) {
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, availableSeats: number) => {
+    if (availableSeats === 0) {
+      return (
+        <Badge
+          variant="outline"
+          className="bg-red-50 text-red-700 border-red-200"
+        >
+          No Seats
+        </Badge>
+      );
+    }
+
     switch (status) {
       case "available":
         return (
@@ -73,7 +118,7 @@ function TicketRow({
             className="bg-blue-50 text-blue-700 border-blue-200"
           >
             Booked
-          </Badge>
+        </Badge>
         );
       case "locked":
         return (
@@ -98,23 +143,45 @@ function TicketRow({
     }
   };
 
-  const isDisabled = ticket.status === "sold";
+  const isDisabled = ticket.status === "sold" || ticket.available_seats === 0;
+  const canBook = ticket.status === "available" && ticket.available_seats > 0;
 
   return (
     <motion.tr
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`border-b border-border/20 hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent transition-all duration-300 ${isDisabled ? "opacity-60" : ""}`}
+      transition={{ delay: index * 0.05, duration: 0.3 }}
+      className={`border-b border-border/20 hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent transition-all duration-300 ${
+        isDisabled ? "opacity-60" : ""
+      }`}
     >
       <td className="px-4 py-3 font-body text-sm text-foreground">
-        {ticket.sl}
+        {index + 1}
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center space-x-2">
           <Plane className="h-4 w-4 text-foreground/40" />
-          <span className="font-body font-medium text-sm text-foreground">
-            {ticket.airline}
-          </span>
+          <div>
+            <div className="font-body font-medium text-sm text-foreground">
+              {ticket.batch?.airline || ticket.airline || "N/A"}
+            </div>
+            <div className="font-body text-xs text-foreground/50">
+              {ticket.batch?.flight_number || "Flight"}
+            </div>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center space-x-2">
+          <MapPin className="h-4 w-4 text-foreground/40" />
+          <div>
+            <div className="font-body font-medium text-sm text-foreground">
+              {ticket.batch?.origin || "Origin"} → {ticket.batch?.destination || ticket.country?.name || "Destination"}
+            </div>
+            <div className="font-body text-xs text-foreground/50 flex items-center">
+              {ticket.country?.flag} {ticket.country?.name}
+            </div>
+          </div>
         </div>
       </td>
       <td className="px-4 py-3">
@@ -122,10 +189,13 @@ function TicketRow({
           <Calendar className="h-4 w-4 text-foreground/40" />
           <div>
             <div className="font-body font-medium text-sm text-foreground">
-              {ticket.departureDate}
+              {ticket.batch?.flight_date 
+                ? new Date(ticket.batch.flight_date).toLocaleDateString()
+                : ticket.departure_date || "N/A"
+              }
             </div>
             <div className="font-body text-xs text-foreground/50">
-              {ticket.departureDay}
+              {new Date(ticket.batch?.flight_date || ticket.departure_date || new Date()).toLocaleDateString("en-US", { weekday: 'long' })}
             </div>
           </div>
         </div>
@@ -133,16 +203,23 @@ function TicketRow({
       <td className="px-4 py-3">
         <div className="flex items-center space-x-2">
           <Clock className="h-4 w-4 text-foreground/40" />
-          <span className="font-body text-sm text-foreground">
-            {ticket.departureTime}
-          </span>
+          <div>
+            <div className="font-body text-sm text-foreground">
+              {ticket.batch?.departure_time || ticket.departure_time || "N/A"}
+            </div>
+            {ticket.batch?.arrival_time && (
+              <div className="font-body text-xs text-foreground/50">
+                Arr: {ticket.batch.arrival_time}
+              </div>
+            )}
+          </div>
         </div>
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center space-x-2">
           <DollarSign className="h-4 w-4 text-green-600" />
           <span className="font-body font-semibold text-sm text-green-600">
-            ৳{ticket.sellingPrice.toLocaleString()}
+            ৳{ticket.selling_price.toLocaleString()}
           </span>
         </div>
       </td>
@@ -151,38 +228,45 @@ function TicketRow({
           <div className="flex items-center space-x-2">
             <DollarSign className="h-4 w-4 text-red-600" />
             <span className="font-body font-semibold text-sm text-red-600">
-              ৳{ticket.buyingPrice?.toLocaleString() || "N/A"}
+              ৳{ticket.buying_price?.toLocaleString() || "N/A"}
             </span>
           </div>
         </td>
       )}
-      <td className="px-4 py-3">{getStatusBadge(ticket.status)}</td>
       <td className="px-4 py-3">
-        {ticket.lockStatus && (
-          <div className="flex items-center space-x-1 text-xs text-foreground/50">
-            <Lock className="h-3 w-3" />
-            <span>{ticket.lockStatus}</span>
+        <div className="flex items-center space-x-2">
+          <Users className="h-4 w-4 text-foreground/40" />
+          <div>
+            <div className="font-body font-medium text-sm text-foreground">
+              {ticket.available_seats} / {ticket.total_seats}
+            </div>
+            <div className="font-body text-xs text-foreground/50">
+              Available
+            </div>
           </div>
-        )}
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        {getStatusBadge(ticket.status, ticket.available_seats)}
       </td>
       <td className="px-4 py-3">
         <div className="flex space-x-2">
           <Button
             size="sm"
             variant="outline"
-            onClick={() => onView(ticket.id)}
+            onClick={() => onView(ticket)}
             className="font-body text-xs hover:scale-105 transform transition-all duration-200"
           >
             <Eye className="h-3 w-3 mr-1" />
             View
           </Button>
-          {!isDisabled && (
+          {canBook && (
             <Button
               size="sm"
-              onClick={() => onBook(ticket.id)}
-              className="font-body text-xs velvet-button hover:scale-105 transform transition-all duration-200"
+              onClick={() => onBook(ticket)}
+              className="font-body text-xs velvet-button text-primary-foreground hover:scale-105 transform transition-all duration-200"
             >
-              <CheckCircle className="h-3 w-3 mr-1" />
+              <ShoppingCart className="h-3 w-3 mr-1" />
               Book
             </Button>
           )}
@@ -191,7 +275,7 @@ function TicketRow({
               variant="outline"
               className="bg-red-50 text-red-700 border-red-200 text-xs"
             >
-              SOLD OUT
+              {ticket.available_seats === 0 ? "NO SEATS" : "SOLD OUT"}
             </Badge>
           )}
         </div>
@@ -202,95 +286,217 @@ function TicketRow({
 
 export default function Tickets() {
   const { hasPermission } = useAuth();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [countryFilter, setCountryFilter] = useState("all");
   const [airlineFilter, setAirlineFilter] = useState("all");
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   const showBuyingPrice = hasPermission("view_buying_price");
 
-  // Mock data - in a real app, this would come from API
-  const tickets = [
-    {
-      id: "1",
-      sl: 1,
-      airline: "Air Arabia",
-      departureDate: "Dec 25, 2024",
-      departureDay: "Wednesday",
-      departureTime: "14:30",
-      sellingPrice: 22000,
-      buyingPrice: 18000,
-      status: "available" as const,
-    },
-    {
-      id: "2",
-      sl: 2,
-      airline: "Emirates",
-      departureDate: "Dec 26, 2024",
-      departureDay: "Thursday",
-      departureTime: "09:15",
-      sellingPrice: 45000,
-      buyingPrice: 38000,
-      status: "booked" as const,
-    },
-    {
-      id: "3",
-      sl: 3,
-      airline: "Flydubai",
-      departureDate: "Dec 27, 2024",
-      departureDay: "Friday",
-      departureTime: "16:45",
-      sellingPrice: 28000,
-      buyingPrice: 23000,
-      status: "locked" as const,
-      lockStatus: "Expires in 18h",
-    },
-    {
-      id: "4",
-      sl: 4,
-      airline: "Saudi Airlines",
-      departureDate: "Dec 28, 2024",
-      departureDay: "Saturday",
-      departureTime: "11:20",
-      sellingPrice: 19500,
-      buyingPrice: 16000,
-      status: "sold" as const,
-    },
-    {
-      id: "5",
-      sl: 5,
-      airline: "Qatar Airways",
-      departureDate: "Dec 29, 2024",
-      departureDay: "Sunday",
-      departureTime: "20:10",
-      sellingPrice: 52000,
-      buyingPrice: 44000,
-      status: "available" as const,
-    },
-  ];
+  // Load all tickets
+  const loadTickets = async (showLoading = true) => {
+    try {
+      if (showLoading) {
+        setLoading(true);
+      }
+      setError(null);
 
-  const airlines = [...new Set(tickets.map((t) => t.airline))];
+      // Get all tickets from all countries
+      const data = await apiClient.getAllTickets();
+      setTickets(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load tickets:", err);
+      setError("Failed to load tickets");
+      setTickets([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    loadTickets();
+  }, []);
+
+  // Get unique values for filters
+  const countries = tickets
+    .filter((t) => t.country)
+    .map((t) => ({ code: t.country!.code, name: t.country!.name, flag: t.country!.flag }))
+    .filter((country, index, self) => 
+      index === self.findIndex((c) => c.code === country.code)
+    );
+
+  const airlines = tickets
+    .map((t) => t.batch?.airline || t.airline)
+    .filter((airline, index, self) => airline && self.indexOf(airline) === index)
+    .filter(Boolean) as string[];
+
+  // Filter tickets
   const filteredTickets = tickets.filter((ticket) => {
     const matchesSearch =
-      ticket.airline.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.departureDate.toLowerCase().includes(searchTerm.toLowerCase());
+      (ticket.batch?.airline || ticket.airline || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (ticket.country?.name || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (ticket.batch?.flight_number || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
     const matchesStatus =
       statusFilter === "all" || ticket.status === statusFilter;
-    const matchesAirline =
-      airlineFilter === "all" || ticket.airline === airlineFilter;
 
-    return matchesSearch && matchesStatus && matchesAirline;
+    const matchesCountry =
+      countryFilter === "all" || ticket.country?.code === countryFilter;
+
+    const matchesAirline =
+      airlineFilter === "all" ||
+      ticket.batch?.airline === airlineFilter ||
+      ticket.airline === airlineFilter;
+
+    return matchesSearch && matchesStatus && matchesCountry && matchesAirline;
   });
 
-  const handleView = (ticketId: string) => {
-    console.log("View ticket:", ticketId);
-    // This would open the booking dialog
+  // Calculate statistics
+  const stats = {
+    total: filteredTickets.length,
+    available: filteredTickets.filter(t => t.status === "available" && t.available_seats > 0).length,
+    booked: filteredTickets.filter(t => t.status === "booked").length,
+    locked: filteredTickets.filter(t => t.status === "locked").length,
+    sold: filteredTickets.filter(t => t.status === "sold" || t.available_seats === 0).length,
   };
 
-  const handleBook = (ticketId: string) => {
-    console.log("Book ticket:", ticketId);
-    // This would open the booking dialog
+  const handleView = (ticket: Ticket) => {
+    setSelectedTicket(ticket);
+    // Could open a detailed view dialog here
+    toast({
+      title: "Ticket Details",
+      description: `Viewing ${ticket.batch?.airline || ticket.airline || 'ticket'} details`,
+    });
   };
+
+  const handleBook = (ticket: Ticket) => {
+    setSelectedTicket(ticket);
+    setBookingOpen(true);
+  };
+
+  const handleBookingSubmit = async (bookingData: any) => {
+    try {
+      const response = await apiClient.createBooking(bookingData);
+      toast({
+        title: "Booking Created Successfully! 🎉",
+        description: `Booking ID: ${response.bookingId} | Passenger: ${bookingData.passengerInfo.name}`,
+      });
+      
+      // Reload tickets to update availability
+      await loadTickets(false);
+      setBookingOpen(false);
+      setSelectedTicket(null);
+    } catch (err: any) {
+      console.error("Booking submission failed:", err);
+      let errorMessage = "Failed to create booking. Please try again.";
+      
+      if (err.message) {
+        if (err.message.includes("not available")) {
+          errorMessage = "This ticket is no longer available. Please select another ticket.";
+        } else if (err.message.includes("validation")) {
+          errorMessage = "Please check all required fields and try again.";
+        } else {
+          errorMessage = err.message;
+        }
+      }
+
+      toast({
+        title: "Booking Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
+      // If ticket not available, reload to update availability
+      if (errorMessage.includes("not available")) {
+        await loadTickets(false);
+      }
+    }
+  };
+
+  const handleExportData = () => {
+    const csvContent = [
+      ["SL", "Airline", "Route", "Date", "Time", "Price", "Seats", "Status"].join(","),
+      ...filteredTickets.map((ticket, index) => [
+        index + 1,
+        ticket.batch?.airline || ticket.airline || "N/A",
+        `${ticket.batch?.origin || "Origin"} → ${ticket.batch?.destination || ticket.country?.name || "Destination"}`,
+        ticket.batch?.flight_date 
+          ? new Date(ticket.batch.flight_date).toLocaleDateString()
+          : ticket.departure_date || "N/A",
+        ticket.batch?.departure_time || ticket.departure_time || "N/A",
+        `৳${ticket.selling_price.toLocaleString()}`,
+        `${ticket.available_seats}/${ticket.total_seats}`,
+        ticket.status,
+      ].join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tickets-export-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Export Complete",
+      description: "Tickets data exported to CSV file",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+        <h3 className="text-lg font-heading font-bold text-foreground mb-2">
+          Error Loading Tickets
+        </h3>
+        <p className="text-foreground/70 font-body mb-4">{error}</p>
+        <Button
+          onClick={() => loadTickets()}
+          className="velvet-button text-primary-foreground font-body"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -300,17 +506,40 @@ export default function Tickets() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center space-x-4">
-          <div className="p-3 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-full animate-glow animate-float">
-            <TicketIcon className="h-6 w-6 text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-full animate-glow animate-float">
+              <TicketIcon className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-heading font-bold velvet-text">
+                All Tickets
+              </h1>
+              <p className="text-foreground/70 font-body">
+                Manage and book flight tickets from all destinations
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-heading font-bold velvet-text">
-              All Tickets
-            </h1>
-            <p className="text-foreground/70 font-body">
-              Manage and book flight tickets
-            </p>
+
+          <div className="flex items-center space-x-2">
+            <Button
+              onClick={handleExportData}
+              variant="outline"
+              size="sm"
+              className="font-body hover:scale-105 transform transition-all duration-200"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+            <Button
+              onClick={() => loadTickets()}
+              variant="outline"
+              size="sm"
+              className="font-body hover:scale-105 transform transition-all duration-200"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
           </div>
         </div>
       </motion.div>
@@ -325,18 +554,18 @@ export default function Tickets() {
           <CardHeader>
             <CardTitle className="font-heading flex items-center space-x-2 velvet-text">
               <Filter className="h-5 w-5" />
-              <span>Filters</span>
+              <span>Filters & Search</span>
             </CardTitle>
             <CardDescription className="font-body">
               Search and filter tickets by various criteria
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-foreground/40" />
                 <Input
-                  placeholder="Search airline or date..."
+                  placeholder="Search airline, country, flight..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 font-body"
@@ -356,6 +585,20 @@ export default function Tickets() {
                 </SelectContent>
               </Select>
 
+              <Select value={countryFilter} onValueChange={setCountryFilter}>
+                <SelectTrigger className="font-body">
+                  <SelectValue placeholder="Filter by country" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Countries</SelectItem>
+                  {countries.map((country) => (
+                    <SelectItem key={country.code} value={country.code}>
+                      {country.flag} {country.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               <Select value={airlineFilter} onValueChange={setAirlineFilter}>
                 <SelectTrigger className="font-body">
                   <SelectValue placeholder="Filter by airline" />
@@ -372,10 +615,63 @@ export default function Tickets() {
 
               <div className="flex items-center space-x-2">
                 <span className="font-body text-sm text-foreground/70">
-                  {filteredTickets.length} tickets found
+                  {stats.total} tickets found
                 </span>
               </div>
             </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Quick Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="grid grid-cols-2 md:grid-cols-5 gap-4"
+      >
+        <Card className="text-center luxury-card border-0">
+          <CardContent className="p-4">
+            <div className="text-2xl font-heading font-bold text-foreground velvet-text">
+              {stats.total}
+            </div>
+            <div className="text-sm font-body text-foreground/60">Total</div>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center luxury-card border-0">
+          <CardContent className="p-4">
+            <div className="text-2xl font-heading font-bold text-green-600 velvet-text">
+              {stats.available}
+            </div>
+            <div className="text-sm font-body text-foreground/60">Available</div>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center luxury-card border-0">
+          <CardContent className="p-4">
+            <div className="text-2xl font-heading font-bold text-blue-600 velvet-text">
+              {stats.booked}
+            </div>
+            <div className="text-sm font-body text-foreground/60">Booked</div>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center luxury-card border-0">
+          <CardContent className="p-4">
+            <div className="text-2xl font-heading font-bold text-yellow-600 velvet-text">
+              {stats.locked}
+            </div>
+            <div className="text-sm font-body text-foreground/60">Locked</div>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center luxury-card border-0">
+          <CardContent className="p-4">
+            <div className="text-2xl font-heading font-bold text-foreground/60 velvet-text">
+              {stats.sold}
+            </div>
+            <div className="text-sm font-body text-foreground/60">Sold</div>
           </CardContent>
         </Card>
       </motion.div>
@@ -399,6 +695,9 @@ export default function Tickets() {
                       Airline
                     </th>
                     <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
+                      Route
+                    </th>
+                    <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
                       Departure Date
                     </th>
                     <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
@@ -413,10 +712,10 @@ export default function Tickets() {
                       </th>
                     )}
                     <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
-                      Booking Status
+                      Seats
                     </th>
                     <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
-                      Lock Status
+                      Status
                     </th>
                     <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
                       Action
@@ -424,15 +723,37 @@ export default function Tickets() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTickets.map((ticket) => (
-                    <TicketRow
-                      key={ticket.id}
-                      ticket={ticket}
-                      showBuyingPrice={showBuyingPrice}
-                      onView={handleView}
-                      onBook={handleBook}
-                    />
-                  ))}
+                  {filteredTickets.length > 0 ? (
+                    filteredTickets.map((ticket, index) => (
+                      <TicketRow
+                        key={ticket.id}
+                        ticket={ticket}
+                        index={index}
+                        showBuyingPrice={showBuyingPrice}
+                        onView={handleView}
+                        onBook={handleBook}
+                      />
+                    ))
+                  ) : (
+                    <tr>
+                      <td 
+                        colSpan={showBuyingPrice ? 10 : 9} 
+                        className="px-4 py-12 text-center"
+                      >
+                        <div className="flex flex-col items-center space-y-3">
+                          <TicketIcon className="h-12 w-12 text-foreground/30" />
+                          <div>
+                            <h3 className="font-heading font-medium text-foreground mb-1">
+                              No tickets found
+                            </h3>
+                            <p className="font-body text-sm text-foreground/60">
+                              Try adjusting your filters or search terms
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -440,51 +761,16 @@ export default function Tickets() {
         </Card>
       </motion.div>
 
-      {/* Summary Stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-        className="grid grid-cols-1 md:grid-cols-4 gap-4"
-      >
-        <Card className="text-center luxury-card border-0">
-          <CardContent className="p-4">
-            <div className="text-2xl font-heading font-bold text-green-600 velvet-text">
-              {filteredTickets.filter((t) => t.status === "available").length}
-            </div>
-            <div className="text-sm font-body text-foreground/60">
-              Available
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="text-center luxury-card border-0">
-          <CardContent className="p-4">
-            <div className="text-2xl font-heading font-bold text-blue-600 velvet-text">
-              {filteredTickets.filter((t) => t.status === "booked").length}
-            </div>
-            <div className="text-sm font-body text-foreground/60">Booked</div>
-          </CardContent>
-        </Card>
-
-        <Card className="text-center luxury-card border-0">
-          <CardContent className="p-4">
-            <div className="text-2xl font-heading font-bold text-yellow-600 velvet-text">
-              {filteredTickets.filter((t) => t.status === "locked").length}
-            </div>
-            <div className="text-sm font-body text-foreground/60">Locked</div>
-          </CardContent>
-        </Card>
-
-        <Card className="text-center luxury-card border-0">
-          <CardContent className="p-4">
-            <div className="text-2xl font-heading font-bold text-foreground/60 velvet-text">
-              {filteredTickets.filter((t) => t.status === "sold").length}
-            </div>
-            <div className="text-sm font-body text-foreground/60">Sold</div>
-          </CardContent>
-        </Card>
-      </motion.div>
+      {/* Booking Dialog */}
+      <BookingDialog
+        isOpen={bookingOpen}
+        onClose={() => {
+          setBookingOpen(false);
+          setSelectedTicket(null);
+        }}
+        ticket={selectedTicket}
+        onSubmit={handleBookingSubmit}
+      />
     </div>
   );
 }
