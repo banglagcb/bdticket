@@ -108,14 +108,18 @@ router.get("/all", async (req: Request, res: Response) => {
     // Get country information for each ticket
     const countries = CountryRepository.findAll();
     const ticketsWithCountryInfo = paginatedTickets.map((ticket) => {
-      const country = countries.find(c => c.code === ticket.batch.country_code);
+      const country = countries.find(
+        (c) => c.code === ticket.batch.country_code,
+      );
       return {
         ...ticket,
-        country: country ? {
-          code: country.code,
-          name: country.name,
-          flag: country.flag
-        } : null,
+        country: country
+          ? {
+              code: country.code,
+              name: country.name,
+              flag: country.flag,
+            }
+          : null,
         batch: {
           ...ticket.batch,
           airline: ticket.batch.airline_name,
@@ -124,8 +128,10 @@ router.get("/all", async (req: Request, res: Response) => {
           arrival_time: ticket.batch.arrival_time,
           origin: ticket.batch.origin_city || "Dhaka",
           destination: country?.name || "Unknown",
-          flight_number: ticket.batch.flight_number || `${ticket.batch.airline_name}-${Math.floor(Math.random() * 1000)}`
-        }
+          flight_number:
+            ticket.batch.flight_number ||
+            `${ticket.batch.airline_name}-${Math.floor(Math.random() * 1000)}`,
+        },
       };
     });
 

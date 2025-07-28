@@ -118,7 +118,7 @@ function TicketRow({
             className="bg-blue-50 text-blue-700 border-blue-200"
           >
             Booked
-        </Badge>
+          </Badge>
         );
       case "locked":
         return (
@@ -176,7 +176,10 @@ function TicketRow({
           <MapPin className="h-4 w-4 text-foreground/40" />
           <div>
             <div className="font-body font-medium text-sm text-foreground">
-              {ticket.batch?.origin || "Origin"} → {ticket.batch?.destination || ticket.country?.name || "Destination"}
+              {ticket.batch?.origin || "Origin"} →{" "}
+              {ticket.batch?.destination ||
+                ticket.country?.name ||
+                "Destination"}
             </div>
             <div className="font-body text-xs text-foreground/50 flex items-center">
               {ticket.country?.flag} {ticket.country?.name}
@@ -189,13 +192,16 @@ function TicketRow({
           <Calendar className="h-4 w-4 text-foreground/40" />
           <div>
             <div className="font-body font-medium text-sm text-foreground">
-              {ticket.batch?.flight_date 
+              {ticket.batch?.flight_date
                 ? new Date(ticket.batch.flight_date).toLocaleDateString()
-                : ticket.departure_date || "N/A"
-              }
+                : ticket.departure_date || "N/A"}
             </div>
             <div className="font-body text-xs text-foreground/50">
-              {new Date(ticket.batch?.flight_date || ticket.departure_date || new Date()).toLocaleDateString("en-US", { weekday: 'long' })}
+              {new Date(
+                ticket.batch?.flight_date ||
+                  ticket.departure_date ||
+                  new Date(),
+              ).toLocaleDateString("en-US", { weekday: "long" })}
             </div>
           </div>
         </div>
@@ -326,14 +332,21 @@ export default function Tickets() {
   // Get unique values for filters
   const countries = tickets
     .filter((t) => t.country)
-    .map((t) => ({ code: t.country!.code, name: t.country!.name, flag: t.country!.flag }))
-    .filter((country, index, self) => 
-      index === self.findIndex((c) => c.code === country.code)
+    .map((t) => ({
+      code: t.country!.code,
+      name: t.country!.name,
+      flag: t.country!.flag,
+    }))
+    .filter(
+      (country, index, self) =>
+        index === self.findIndex((c) => c.code === country.code),
     );
 
   const airlines = tickets
     .map((t) => t.batch?.airline || t.airline)
-    .filter((airline, index, self) => airline && self.indexOf(airline) === index)
+    .filter(
+      (airline, index, self) => airline && self.indexOf(airline) === index,
+    )
     .filter(Boolean) as string[];
 
   // Filter tickets
@@ -366,10 +379,14 @@ export default function Tickets() {
   // Calculate statistics
   const stats = {
     total: filteredTickets.length,
-    available: filteredTickets.filter(t => t.status === "available" && t.available_seats > 0).length,
-    booked: filteredTickets.filter(t => t.status === "booked").length,
-    locked: filteredTickets.filter(t => t.status === "locked").length,
-    sold: filteredTickets.filter(t => t.status === "sold" || t.available_seats === 0).length,
+    available: filteredTickets.filter(
+      (t) => t.status === "available" && t.available_seats > 0,
+    ).length,
+    booked: filteredTickets.filter((t) => t.status === "booked").length,
+    locked: filteredTickets.filter((t) => t.status === "locked").length,
+    sold: filteredTickets.filter(
+      (t) => t.status === "sold" || t.available_seats === 0,
+    ).length,
   };
 
   const handleView = (ticket: Ticket) => {
@@ -377,7 +394,7 @@ export default function Tickets() {
     // Could open a detailed view dialog here
     toast({
       title: "Ticket Details",
-      description: `Viewing ${ticket.batch?.airline || ticket.airline || 'ticket'} details`,
+      description: `Viewing ${ticket.batch?.airline || ticket.airline || "ticket"} details`,
     });
   };
 
@@ -393,7 +410,7 @@ export default function Tickets() {
         title: "Booking Created Successfully! 🎉",
         description: `Booking ID: ${response.bookingId} | Passenger: ${bookingData.passengerInfo.name}`,
       });
-      
+
       // Reload tickets to update availability
       await loadTickets(false);
       setBookingOpen(false);
@@ -401,10 +418,11 @@ export default function Tickets() {
     } catch (err: any) {
       console.error("Booking submission failed:", err);
       let errorMessage = "Failed to create booking. Please try again.";
-      
+
       if (err.message) {
         if (err.message.includes("not available")) {
-          errorMessage = "This ticket is no longer available. Please select another ticket.";
+          errorMessage =
+            "This ticket is no longer available. Please select another ticket.";
         } else if (err.message.includes("validation")) {
           errorMessage = "Please check all required fields and try again.";
         } else {
@@ -427,26 +445,37 @@ export default function Tickets() {
 
   const handleExportData = () => {
     const csvContent = [
-      ["SL", "Airline", "Route", "Date", "Time", "Price", "Seats", "Status"].join(","),
-      ...filteredTickets.map((ticket, index) => [
-        index + 1,
-        ticket.batch?.airline || ticket.airline || "N/A",
-        `${ticket.batch?.origin || "Origin"} → ${ticket.batch?.destination || ticket.country?.name || "Destination"}`,
-        ticket.batch?.flight_date 
-          ? new Date(ticket.batch.flight_date).toLocaleDateString()
-          : ticket.departure_date || "N/A",
-        ticket.batch?.departure_time || ticket.departure_time || "N/A",
-        `৳${ticket.selling_price.toLocaleString()}`,
-        `${ticket.available_seats}/${ticket.total_seats}`,
-        ticket.status,
-      ].join(","))
+      [
+        "SL",
+        "Airline",
+        "Route",
+        "Date",
+        "Time",
+        "Price",
+        "Seats",
+        "Status",
+      ].join(","),
+      ...filteredTickets.map((ticket, index) =>
+        [
+          index + 1,
+          ticket.batch?.airline || ticket.airline || "N/A",
+          `${ticket.batch?.origin || "Origin"} → ${ticket.batch?.destination || ticket.country?.name || "Destination"}`,
+          ticket.batch?.flight_date
+            ? new Date(ticket.batch.flight_date).toLocaleDateString()
+            : ticket.departure_date || "N/A",
+          ticket.batch?.departure_time || ticket.departure_time || "N/A",
+          `৳${ticket.selling_price.toLocaleString()}`,
+          `${ticket.available_seats}/${ticket.total_seats}`,
+          ticket.status,
+        ].join(","),
+      ),
     ].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `tickets-export-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `tickets-export-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -644,7 +673,9 @@ export default function Tickets() {
             <div className="text-2xl font-heading font-bold text-green-600 velvet-text">
               {stats.available}
             </div>
-            <div className="text-sm font-body text-foreground/60">Available</div>
+            <div className="text-sm font-body text-foreground/60">
+              Available
+            </div>
           </CardContent>
         </Card>
 
@@ -736,8 +767,8 @@ export default function Tickets() {
                     ))
                   ) : (
                     <tr>
-                      <td 
-                        colSpan={showBuyingPrice ? 10 : 9} 
+                      <td
+                        colSpan={showBuyingPrice ? 10 : 9}
                         className="px-4 py-12 text-center"
                       >
                         <div className="flex flex-col items-center space-y-3">

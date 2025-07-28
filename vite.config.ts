@@ -21,54 +21,57 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: (id) => {
           // Vendor chunks
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
+          if (id.includes("node_modules")) {
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "vendor-react";
             }
-            if (id.includes('react-router')) {
-              return 'vendor-router';
+            if (id.includes("react-router")) {
+              return "vendor-router";
             }
-            if (id.includes('@radix-ui')) {
-              return 'vendor-ui';
+            if (id.includes("@radix-ui")) {
+              return "vendor-ui";
             }
-            if (id.includes('framer-motion')) {
-              return 'vendor-animation';
+            if (id.includes("framer-motion")) {
+              return "vendor-animation";
             }
-            if (id.includes('lucide-react')) {
-              return 'vendor-icons';
+            if (id.includes("lucide-react")) {
+              return "vendor-icons";
             }
-            if (id.includes('react-hook-form') || id.includes('zod')) {
-              return 'vendor-forms';
+            if (id.includes("react-hook-form") || id.includes("zod")) {
+              return "vendor-forms";
             }
             // All other vendor dependencies
-            return 'vendor-misc';
+            return "vendor-misc";
           }
 
           // Split pages into separate chunks
-          if (id.includes('/pages/')) {
-            const pageName = id.split('/pages/')[1].split('.')[0];
+          if (id.includes("/pages/")) {
+            const pageName = id.split("/pages/")[1].split(".")[0];
             return `page-${pageName.toLowerCase()}`;
           }
 
           // Components chunk
-          if (id.includes('/components/')) {
-            return 'components';
+          if (id.includes("/components/")) {
+            return "components";
           }
 
           // Utilities chunk
-          if (id.includes('/lib/') || id.includes('/services/')) {
-            return 'utils';
+          if (id.includes("/lib/") || id.includes("/services/")) {
+            return "utils";
           }
         },
         // Optimize chunk names
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId.split('/').pop().replace(/\.\w+$/, '')
-            : 'chunk';
+            ? chunkInfo.facadeModuleId
+                .split("/")
+                .pop()
+                .replace(/\.\w+$/, "")
+            : "chunk";
           return `js/${facadeModuleId}-[hash].js`;
         },
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name.split('.');
+          const info = assetInfo.name.split(".");
           const extType = info[info.length - 1];
           if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name)) {
             return `images/[name]-[hash][extname]`;
@@ -90,10 +93,13 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   },
-  plugins: [react({
-    // Enable Fast Refresh for better development experience
-    fastRefresh: true,
-  }), expressPlugin()],
+  plugins: [
+    react({
+      // Enable Fast Refresh for better development experience
+      fastRefresh: true,
+    }),
+    expressPlugin(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),

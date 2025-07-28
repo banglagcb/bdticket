@@ -68,7 +68,12 @@ interface ReportData {
     dailySales: Array<{ date: string; amount: number; bookings: number }>;
   };
   countryReport: {
-    topCountries: Array<{ country: string; bookings: number; revenue: number; flag?: string }>;
+    topCountries: Array<{
+      country: string;
+      bookings: number;
+      revenue: number;
+      flag?: string;
+    }>;
   };
   agentReport: {
     topAgents: Array<{ agent: string; bookings: number; revenue: number }>;
@@ -86,8 +91,10 @@ export default function Reports() {
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
-    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0],
+    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0],
+    endDate: new Date().toISOString().split("T")[0],
   });
   const [reportType, setReportType] = useState("overview");
 
@@ -108,30 +115,48 @@ export default function Reports() {
         salesReport: {
           totalRevenue: stats.todaysSales?.amount || 2850000,
           totalBookings: stats.totalBookings || 156,
-          avgTicketPrice: stats.todaysSales?.amount ? Math.round(stats.todaysSales.amount / (stats.todaysSales.count || 1)) : 18269,
+          avgTicketPrice: stats.todaysSales?.amount
+            ? Math.round(
+                stats.todaysSales.amount / (stats.todaysSales.count || 1),
+              )
+            : 18269,
           profitMargin: 18.5, // This would need separate calculation
           dailySales: Array.from({ length: 30 }, (_, i) => ({
-            date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            date: new Date(Date.now() - i * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split("T")[0],
             amount: Math.floor(Math.random() * 150000) + 50000,
             bookings: Math.floor(Math.random() * 10) + 2,
           })).reverse(),
         },
         countryReport: {
-          topCountries: countries.countries ? countries.countries
-            .sort((a, b) => b.totalTickets - a.totalTickets)
-            .slice(0, 5)
-            .map((country, index) => ({
-              country: country.name,
-              flag: country.flag,
-              bookings: Math.floor(country.totalTickets * 0.3), // Estimated bookings
-              revenue: Math.floor(country.totalTickets * 18000), // Estimated revenue
-            })) : [
-            { country: "UAE", flag: "🇦🇪", bookings: 45, revenue: 820000 },
-            { country: "Saudi Arabia", flag: "🇸🇦", bookings: 38, revenue: 695000 },
-            { country: "Qatar", flag: "🇶🇦", bookings: 32, revenue: 580000 },
-            { country: "Kuwait", flag: "🇰🇼", bookings: 28, revenue: 510000 },
-            { country: "Oman", flag: "🇴🇲", bookings: 13, revenue: 245000 },
-          ],
+          topCountries: countries.countries
+            ? countries.countries
+                .sort((a, b) => b.totalTickets - a.totalTickets)
+                .slice(0, 5)
+                .map((country, index) => ({
+                  country: country.name,
+                  flag: country.flag,
+                  bookings: Math.floor(country.totalTickets * 0.3), // Estimated bookings
+                  revenue: Math.floor(country.totalTickets * 18000), // Estimated revenue
+                }))
+            : [
+                { country: "UAE", flag: "🇦🇪", bookings: 45, revenue: 820000 },
+                {
+                  country: "Saudi Arabia",
+                  flag: "🇸🇦",
+                  bookings: 38,
+                  revenue: 695000,
+                },
+                { country: "Qatar", flag: "🇶🇦", bookings: 32, revenue: 580000 },
+                {
+                  country: "Kuwait",
+                  flag: "🇰🇼",
+                  bookings: 28,
+                  revenue: 510000,
+                },
+                { country: "Oman", flag: "🇴🇲", bookings: 13, revenue: 245000 },
+              ],
         },
         agentReport: {
           topAgents: [
@@ -169,37 +194,53 @@ export default function Reports() {
 
   const exportReport = (format: string) => {
     if (!reportData) return;
-    
+
     let csvContent = "";
-    
+
     if (reportType === "countries") {
       csvContent = [
-        ["Country", "Bookings", "Revenue", "Average Price", "Market Share"].join(","),
-        ...reportData.countryReport.topCountries.map(country => [
-          country.country,
-          country.bookings,
-          country.revenue,
-          Math.round(country.revenue / country.bookings),
-          `${((country.bookings / reportData.salesReport.totalBookings) * 100).toFixed(1)}%`
-        ].join(","))
+        [
+          "Country",
+          "Bookings",
+          "Revenue",
+          "Average Price",
+          "Market Share",
+        ].join(","),
+        ...reportData.countryReport.topCountries.map((country) =>
+          [
+            country.country,
+            country.bookings,
+            country.revenue,
+            Math.round(country.revenue / country.bookings),
+            `${((country.bookings / reportData.salesReport.totalBookings) * 100).toFixed(1)}%`,
+          ].join(","),
+        ),
       ].join("\n");
     } else if (reportType === "agents") {
       csvContent = [
         ["Agent", "Bookings", "Revenue", "Average Deal Size"].join(","),
-        ...reportData.agentReport.topAgents.map(agent => [
-          agent.agent,
-          agent.bookings,
-          agent.revenue,
-          Math.round(agent.revenue / agent.bookings)
-        ].join(","))
+        ...reportData.agentReport.topAgents.map((agent) =>
+          [
+            agent.agent,
+            agent.bookings,
+            agent.revenue,
+            Math.round(agent.revenue / agent.bookings),
+          ].join(","),
+        ),
       ].join("\n");
     } else {
       // Overview export
       csvContent = [
         ["Metric", "Value"].join(","),
-        ["Total Revenue", `৳${reportData.salesReport.totalRevenue.toLocaleString()}`],
+        [
+          "Total Revenue",
+          `৳${reportData.salesReport.totalRevenue.toLocaleString()}`,
+        ],
         ["Total Bookings", reportData.salesReport.totalBookings],
-        ["Average Ticket Price", `৳${reportData.salesReport.avgTicketPrice.toLocaleString()}`],
+        [
+          "Average Ticket Price",
+          `৳${reportData.salesReport.avgTicketPrice.toLocaleString()}`,
+        ],
         ["Profit Margin", `${reportData.salesReport.profitMargin}%`],
       ].join("\n");
     }
@@ -208,7 +249,7 @@ export default function Reports() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${reportType}-report-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `${reportType}-report-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -231,8 +272,12 @@ export default function Reports() {
               <div className="p-3 bg-gradient-to-br from-red-100 to-red-200 rounded-full w-fit mx-auto mb-4">
                 <AlertCircle className="h-12 w-12 text-red-600" />
               </div>
-              <h2 className="text-2xl font-heading font-bold velvet-text mb-2">Access Denied</h2>
-              <p className="text-foreground/70 font-body">You don't have permission to view financial reports.</p>
+              <h2 className="text-2xl font-heading font-bold velvet-text mb-2">
+                Access Denied
+              </h2>
+              <p className="text-foreground/70 font-body">
+                You don't have permission to view financial reports.
+              </p>
             </CardContent>
           </Card>
         </motion.div>
@@ -290,31 +335,42 @@ export default function Reports() {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Label htmlFor="startDate" className="font-body text-sm">From:</Label>
+              <Label htmlFor="startDate" className="font-body text-sm">
+                From:
+              </Label>
               <Input
                 id="startDate"
                 type="date"
                 value={dateRange.startDate}
-                onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+                onChange={(e) =>
+                  setDateRange((prev) => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
+                }
                 className="w-auto font-body"
               />
             </div>
             <div className="flex items-center gap-2">
-              <Label htmlFor="endDate" className="font-body text-sm">To:</Label>
+              <Label htmlFor="endDate" className="font-body text-sm">
+                To:
+              </Label>
               <Input
                 id="endDate"
                 type="date"
                 value={dateRange.endDate}
-                onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+                onChange={(e) =>
+                  setDateRange((prev) => ({ ...prev, endDate: e.target.value }))
+                }
                 className="w-auto font-body"
               />
             </div>
-            <Button 
-              onClick={loadReportData} 
-              variant="outline" 
+            <Button
+              onClick={loadReportData}
+              variant="outline"
               size="sm"
               className="font-body hover:scale-105 transform transition-all duration-200"
             >
@@ -336,8 +392,12 @@ export default function Reports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground/70 font-body">Total Revenue</p>
-                  <p className="text-2xl font-heading font-bold velvet-text">৳{reportData?.salesReport.totalRevenue.toLocaleString()}</p>
+                  <p className="text-sm text-foreground/70 font-body">
+                    Total Revenue
+                  </p>
+                  <p className="text-2xl font-heading font-bold velvet-text">
+                    ৳{reportData?.salesReport.totalRevenue.toLocaleString()}
+                  </p>
                   <p className="text-sm text-green-600 flex items-center mt-1 font-body">
                     <TrendingUp className="h-4 w-4 mr-1" />
                     +12.5% from last month
@@ -360,8 +420,12 @@ export default function Reports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground/70 font-body">Total Bookings</p>
-                  <p className="text-2xl font-heading font-bold velvet-text">{reportData?.salesReport.totalBookings}</p>
+                  <p className="text-sm text-foreground/70 font-body">
+                    Total Bookings
+                  </p>
+                  <p className="text-2xl font-heading font-bold velvet-text">
+                    {reportData?.salesReport.totalBookings}
+                  </p>
                   <p className="text-sm text-blue-600 flex items-center mt-1 font-body">
                     <TrendingUp className="h-4 w-4 mr-1" />
                     +8.3% from last month
@@ -384,8 +448,12 @@ export default function Reports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground/70 font-body">Avg. Ticket Price</p>
-                  <p className="text-2xl font-heading font-bold velvet-text">৳{reportData?.salesReport.avgTicketPrice.toLocaleString()}</p>
+                  <p className="text-sm text-foreground/70 font-body">
+                    Avg. Ticket Price
+                  </p>
+                  <p className="text-2xl font-heading font-bold velvet-text">
+                    ৳{reportData?.salesReport.avgTicketPrice.toLocaleString()}
+                  </p>
                   <p className="text-sm text-purple-600 flex items-center mt-1 font-body">
                     <TrendingUp className="h-4 w-4 mr-1" />
                     +3.7% from last month
@@ -408,8 +476,12 @@ export default function Reports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground/70 font-body">Profit Margin</p>
-                  <p className="text-2xl font-heading font-bold velvet-text">{reportData?.salesReport.profitMargin}%</p>
+                  <p className="text-sm text-foreground/70 font-body">
+                    Profit Margin
+                  </p>
+                  <p className="text-2xl font-heading font-bold velvet-text">
+                    {reportData?.salesReport.profitMargin}%
+                  </p>
                   <p className="text-sm text-orange-600 flex items-center mt-1 font-body">
                     <TrendingUp className="h-4 w-4 mr-1" />
                     +1.2% from last month
@@ -451,18 +523,18 @@ export default function Reports() {
               </TabsTrigger>
             </TabsList>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => exportReport("csv")}
                 className="font-body hover:scale-105 transform transition-all duration-200"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Export CSV
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => exportReport("excel")}
                 className="font-body hover:scale-105 transform transition-all duration-200"
               >
@@ -487,9 +559,12 @@ export default function Reports() {
                 <div className="h-64 flex items-center justify-center bg-gradient-to-br from-cream-100/50 to-cream-200/50 rounded-lg">
                   <div className="text-center">
                     <BarChart3 className="h-16 w-16 text-foreground/30 mx-auto mb-4 animate-float" />
-                    <p className="text-foreground/70 font-body font-medium">Sales Trend Visualization</p>
+                    <p className="text-foreground/70 font-body font-medium">
+                      Sales Trend Visualization
+                    </p>
                     <p className="text-sm text-foreground/50 font-body">
-                      Showing {reportData?.salesReport.dailySales.length} days of sales data
+                      Showing {reportData?.salesReport.dailySales.length} days
+                      of sales data
                     </p>
                     <Badge className="mt-2 bg-luxury-gold/20 text-luxury-gold border-luxury-gold">
                       Chart Ready for Integration
@@ -519,39 +594,70 @@ export default function Reports() {
                         <TableHead className="font-heading">Country</TableHead>
                         <TableHead className="font-heading">Bookings</TableHead>
                         <TableHead className="font-heading">Revenue</TableHead>
-                        <TableHead className="font-heading">Avg. Price</TableHead>
-                        <TableHead className="font-heading">Market Share</TableHead>
+                        <TableHead className="font-heading">
+                          Avg. Price
+                        </TableHead>
+                        <TableHead className="font-heading">
+                          Market Share
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {reportData?.countryReport.topCountries.map((country, index) => (
-                        <TableRow key={country.country} className="hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent">
-                          <TableCell className="font-medium font-body">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white ${
-                                index === 0 ? 'bg-gradient-to-br from-luxury-gold to-luxury-bronze' :
-                                index === 1 ? 'bg-gradient-to-br from-gray-400 to-gray-500' :
-                                index === 2 ? 'bg-gradient-to-br from-amber-600 to-amber-700' :
-                                'bg-gradient-to-br from-blue-500 to-blue-600'
-                              }`}>
-                                {index + 1}
+                      {reportData?.countryReport.topCountries.map(
+                        (country, index) => (
+                          <TableRow
+                            key={country.country}
+                            className="hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent"
+                          >
+                            <TableCell className="font-medium font-body">
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                                    index === 0
+                                      ? "bg-gradient-to-br from-luxury-gold to-luxury-bronze"
+                                      : index === 1
+                                        ? "bg-gradient-to-br from-gray-400 to-gray-500"
+                                        : index === 2
+                                          ? "bg-gradient-to-br from-amber-600 to-amber-700"
+                                          : "bg-gradient-to-br from-blue-500 to-blue-600"
+                                  }`}
+                                >
+                                  {index + 1}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-2xl">
+                                    {country.flag}
+                                  </span>
+                                  <span>{country.country}</span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-2xl">{country.flag}</span>
-                                <span>{country.country}</span>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-body">{country.bookings}</TableCell>
-                          <TableCell className="font-body font-semibold text-green-600">৳{country.revenue.toLocaleString()}</TableCell>
-                          <TableCell className="font-body">৳{Math.round(country.revenue / country.bookings).toLocaleString()}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="font-body">
-                              {((country.bookings / (reportData?.salesReport.totalBookings || 1)) * 100).toFixed(1)}%
-                            </Badge>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                            </TableCell>
+                            <TableCell className="font-body">
+                              {country.bookings}
+                            </TableCell>
+                            <TableCell className="font-body font-semibold text-green-600">
+                              ৳{country.revenue.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="font-body">
+                              ৳
+                              {Math.round(
+                                country.revenue / country.bookings,
+                              ).toLocaleString()}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="font-body">
+                                {(
+                                  (country.bookings /
+                                    (reportData?.salesReport.totalBookings ||
+                                      1)) *
+                                  100
+                                ).toFixed(1)}
+                                %
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )}
                     </TableBody>
                   </Table>
                 </div>
@@ -578,31 +684,57 @@ export default function Reports() {
                         <TableHead className="font-heading">Agent</TableHead>
                         <TableHead className="font-heading">Bookings</TableHead>
                         <TableHead className="font-heading">Revenue</TableHead>
-                        <TableHead className="font-heading">Avg. Deal Size</TableHead>
-                        <TableHead className="font-heading">Performance</TableHead>
+                        <TableHead className="font-heading">
+                          Avg. Deal Size
+                        </TableHead>
+                        <TableHead className="font-heading">
+                          Performance
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {reportData?.agentReport.topAgents.map((agent, index) => (
-                        <TableRow key={agent.agent} className="hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent">
+                        <TableRow
+                          key={agent.agent}
+                          className="hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent"
+                        >
                           <TableCell className="font-medium font-body">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center">
-                                <span className="text-xs font-bold text-blue-600">{index + 1}</span>
+                                <span className="text-xs font-bold text-blue-600">
+                                  {index + 1}
+                                </span>
                               </div>
                               {agent.agent}
                             </div>
                           </TableCell>
-                          <TableCell className="font-body">{agent.bookings}</TableCell>
-                          <TableCell className="font-body font-semibold text-green-600">৳{agent.revenue.toLocaleString()}</TableCell>
-                          <TableCell className="font-body">৳{Math.round(agent.revenue / agent.bookings).toLocaleString()}</TableCell>
+                          <TableCell className="font-body">
+                            {agent.bookings}
+                          </TableCell>
+                          <TableCell className="font-body font-semibold text-green-600">
+                            ৳{agent.revenue.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="font-body">
+                            ৳
+                            {Math.round(
+                              agent.revenue / agent.bookings,
+                            ).toLocaleString()}
+                          </TableCell>
                           <TableCell>
-                            <Badge className={`font-body ${
-                              index < 2 ? "bg-green-100 text-green-800" : 
-                              index < 4 ? "bg-blue-100 text-blue-800" : 
-                              "bg-gray-100 text-gray-800"
-                            }`}>
-                              {index < 2 ? "🏆 Excellent" : index < 4 ? "⭐ Good" : "👍 Average"}
+                            <Badge
+                              className={`font-body ${
+                                index < 2
+                                  ? "bg-green-100 text-green-800"
+                                  : index < 4
+                                    ? "bg-blue-100 text-blue-800"
+                                    : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {index < 2
+                                ? "🏆 Excellent"
+                                : index < 4
+                                  ? "⭐ Good"
+                                  : "👍 Average"}
                             </Badge>
                           </TableCell>
                         </TableRow>
@@ -628,23 +760,39 @@ export default function Reports() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {reportData?.paymentReport.paymentMethods.map((method, index) => (
-                      <div key={method.method} className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-cream-100/30 to-transparent hover:from-cream-100/50 transition-all duration-200">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-4 h-4 rounded ${
-                            index === 0 ? 'bg-green-500' :
-                            index === 1 ? 'bg-blue-500' :
-                            index === 2 ? 'bg-purple-500' :
-                            'bg-orange-500'
-                          }`}></div>
-                          <span className="font-medium font-body">{method.method}</span>
+                    {reportData?.paymentReport.paymentMethods.map(
+                      (method, index) => (
+                        <div
+                          key={method.method}
+                          className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-cream-100/30 to-transparent hover:from-cream-100/50 transition-all duration-200"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-4 h-4 rounded ${
+                                index === 0
+                                  ? "bg-green-500"
+                                  : index === 1
+                                    ? "bg-blue-500"
+                                    : index === 2
+                                      ? "bg-purple-500"
+                                      : "bg-orange-500"
+                              }`}
+                            ></div>
+                            <span className="font-medium font-body">
+                              {method.method}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold font-body">
+                              ৳{method.amount.toLocaleString()}
+                            </p>
+                            <p className="text-sm text-foreground/60 font-body">
+                              {method.count} transactions
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold font-body">৳{method.amount.toLocaleString()}</p>
-                          <p className="text-sm text-foreground/60 font-body">{method.count} transactions</p>
-                        </div>
-                      </div>
-                    ))}
+                      ),
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -664,12 +812,25 @@ export default function Reports() {
                     <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-green-100/30 to-transparent">
                       <div className="flex items-center gap-3">
                         <div className="w-4 h-4 bg-green-500 rounded"></div>
-                        <span className="font-medium font-body">Completed Payments</span>
+                        <span className="font-medium font-body">
+                          Completed Payments
+                        </span>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-green-600 font-body">{reportData?.paymentReport.completedPayments}</p>
+                        <p className="font-semibold text-green-600 font-body">
+                          {reportData?.paymentReport.completedPayments}
+                        </p>
                         <p className="text-sm text-foreground/60 font-body">
-                          {((reportData?.paymentReport.completedPayments || 0) / ((reportData?.paymentReport.completedPayments || 0) + (reportData?.paymentReport.pendingPayments || 0)) * 100).toFixed(1)}%
+                          {(
+                            ((reportData?.paymentReport.completedPayments ||
+                              0) /
+                              ((reportData?.paymentReport.completedPayments ||
+                                0) +
+                                (reportData?.paymentReport.pendingPayments ||
+                                  0))) *
+                            100
+                          ).toFixed(1)}
+                          %
                         </p>
                       </div>
                     </div>
@@ -677,21 +838,36 @@ export default function Reports() {
                     <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-yellow-100/30 to-transparent">
                       <div className="flex items-center gap-3">
                         <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-                        <span className="font-medium font-body">Pending Payments</span>
+                        <span className="font-medium font-body">
+                          Pending Payments
+                        </span>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-yellow-600 font-body">{reportData?.paymentReport.pendingPayments}</p>
+                        <p className="font-semibold text-yellow-600 font-body">
+                          {reportData?.paymentReport.pendingPayments}
+                        </p>
                         <p className="text-sm text-foreground/60 font-body">
-                          {((reportData?.paymentReport.pendingPayments || 0) / ((reportData?.paymentReport.completedPayments || 0) + (reportData?.paymentReport.pendingPayments || 0)) * 100).toFixed(1)}%
+                          {(
+                            ((reportData?.paymentReport.pendingPayments || 0) /
+                              ((reportData?.paymentReport.completedPayments ||
+                                0) +
+                                (reportData?.paymentReport.pendingPayments ||
+                                  0))) *
+                            100
+                          ).toFixed(1)}
+                          %
                         </p>
                       </div>
                     </div>
 
                     <div className="pt-4 border-t border-border/30">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium font-body">Total Transactions</span>
+                        <span className="font-medium font-body">
+                          Total Transactions
+                        </span>
                         <span className="font-bold font-heading velvet-text">
-                          {(reportData?.paymentReport.completedPayments || 0) + (reportData?.paymentReport.pendingPayments || 0)}
+                          {(reportData?.paymentReport.completedPayments || 0) +
+                            (reportData?.paymentReport.pendingPayments || 0)}
                         </span>
                       </div>
                     </div>
