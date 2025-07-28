@@ -96,6 +96,21 @@
     @apply border-border;
   }
 
+  /* Performance optimizations */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     @apply bg-background text-foreground font-body;
     background: linear-gradient(
@@ -104,6 +119,18 @@
       hsl(42 60% 94%) 100%
     );
     min-height: 100vh;
+    line-height: 1.6;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+  }
+
+  /* Improve tap targets for mobile */
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
   }
 
   h1,
