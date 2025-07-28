@@ -338,8 +338,7 @@ export function createResponsiveStyles(
   return mergedStyles;
 }
 
-// Mock React import for TypeScript (this would be imported in real usage)
-declare const React: any;
+
 
 export default {
   breakpoints,
