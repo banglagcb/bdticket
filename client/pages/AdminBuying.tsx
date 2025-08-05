@@ -155,7 +155,7 @@ export default function AdminBuying() {
     if (!formData.quantity || formData.quantity <= 0) {
       errors.quantity = "টিকেটের সংখ্যা ০ ���র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
     } else if (formData.quantity > 1000) {
-      errors.quantity = "একবারে সর্বোচ্চ ১০০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
+      errors.quantity = "একবারে সর্বোচ্চ ১��০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
     }
 
     // Agent name validation
@@ -214,7 +214,7 @@ export default function AdminBuying() {
     return errors;
   };
 
-  // Real-time form validation
+  // Real-time validation - form validation happens in real-time
   useEffect(() => {
     const formErrors = validateForm();
     const businessErrors = validateBusinessRules();
@@ -290,7 +290,7 @@ export default function AdminBuying() {
     if (Object.keys(allErrors).length > 0) {
       setValidationErrors(allErrors);
       toast({
-        title: "ভ্যালিডেশন ত্রুটি / Validation Error",
+        title: "ভ্যা���িডেশন ত্রুটি / Validation Error",
         description: "দয়া করে সব ক্ষেত্র সঠিকভাবে পূরণ করুন / Please fill all fields correctly",
         variant: "destructive",
       });
