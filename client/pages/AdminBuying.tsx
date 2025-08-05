@@ -101,6 +101,145 @@ export default function AdminBuying() {
     // Will be populated with real purchase data
   ];
 
+  // Comprehensive validation functions
+  const validateForm = (): Record<string, string> => {
+    const errors: Record<string, string> = {};
+
+    // Country validation
+    if (!formData.country.trim()) {
+      errors.country = "দেশ নির্বাচন করা আবশ্যক / Country selection is required";
+    }
+
+    // Airline validation
+    if (!formData.airline.trim()) {
+      errors.airline = "এয়ারলাইন নির্বাচন করা আবশ্যক / Airline selection is required";
+    }
+
+    // Flight date validation
+    if (!formData.flightDate) {
+      errors.flightDate = "ফ্লাইটের তারিখ আবশ্যক / Flight date is required";
+    } else {
+      const flightDate = new Date(formData.flightDate);
+      const today = new Date();
+      const maxDate = new Date();
+      maxDate.setFullYear(today.getFullYear() + 1); // Max 1 year in future
+
+      if (flightDate < today) {
+        errors.flightDate = "ভবিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
+      }
+      if (flightDate > maxDate) {
+        errors.flightDate = "১ বছরের মধ্যে তারিখ নির্বাচন করুন / Please select date within 1 year";
+      }
+    }
+
+    // Flight time validation
+    if (!formData.flightTime) {
+      errors.flightTime = "ফ্লাইটের সময় আবশ্যক / Flight time is required";
+    } else {
+      const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (!timeRegex.test(formData.flightTime)) {
+        errors.flightTime = "সঠিক সময় ফরম্যাট ব্যবহার করুন (HH:MM) / Please use correct time format (HH:MM)";
+      }
+    }
+
+    // Buying price validation
+    if (!formData.buyingPrice || formData.buyingPrice <= 0) {
+      errors.buyingPrice = "ক্রয় মূল্য ০ এর চেয়ে বেশি হতে হবে / Buying price must be greater than 0";
+    } else if (formData.buyingPrice < 1000) {
+      errors.buyingPrice = "ক্রয় মূল্য কমপক্ষে ১০০০ টাকা হতে হবে / Buying price must be at least ৳1000";
+    } else if (formData.buyingPrice > 200000) {
+      errors.buyingPrice = "ক্রয় মূল্য ২,০০,০০০ টাকার চেয়ে বেশি হতে পারে না / Buying price cannot exceed ৳2,00,000";
+    }
+
+    // Quantity validation
+    if (!formData.quantity || formData.quantity <= 0) {
+      errors.quantity = "টিকেটের সংখ্যা ০ ���র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
+    } else if (formData.quantity > 1000) {
+      errors.quantity = "একবারে সর্বোচ্চ ১০০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
+    }
+
+    // Agent name validation
+    if (!formData.agentName.trim()) {
+      errors.agentName = "এজেন্টের নাম আবশ্যক / Agent name is required";
+    } else if (formData.agentName.trim().length < 3) {
+      errors.agentName = "এজেন্টের নাম কমপক্ষে ৩ অক্ষর হতে হবে / Agent name must be at least 3 characters";
+    }
+
+    // Agent contact validation
+    if (!formData.agentContact.trim()) {
+      errors.agentContact = "এজেন্টের যোগাযোগ নম্বর আবশ্যক / Agent contact is required";
+    } else {
+      const phoneRegex = /^(\+880|880|0)?(1[3-9]\d{8})$/;
+      const cleanContact = formData.agentContact.replace(/[\s-]/g, '');
+      if (!phoneRegex.test(cleanContact)) {
+        errors.agentContact = "সঠিক বাংলাদেশি মোবাইল নম্বর দিন / Please provide valid Bangladeshi mobile number";
+      }
+    }
+
+    // Agent address validation
+    if (formData.agentAddress && formData.agentAddress.trim().length > 0 && formData.agentAddress.trim().length < 10) {
+      errors.agentAddress = "ঠিকানা কমপক্ষে ১০ অক্ষর হতে হবে / Address must be at least 10 characters";
+    }
+
+    // Total cost validation
+    const totalCost = formData.buyingPrice * formData.quantity;
+    if (totalCost > 50000000) { // 5 crore limit
+      errors.general = "মোট খরচ ৫ কোটি টাকার বেশি হতে পারে না / Total cost cannot exceed ৳5 crore";
+    }
+
+    return errors;
+  };
+
+  // Business logic validation
+  const validateBusinessRules = (): Record<string, string> => {
+    const errors: Record<string, string> = {};
+
+    // Check for duplicate flights on same date/time
+    const existingFlight = pastPurchases.find(p =>
+      p.country === formData.country &&
+      p.airline === formData.airline &&
+      p.flightDate === formData.flightDate
+    );
+
+    if (existingFlight) {
+      errors.duplicate = "একই দিনে, একই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
+    }
+
+    // Check minimum profit margin (20%)
+    const estimatedSellingPrice = formData.buyingPrice * 1.15; // Minimum 15% markup
+    if (estimatedSellingPrice - formData.buyingPrice < formData.buyingPrice * 0.1) {
+      errors.profit = "লাভের মার্জিন কমপক্ষে ১০% রাখুন / Keep minimum 10% profit margin";
+    }
+
+    return errors;
+  };
+
+  // Real-time form validation
+  useEffect(() => {
+    const formErrors = validateForm();
+    const businessErrors = validateBusinessRules();
+    const allErrors = { ...formErrors, ...businessErrors };
+
+    setValidationErrors(allErrors);
+    setIsFormValid(Object.keys(allErrors).length === 0);
+  }, [formData]);
+
+  // Financial calculations with validation
+  const calculateFinancials = () => {
+    const totalCost = formData.buyingPrice * formData.quantity;
+    const estimatedSellingPrice = Math.round(formData.buyingPrice * 1.2); // 20% markup
+    const estimatedRevenue = estimatedSellingPrice * formData.quantity;
+    const estimatedProfit = estimatedRevenue - totalCost;
+
+    return {
+      totalCost,
+      estimatedSellingPrice,
+      estimatedRevenue,
+      estimatedProfit,
+      profitMargin: totalCost > 0 ? ((estimatedProfit / totalCost) * 100).toFixed(1) : "0"
+    };
+  };
+
   const countries = [
     { code: "KSA", name: "Saudi Arabia", flag: "🇸🇦" },
     { code: "UAE", name: "United Arab Emirates", flag: "🇦🇪" },
