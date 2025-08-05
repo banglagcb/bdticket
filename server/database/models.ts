@@ -597,6 +597,22 @@ export class BookingRepository {
 
   static updateStatus(id: string, status: Booking["status"]): boolean {
     console.log("BookingRepository.updateStatus called with:", { id, status });
+
+    // First check if the booking exists and get current status
+    const currentBooking = this.findById(id);
+    if (!currentBooking) {
+      console.log("Booking not found for status update:", id);
+      return false;
+    }
+
+    console.log("Current booking status:", currentBooking.status);
+
+    // If the status is already the same, consider it successful
+    if (currentBooking.status === status) {
+      console.log("Status is already set to:", status);
+      return true;
+    }
+
     const now = new Date().toISOString();
     let stmt;
     let result;
