@@ -133,9 +133,9 @@ function verifyValidationSystem() {
   // 5. Check multi-language support
   console.log('\n🌐 Multi-language Support Check:');
   const multiLanguageFeatures = [
-    'Bengali error messages',
-    'English error messages', 
-    'Dual language validation',
+    'দেশ নির্বাচন', // Bengali text exists
+    'Country selection is required', // English text exists
+    'আবশ্যক / ', // Dual language pattern
     'বাংলা ভ্যালিডেশন',
     'তথ্য সঠিকভাবে'
   ];
