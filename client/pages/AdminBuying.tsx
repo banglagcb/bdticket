@@ -92,6 +92,9 @@ export default function AdminBuying() {
   });
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [isFormValid, setIsFormValid] = useState(false);
+  const { toast } = useToast();
 
   // Mock data for past purchases
   const pastPurchases: PastPurchase[] = [
