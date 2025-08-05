@@ -167,7 +167,7 @@ export default function AdminBuying() {
 
     // Agent contact validation
     if (!formData.agentContact.trim()) {
-      errors.agentContact = "এজেন্টের যোগাযোগ নম্বর আবশ্যক / Agent contact is required";
+      errors.agentContact = "এজেন্টের যোগাযোগ নম্বর আবশ্���ক / Agent contact is required";
     } else {
       const phoneRegex = /^(\+880|880|0)?(1[3-9]\d{8})$/;
       const cleanContact = formData.agentContact.replace(/[\s-]/g, '');
@@ -525,6 +525,11 @@ export default function AdminBuying() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {validationErrors.country && (
+                        <p className="text-red-500 text-sm font-body mt-1">
+                          {validationErrors.country}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
