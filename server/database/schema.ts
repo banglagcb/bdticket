@@ -288,20 +288,18 @@ export function seedDatabase() {
       insertSetting.run(...setting);
     }
 
-    // Create sample ticket batches and tickets
-    const adminUser = db
-      .prepare("SELECT id FROM users WHERE role = ? LIMIT 1")
-      .get("admin") as { id: string };
+    // NOTE: Dummy ticket data creation has been removed
+    // The system is now ready for real ticket data to be added
+    // through the admin interface or API endpoints
 
-    const insertBatch = db.prepare(`
-      INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, created_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+    console.log("✅ Essential data seeded successfully!");
+    console.log("💡 Dummy ticket data has been excluded - system ready for real tickets");
 
-    const insertTicket = db.prepare(`
-      INSERT INTO tickets (id, batch_id, flight_number, status, selling_price, aircraft, terminal, arrival_time, duration, available_seats, total_seats)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+    /*
+    // REMOVED: Sample ticket batches and tickets creation
+    // This section previously created dummy ticket data
+    // Real tickets should now be added through the application interface
+    */
 
     // Sample data - More comprehensive data for all countries
     const sampleBatches = [
