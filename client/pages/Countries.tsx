@@ -31,15 +31,34 @@ function CountryCard({ country, index }: CountryCardProps) {
       ? (country.availableTickets / country.totalTickets) * 100
       : 0;
 
+  const getAvailabilityStatus = () => {
+    if (availabilityPercentage > 50) return 'high';
+    if (availabilityPercentage > 20) return 'medium';
+    return 'low';
+  };
+
+  const availabilityStatus = getAvailabilityStatus();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
+      whileHover={{ scale: 1.02, y: -5 }}
+      whileTap={{ scale: 0.98 }}
     >
       <Link to={`/tickets/${country.code.toLowerCase()}`}>
         <Card className="h-full luxury-card hover:shadow-2xl transition-all duration-300 cursor-pointer group border-0 overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-luxury-gold/5 to-luxury-bronze/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+          {/* Availability Status Indicator */}
+          <div className={`absolute top-2 right-2 w-3 h-3 rounded-full z-20 ${
+            availabilityStatus === 'high'
+              ? 'bg-green-500 animate-pulse'
+              : availabilityStatus === 'medium'
+                ? 'bg-yellow-500'
+                : 'bg-red-500'
+          }`} title={`${availabilityPercentage.toFixed(0)}% available`}></div>
           <CardHeader className="text-center pb-2 relative z-10">
             <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
               {country.flag}
