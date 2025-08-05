@@ -46,6 +46,7 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { CreateTicketBatchRequest } from "@shared/api";
+import { useToast } from "../hooks/use-toast";
 
 interface PastPurchase {
   id: string;
