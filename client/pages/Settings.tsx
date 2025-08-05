@@ -180,12 +180,12 @@ export default function Settings() {
   });
 
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
-    companyName: "BD TicketPro",
-    companyEmail: "info@bdticketpro.com",
-    companyPhone: "+880-123-456-7890",
-    companyAddress: "Dhanmondi, Dhaka, Bangladesh",
-    companyWebsite: "https://bdticketpro.com",
-    tradeLicense: "TRAD/DSCC/123456/2024",
+    companyName: "Your Travel Agency",
+    companyEmail: "",
+    companyPhone: "",
+    companyAddress: "",
+    companyWebsite: "",
+    tradeLicense: "",
     defaultCurrency: "BDT",
     timezone: "Asia/Dhaka",
     language: "en",
