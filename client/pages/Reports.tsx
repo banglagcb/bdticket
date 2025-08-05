@@ -127,23 +127,12 @@ export default function Reports() {
           topCountries: [], // Will be populated with real booking and revenue data
         },
         agentReport: {
-          topAgents: [
-            { agent: "Rahman Travel Agency", bookings: 23, revenue: 420000 },
-            { agent: "Sundarban Tours", bookings: 18, revenue: 325000 },
-            { agent: "Golden Travel", bookings: 15, revenue: 275000 },
-            { agent: "Dream Holidays", bookings: 12, revenue: 220000 },
-            { agent: "Sky Way Travel", bookings: 10, revenue: 185000 },
-          ],
+          topAgents: [], // Will show real agent performance data
         },
         paymentReport: {
-          paymentMethods: [
-            { method: "Cash", count: 78, amount: 1425000 },
-            { method: "Bank Transfer", count: 45, amount: 825000 },
-            { method: "Mobile Banking", count: 23, amount: 420000 },
-            { method: "Credit Card", count: 10, amount: 180000 },
-          ],
-          pendingPayments: 12,
-          completedPayments: 144,
+          paymentMethods: [], // Will show real payment method statistics
+          pendingPayments: 0,
+          completedPayments: 0,
         },
       };
 
