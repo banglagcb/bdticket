@@ -118,13 +118,29 @@ function CountryCard({ country, index }: CountryCardProps) {
 
               <div className="flex items-center space-x-2">
                 <div
-                  className="p-1 bg-gradient-to-br from-green-100 to-green-200 rounded animate-float"
+                  className={`p-1 rounded animate-float ${
+                    availabilityStatus === 'high'
+                      ? 'bg-gradient-to-br from-green-100 to-green-200'
+                      : availabilityStatus === 'medium'
+                        ? 'bg-gradient-to-br from-yellow-100 to-yellow-200'
+                        : 'bg-gradient-to-br from-red-100 to-red-200'
+                  }`}
                   style={{ animationDelay: "0.5s" }}
                 >
-                  <Ticket className="h-3 w-3 text-green-600" />
+                  <Ticket className={`h-3 w-3 ${
+                    availabilityStatus === 'high'
+                      ? 'text-green-600'
+                      : availabilityStatus === 'medium'
+                        ? 'text-yellow-600'
+                        : 'text-red-600'
+                  }`} />
                 </div>
                 <span className="font-body text-xs text-foreground/70">
-                  View Tickets
+                  {availabilityStatus === 'high'
+                    ? 'High Availability'
+                    : availabilityStatus === 'medium'
+                      ? 'Limited Stock'
+                      : 'Low Stock'}
                 </span>
               </div>
             </div>
