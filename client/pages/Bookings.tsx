@@ -123,10 +123,86 @@ export default function Bookings() {
 
   const handleStatusUpdate = async (bookingId: string, newStatus: string) => {
     try {
+      // Find the booking to validate
+      const booking = bookings.find(b => b.id === bookingId);
+      if (!booking) {
+        throw new Error("বুকিং খুঁজে পাওয়া যায়নি / Booking not found");
+      }
+
+      // 1st Check: Status transition validation
+      const currentStatus = booking.status;
+      const validTransitions: Record<string, string[]> = {
+        'pending': ['confirmed', 'cancelled'],
+        'confirmed': ['cancelled'], // Can only cancel confirmed bookings
+        'cancelled': [], // Cannot change cancelled bookings
+        'expired': [] // Cannot change expired bookings
+      };
+
+      if (!validTransitions[currentStatus]?.includes(newStatus)) {
+        throw new Error(
+          `অবৈধ স্ট্যাটাস পরিবর্তন: ${currentStatus} থেকে ${newStatus} এ পরিবর্তন করা যাবে না / Invalid status transition: Cannot change from ${currentStatus} to ${newStatus}`
+        );
+      }
+
+      // 2nd Check: Permission validation
+      if (newStatus === 'confirmed' && !hasPermission('confirm_sales')) {
+        throw new Error("বুকিং নিশ্চিত করার অনুমতি নেই / No permission to confirm bookings");
+      }
+
+      // 3rd Check: Business logic validation
+      if (newStatus === 'confirmed') {
+        // Check if flight date is in the future
+        const flightDate = new Date(booking.ticketInfo?.flightDate || '');
+        const today = new Date();
+        if (flightDate <= today) {
+          throw new Error("অতীতের ফ্লাইটের জন্য বুকিং নিশ্চিত করা যাবে না / Cannot confirm booking for past flights");
+        }
+
+        // Confirm large amount bookings
+        const totalAmount = booking.sellingPrice * booking.passengerInfo.paxCount;
+        if (totalAmount > 500000) { // 5 lakh
+          const confirmed = window.confirm(
+            `বড় পরিমাণের বুকিং নিশ্চিতকরণ: ৳${totalAmount.toLocaleString()}\n\nআপনি কি নিশ্চিত?\n\nLarge booking confirmation: ৳${totalAmount.toLocaleString()}\n\nAre you sure?`
+          );
+          if (!confirmed) return;
+        }
+      }
+
+      // 4th Check: Final confirmation for critical actions
+      if (newStatus === 'cancelled') {
+        const confirmed = window.confirm(
+          `বুকিং বাতিল করা হবে: ${booking.passengerInfo?.name}\n\nআপনি কি নিশ্চিত?\n\nCancel booking for: ${booking.passengerInfo?.name}\n\nAre you sure?`
+        );
+        if (!confirmed) return;
+      }
+
+      // Log the action for audit
+      console.log("=== বুকিং স্ট্যাটাস আ���ডেট অডিট লগ / BOOKING STATUS UPDATE AUDIT LOG ===");
+      console.log("বুকিং আইডি / Booking ID:", bookingId);
+      console.log("যাত্রীর নাম / Passenger Name:", booking.passengerInfo?.name);
+      console.log("পূর্বের স্ট্যাটাস / Previous Status:", currentStatus);
+      console.log("নতুন স্ট্যাটাস / New Status:", newStatus);
+      console.log("ব্যবহারকারী / User:", user?.name);
+      console.log("সময় / Time:", new Date().toLocaleString());
+      console.log("=== লগ শেষ / END LOG ===");
+
+      // Perform the update
       await apiClient.updateBookingStatus(bookingId, newStatus);
       await loadBookings(); // Refresh the list
-    } catch (err) {
+
+      // Success notification
+      toast({
+        title: "সফল / Success!",
+        description: `বুকিং স্ট্যাটাস আপডেট হয়েছে: ${currentStatus} → ${newStatus} / Booking status updated: ${currentStatus} → ${newStatus}`,
+      });
+
+    } catch (err: any) {
       console.error("Failed to update booking status:", err);
+      toast({
+        title: "ত্রুটি / Error",
+        description: err.message || "বুকিং স্ট্যাটাস আপডেট করতে ব্যর্থ / Failed to update booking status",
+        variant: "destructive",
+      });
     }
   };
 
