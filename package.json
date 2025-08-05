@@ -23,7 +23,8 @@
     "format.fix": "prettier --write .",
     "typecheck": "tsc",
     "verify-deployment": "node scripts/verify-deployment.js",
-    "clear-dummy-data": "node clear-dummy-data.js"
+    "clear-dummy-data": "node clear-dummy-data.js",
+    "verify-db": "node verify-clean-db.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
