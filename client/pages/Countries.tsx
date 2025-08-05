@@ -343,6 +343,27 @@ export default function Countries() {
     return () => clearInterval(timer);
   }, []);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey) return; // Ignore if modifier keys are pressed
+
+      switch (event.key.toLowerCase()) {
+        case 'r':
+          event.preventDefault();
+          handleManualRefresh();
+          break;
+        case 't':
+          event.preventDefault();
+          toggleAutoRefresh();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [handleManualRefresh, toggleAutoRefresh]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
