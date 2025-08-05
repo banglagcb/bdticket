@@ -203,9 +203,9 @@ export default function Countries() {
         {
           code: "QAT",
           name: "Qatar",
-          flag: "����🇦",
-          totalTickets: 33,
-          availableTickets: 28,
+          flag: "🇶🇦",
+          totalTickets: 0,
+          availableTickets: 0,
         },
         {
           code: "KWT",
