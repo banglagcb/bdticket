@@ -591,7 +591,7 @@ export function seedDatabase() {
       }
     }
 
-    console.log("Database seeded successfully with sample data");
+    console.log("Database seeded successfully - ready for real ticket data");
   } catch (error) {
     console.error("Error seeding database:", error);
   }
