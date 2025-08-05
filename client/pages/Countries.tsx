@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Plane, MapPin, Ticket, RefreshCw, AlertCircle } from "lucide-react";
+import { Plane, MapPin, Ticket, RefreshCw, AlertCircle, Clock, Wifi, WifiOff } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -60,7 +60,7 @@ function CountryCard({ country, index }: CountryCardProps) {
                   Available
                 </span>
                 <span className="font-heading font-semibold text-primary">
-                  {country.availableTickets}
+                  {country.availableTickets.toLocaleString()}
                 </span>
               </div>
 
@@ -72,7 +72,7 @@ function CountryCard({ country, index }: CountryCardProps) {
               </div>
 
               <div className="flex justify-between items-center text-xs font-body text-foreground/50">
-                <span>Total: {country.totalTickets}</span>
+                <span>Total: {country.totalTickets.toLocaleString()}</span>
                 <span>{availabilityPercentage.toFixed(0)}% available</span>
               </div>
             </div>
@@ -111,16 +111,28 @@ export default function Countries() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const mountedRef = useRef(true);
 
-  const loadCountries = async () => {
+  const loadCountries = useCallback(async (showLoader = true) => {
     try {
-      setLoading(true);
+      if (showLoader) {
+        setLoading(true);
+      }
       setError(null);
       console.log("Loading countries data...");
       const data = await apiClient.getCountries();
       console.log("Countries API response:", data);
       console.log("Countries array:", data.countries);
-      setCountries(data.countries || []);
+
+      if (mountedRef.current) {
+        setCountries(data.countries || []);
+        setLastUpdated(new Date());
+        setError(null);
+      }
     } catch (err) {
       console.error("Failed to load countries:", err);
       console.log("Using demo data due to authentication...");
@@ -185,15 +197,106 @@ export default function Countries() {
         },
       ];
 
-      setCountries(demoCountries);
-      setError(null); // Clear error since we're showing demo data
+      if (mountedRef.current) {
+        setCountries(demoCountries);
+        setLastUpdated(new Date());
+        setError(null); // Clear error since we're showing demo data
+      }
     } finally {
-      setLoading(false);
+      if (showLoader && mountedRef.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, []);
+
+  // Handle online/offline status
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      if (autoRefresh) {
+        loadCountries(false);
+      }
+    };
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [loadCountries, autoRefresh]);
+
+  // Auto-refresh functionality
+  useEffect(() => {
+    if (autoRefresh && isOnline) {
+      // Refresh every 30 seconds when auto-refresh is enabled
+      intervalRef.current = setInterval(() => {
+        loadCountries(false);
+      }, 30000);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [autoRefresh, isOnline, loadCountries]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     loadCountries();
+  }, [loadCountries]);
+
+  // Manual refresh handler
+  const handleManualRefresh = useCallback(() => {
+    loadCountries(true);
+  }, [loadCountries]);
+
+  // Toggle auto-refresh
+  const toggleAutoRefresh = useCallback(() => {
+    setAutoRefresh(prev => !prev);
+  }, []);
+
+  // Format last updated time
+  const formatLastUpdated = useCallback(() => {
+    if (!lastUpdated) return '';
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - lastUpdated.getTime()) / 1000);
+
+    if (diffInSeconds < 60) {
+      return `Updated ${diffInSeconds}s ago`;
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `Updated ${minutes}m ago`;
+    } else {
+      return lastUpdated.toLocaleTimeString();
+    }
+  }, [lastUpdated]);
+
+  // Update the formatted time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Force re-render to update the time display
+      setLastUpdated(prev => prev);
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   if (loading) {
@@ -218,10 +321,11 @@ export default function Countries() {
         </h3>
         <p className="text-foreground/70 font-body mb-4">{error}</p>
         <Button
-          onClick={loadCountries}
+          onClick={handleManualRefresh}
           className="velvet-button text-primary-foreground font-body"
+          disabled={loading}
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Retry
         </Button>
       </div>
@@ -261,21 +365,49 @@ export default function Countries() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Button
-              onClick={loadCountries}
-              variant="outline"
-              size="sm"
-              className="font-body hover:scale-105 transform transition-all duration-200"
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
+            <div className="flex items-center space-x-2">
+          {/* Connection Status */}
+          <div className="flex items-center space-x-1 text-xs">
+            {isOnline ? (
+              <Wifi className="h-3 w-3 text-green-500" />
+            ) : (
+              <WifiOff className="h-3 w-3 text-red-500" />
+            )}
+            <span className={`font-body ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
+              {isOnline ? 'Online' : 'Offline'}
+            </span>
+          </div>
+
+          {/* Auto-refresh toggle */}
+          <Button
+            onClick={toggleAutoRefresh}
+            variant={autoRefresh ? "default" : "outline"}
+            size="sm"
+            className="font-body text-xs px-2 py-1"
+            title={autoRefresh ? "Disable auto-refresh" : "Enable auto-refresh"}
+          >
+            <Clock className="h-3 w-3 mr-1" />
+            Auto
+          </Button>
+
+          {/* Manual refresh */}
+          <Button
+            onClick={handleManualRefresh}
+            variant="outline"
+            size="sm"
+            disabled={loading}
+            className="font-body hover:scale-105 transform transition-all duration-200"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
 
             {/* Summary Stats */}
             <div className="hidden md:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0 backdrop-blur-md">
               <div className="text-center">
                 <p className="text-2xl font-heading font-bold text-primary velvet-text">
-                  {totalAvailable}
+                  {totalAvailable.toLocaleString()}
                 </p>
                 <p className="text-xs font-body text-foreground/60">
                   Available
@@ -283,7 +415,7 @@ export default function Countries() {
               </div>
               <div className="text-center">
                 <p className="text-2xl font-heading font-bold text-foreground velvet-text">
-                  {totalTickets}
+                  {totalTickets.toLocaleString()}
                 </p>
                 <p className="text-xs font-body text-foreground/60">Total</p>
               </div>
@@ -295,6 +427,21 @@ export default function Countries() {
                   Countries
                 </p>
               </div>
+
+              {/* Last Updated Info */}
+              {lastUpdated && (
+                <div className="text-center border-l border-border/30 pl-4">
+                  <p className="text-xs font-body text-foreground/60">
+                    {formatLastUpdated()}
+                  </p>
+                  {autoRefresh && isOnline && (
+                    <div className="flex items-center justify-center mt-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-xs font-body text-green-600 ml-1">Live</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -309,13 +456,13 @@ export default function Countries() {
       >
         <Card className="text-center p-4 luxury-card border-0">
           <div className="text-xl font-heading font-bold text-primary velvet-text">
-            {totalAvailable}
+            {totalAvailable.toLocaleString()}
           </div>
           <div className="text-xs font-body text-foreground/60">Available</div>
         </Card>
         <Card className="text-center p-4 luxury-card border-0">
           <div className="text-xl font-heading font-bold text-foreground velvet-text">
-            {totalTickets}
+            {totalTickets.toLocaleString()}
           </div>
           <div className="text-xs font-body text-foreground/60">Total</div>
         </Card>
@@ -324,6 +471,12 @@ export default function Countries() {
             {countries.length}
           </div>
           <div className="text-xs font-body text-foreground/60">Countries</div>
+          {lastUpdated && autoRefresh && isOnline && (
+            <div className="flex items-center justify-center mt-1">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-xs font-body text-green-600 ml-1">Live</span>
+            </div>
+          )}
         </Card>
       </motion.div>
 
@@ -358,9 +511,17 @@ export default function Countries() {
         transition={{ delay: 0.8, duration: 0.5 }}
         className="text-center py-8"
       >
-        <p className="font-body text-sm text-foreground/50">
-          Click on any country to view available tickets and make bookings
-        </p>
+        <div className="space-y-2">
+          <p className="font-body text-sm text-foreground/50">
+            Click on any country to view available tickets and make bookings
+          </p>
+          {lastUpdated && (
+            <p className="font-body text-xs text-foreground/40">
+              Last updated: {lastUpdated.toLocaleString()} •
+              {autoRefresh && isOnline ? 'Auto-refreshing every 30s' : 'Manual refresh only'}
+            </p>
+          )}
+        </div>
       </motion.div>
     </div>
   );
