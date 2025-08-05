@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../context/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -162,7 +163,7 @@ export default function Bookings() {
         const totalAmount = booking.sellingPrice * booking.passengerInfo.paxCount;
         if (totalAmount > 500000) { // 5 lakh
           const confirmed = window.confirm(
-            `বড় পরিমাণের বুকিং নিশ্চিতকরণ: ৳${totalAmount.toLocaleString()}\n\nআপনি কি নিশ্চিত?\n\nLarge booking confirmation: ৳${totalAmount.toLocaleString()}\n\nAre you sure?`
+            `বড় পরিমাণের বুকিং নিশ্চিতকরণ: ৳${totalAmount.toLocaleString()}\n\nআপনি কি ���িশ্চিত?\n\nLarge booking confirmation: ৳${totalAmount.toLocaleString()}\n\nAre you sure?`
           );
           if (!confirmed) return;
         }
