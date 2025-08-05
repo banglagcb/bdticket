@@ -441,7 +441,7 @@ export default function AdminBuying() {
                             handleInputChange("agentContact", e.target.value)
                           }
                           className="pl-10 font-body"
-                          placeholder="+8801234567890"
+                          placeholder="Enter agent contact number"
                         />
                       </div>
                     </div>
