@@ -82,6 +82,7 @@ const paymentColors = {
 export default function Bookings() {
   const { user, hasPermission } = useAuth();
   const [searchParams] = useSearchParams();
+  const { toast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
