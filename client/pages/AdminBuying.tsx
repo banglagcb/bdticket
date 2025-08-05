@@ -380,7 +380,7 @@ export default function AdminBuying() {
                             )
                           }
                           className="pl-10 font-body"
-                          placeholder="18000"
+                          placeholder="Enter buying price per ticket"
                           required
                         />
                       </div>
