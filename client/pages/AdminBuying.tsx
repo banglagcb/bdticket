@@ -47,6 +47,7 @@ import {
 } from "../components/ui/tabs";
 import { CreateTicketBatchRequest } from "@shared/api";
 import { useToast } from "../hooks/use-toast";
+import { apiClient } from "../services/api";
 
 interface PastPurchase {
   id: string;
@@ -148,7 +149,7 @@ export default function AdminBuying() {
     } else if (formData.buyingPrice < 1000) {
       errors.buyingPrice = "ক্রয় মূল্য কমপক্ষে ১০০০ টাকা হতে হবে / Buying price must be at least ৳1000";
     } else if (formData.buyingPrice > 200000) {
-      errors.buyingPrice = "ক্রয় মূল্য ২,০০,০০০ টাকার চেয়ে বেশ��� হতে পারে না / Buying price cannot exceed ৳2,00,000";
+      errors.buyingPrice = "ক্রয় মূল্য ২,০০,০০০ টাকার চেয়ে বেশি হতে পারে না / Buying price cannot exceed ৳2,00,000";
     }
 
     // Quantity validation
@@ -333,7 +334,7 @@ export default function AdminBuying() {
       console.log("পরিমাণ / Quantity:", formData.quantity);
       console.log("ক্রয় মূল্য / Buying Price:", `৳${formData.buyingPrice.toLocaleString()}`);
       console.log("মোট খরচ / Total Cost:", `৳${financials.totalCost.toLocaleString()}`);
-      console.log("��্রত্য��শিত বিক্রয় মূল্য / Expected Selling Price:", `৳${financials.estimatedSellingPrice.toLocaleString()}`);
+      console.log("��্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price:", `৳${financials.estimatedSellingPrice.toLocaleString()}`);
       console.log("প্রত্যাশিত মুনাফা / Expected Profit:", `৳${financials.estimatedProfit.toLocaleString()}`);
       console.log("মুনাফার হার / Profit Margin:", `${financials.profitMargin}%`);
       console.log("এজেন্ট / Agent:", formData.agentName);
@@ -350,7 +351,7 @@ export default function AdminBuying() {
         `📊 বিস্তারিত / Details:\n` +
         `• দেশ / Country: ${formData.country}\n` +
         `• এয়ারলাইন / Airline: ${formData.airline}\n` +
-        `• টিকেট সংখ্��া / Tickets: ${formData.quantity}\n` +
+        `• টিকেট সংখ্যা / Tickets: ${formData.quantity}\n` +
         `• মোট খরচ / Total Cost: ৳${financials.totalCost.toLocaleString()}\n` +
         `• প্রত্যাশিত মুনাফা / Expected Profit: ৳${financials.estimatedProfit.toLocaleString()}\n` +
         `• মুনাফার হার / Profit Margin: ${financials.profitMargin}%`;
