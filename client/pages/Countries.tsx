@@ -166,6 +166,8 @@ export default function Countries() {
     try {
       if (showLoader) {
         setLoading(true);
+      } else {
+        setIsBackgroundLoading(true);
       }
       setError(null);
       console.log("Loading countries data...");
@@ -222,7 +224,7 @@ export default function Countries() {
         {
           code: "BHR",
           name: "Bahrain",
-          flag: "🇧🇭",
+          flag: "🇧���",
           totalTickets: 45,
           availableTickets: 38,
         },
