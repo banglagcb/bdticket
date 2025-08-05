@@ -394,7 +394,7 @@ export class TicketRepository {
       .prepare(
         `
       SELECT COUNT(*) as count, COALESCE(SUM(selling_price), 0) as amount
-      FROM tickets 
+      FROM tickets
       WHERE status = 'sold' AND DATE(sold_at) = ?
     `,
       )
@@ -408,10 +408,35 @@ export class TicketRepository {
       )
       .get() as { count: number };
 
+    // Get all ticket counts by status
+    const totalTickets = db
+      .prepare(
+        `
+      SELECT COUNT(*) as count FROM tickets
+    `,
+      )
+      .get() as { count: number };
+
+    const availableTickets = db
+      .prepare(
+        `
+      SELECT COUNT(*) as count FROM tickets WHERE status = 'available'
+    `,
+      )
+      .get() as { count: number };
+
     const lockedTickets = db
       .prepare(
         `
       SELECT COUNT(*) as count FROM tickets WHERE status = 'locked'
+    `,
+      )
+      .get() as { count: number };
+
+    const soldTickets = db
+      .prepare(
+        `
+      SELECT COUNT(*) as count FROM tickets WHERE status = 'sold'
     `,
       )
       .get() as { count: number };
@@ -423,6 +448,16 @@ export class TicketRepository {
     `,
       )
       .get() as { count: number };
+
+    // Get total investment from all ticket batches
+    const totalInvestment = db
+      .prepare(
+        `
+      SELECT COALESCE(SUM(buying_price * quantity), 0) as investment
+      FROM ticket_batches
+    `,
+      )
+      .get() as { investment: number };
 
     const estimatedProfit = db
       .prepare(
@@ -438,8 +473,12 @@ export class TicketRepository {
     return {
       todaysSales,
       totalBookings: totalBookings.count,
+      totalTickets: totalTickets.count,
+      availableTickets: availableTickets.count,
       lockedTickets: lockedTickets.count,
+      soldTickets: soldTickets.count,
       totalInventory: totalInventory.count,
+      totalInvestment: totalInvestment.investment,
       estimatedProfit: estimatedProfit.profit,
     };
   }
