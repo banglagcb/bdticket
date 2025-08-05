@@ -596,22 +596,32 @@ export class BookingRepository {
   }
 
   static updateStatus(id: string, status: Booking["status"]): boolean {
+    console.log("BookingRepository.updateStatus called with:", { id, status });
     const now = new Date().toISOString();
     let stmt;
+    let result;
 
-    if (status === "confirmed") {
-      stmt = db.prepare(
-        "UPDATE bookings SET status = ?, confirmed_at = ?, updated_at = ? WHERE id = ?",
-      );
-      stmt.run(status, now, now, id);
-    } else {
-      stmt = db.prepare(
-        "UPDATE bookings SET status = ?, updated_at = ? WHERE id = ?",
-      );
-      stmt.run(status, now, id);
+    try {
+      if (status === "confirmed") {
+        stmt = db.prepare(
+          "UPDATE bookings SET status = ?, confirmed_at = ?, updated_at = ? WHERE id = ?",
+        );
+        result = stmt.run(status, now, now, id);
+        console.log("Confirmed status update result:", result);
+      } else {
+        stmt = db.prepare(
+          "UPDATE bookings SET status = ?, updated_at = ? WHERE id = ?",
+        );
+        result = stmt.run(status, now, id);
+        console.log("Status update result:", result);
+      }
+
+      console.log("Changes made:", result.changes);
+      return result.changes > 0;
+    } catch (error) {
+      console.error("Error in BookingRepository.updateStatus:", error);
+      throw error;
     }
-
-    return stmt.changes > 0;
   }
 }
 
