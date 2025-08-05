@@ -184,21 +184,21 @@ export default function Countries() {
       console.error("Failed to load countries:", err);
       console.log("Using demo data due to authentication...");
 
-      // Show demo data with realistic numbers
+      // Show clean countries data (no dummy tickets)
       const demoCountries: Country[] = [
         {
           code: "KSA",
           name: "Saudi Arabia",
           flag: "🇸🇦",
-          totalTickets: 55,
-          availableTickets: 45,
+          totalTickets: 0,
+          availableTickets: 0,
         },
         {
           code: "UAE",
           name: "United Arab Emirates",
           flag: "🇦🇪",
-          totalTickets: 55,
-          availableTickets: 48,
+          totalTickets: 0,
+          availableTickets: 0,
         },
         {
           code: "QAT",
@@ -211,36 +211,36 @@ export default function Countries() {
           code: "KWT",
           name: "Kuwait",
           flag: "🇰🇼",
-          totalTickets: 50,
-          availableTickets: 42,
+          totalTickets: 0,
+          availableTickets: 0,
         },
         {
           code: "OMN",
           name: "Oman",
           flag: "🇴🇲",
-          totalTickets: 16,
-          availableTickets: 14,
+          totalTickets: 0,
+          availableTickets: 0,
         },
         {
           code: "BHR",
           name: "Bahrain",
           flag: "🇧🇭",
-          totalTickets: 45,
-          availableTickets: 38,
+          totalTickets: 0,
+          availableTickets: 0,
         },
         {
           code: "JOR",
           name: "Jordan",
           flag: "🇯🇴",
-          totalTickets: 12,
-          availableTickets: 10,
+          totalTickets: 0,
+          availableTickets: 0,
         },
         {
           code: "LBN",
           name: "Lebanon",
           flag: "🇱🇧",
-          totalTickets: 14,
-          availableTickets: 12,
+          totalTickets: 0,
+          availableTickets: 0,
         },
       ];
 
