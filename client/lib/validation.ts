@@ -338,6 +338,35 @@ export const validateSecurityPermissions = (user: any, action: string): Validati
   };
 };
 
+// 🔄 Wrapper functions for compatibility
+export const validateForm = validateTicketBatch;
+export const validateBusinessRules = (formData: any, existingData: any[] = []): ValidationResult => {
+  const errors: string[] = [];
+
+  // Check for duplicate flights on same date/time
+  const existingFlight = existingData.find(p =>
+    p.country === formData.country &&
+    p.airline === formData.airline &&
+    p.flightDate === formData.flightDate
+  );
+
+  if (existingFlight) {
+    errors.push("একই দিনে, একই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date");
+  }
+
+  // Check minimum profit margin (10%)
+  const estimatedSellingPrice = formData.buyingPrice * 1.15; // Minimum 15% markup
+  if (estimatedSellingPrice - formData.buyingPrice < formData.buyingPrice * 0.1) {
+    errors.push("লাভের মার্জিন কমপক্ষে ১০% রাখুন / Keep minimum 10% profit margin");
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings: []
+  };
+};
+
 export default {
   validateBangladeshiPhone,
   validateEmail,
@@ -352,5 +381,7 @@ export default {
   validatePassengerInfo,
   validateTicketBatch,
   generateAuditLog,
-  validateSecurityPermissions
+  validateSecurityPermissions,
+  validateForm,
+  validateBusinessRules
 };
