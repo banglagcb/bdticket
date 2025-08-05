@@ -124,33 +124,7 @@ export default function Reports() {
           dailySales: [], // Will be populated with real sales data
         },
         countryReport: {
-          topCountries: countries.countries
-            ? countries.countries
-                .sort((a, b) => b.totalTickets - a.totalTickets)
-                .slice(0, 5)
-                .map((country, index) => ({
-                  country: country.name,
-                  flag: country.flag,
-                  bookings: Math.floor(country.totalTickets * 0.3), // Estimated bookings
-                  revenue: Math.floor(country.totalTickets * 18000), // Estimated revenue
-                }))
-            : [
-                { country: "UAE", flag: "🇦🇪", bookings: 45, revenue: 820000 },
-                {
-                  country: "Saudi Arabia",
-                  flag: "🇸🇦",
-                  bookings: 38,
-                  revenue: 695000,
-                },
-                { country: "Qatar", flag: "🇶🇦", bookings: 32, revenue: 580000 },
-                {
-                  country: "Kuwait",
-                  flag: "🇰🇼",
-                  bookings: 28,
-                  revenue: 510000,
-                },
-                { country: "Oman", flag: "🇴🇲", bookings: 13, revenue: 245000 },
-              ],
+          topCountries: [], // Will be populated with real booking and revenue data
         },
         agentReport: {
           topAgents: [
