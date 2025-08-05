@@ -26,7 +26,8 @@
     "clear-dummy-data": "node clear-dummy-data.js",
     "verify-db": "node verify-clean-db.js",
     "verify-app-cleanup": "node verify-app-cleanup.js",
-    "verify-360-validation": "node verify-360-validation.js"
+    "verify-360-validation": "node verify-360-validation.js",
+    "test-ticket-batch": "node test-ticket-batch.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
