@@ -22,7 +22,8 @@
     "test": "vitest --run",
     "format.fix": "prettier --write .",
     "typecheck": "tsc",
-    "verify-deployment": "node scripts/verify-deployment.js"
+    "verify-deployment": "node scripts/verify-deployment.js",
+    "clear-dummy-data": "node clear-dummy-data.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
