@@ -202,7 +202,7 @@ export default function AdminBuying() {
     );
 
     if (existingFlight) {
-      errors.duplicate = "একই দিনে, একই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
+      errors.duplicate = "একই দিনে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
     }
 
     // Check minimum profit margin (20%)
@@ -801,7 +801,7 @@ export default function AdminBuying() {
                                   </span>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
-                                  <span className="text-gray-600 block">মুনাফার হার / Profit Margin</span>
+                                  <span className="text-gray-600 block">মুনাফার হ���র / Profit Margin</span>
                                   <span className={`font-bold text-xl ${
                                     parseFloat(financials.profitMargin) >= 20 ? 'text-green-600' :
                                     parseFloat(financials.profitMargin) >= 10 ? 'text-yellow-600' : 'text-red-600'
@@ -847,20 +847,45 @@ export default function AdminBuying() {
                     </motion.div>
                   )}
 
+                  {/* Validation Summary */}
+                  {Object.keys(validationErrors).length > 0 && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <h4 className="font-semibold text-red-800 mb-2">
+                        ত্রুটি সমূহ / Validation Errors:
+                      </h4>
+                      <ul className="space-y-1 text-sm text-red-600">
+                        {Object.values(validationErrors).map((error, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-red-500 mr-2">•</span>
+                            {error}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <Button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full velvet-button text-primary-foreground font-body text-lg py-3 hover:scale-105 transform transition-all duration-200"
+                    disabled={isSubmitting || !isFormValid}
+                    className={`w-full font-body text-lg py-3 hover:scale-105 transform transition-all duration-200 ${
+                      isFormValid
+                        ? 'velvet-button text-primary-foreground'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    }`}
                   >
                     {isSubmitting ? (
                       <div className="flex items-center space-x-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        <span>Adding to Inventory...</span>
+                        <span>টিকেট ইনভেন্টরিতে যোগ করা হচ্ছে... / Adding to Inventory...</span>
+                      </div>
+                    ) : !isFormValid ? (
+                      <div className="flex items-center space-x-2">
+                        <span>সব তথ্য সঠিকভাবে পূরণ করুন / Please fill all fields correctly</span>
                       </div>
                     ) : (
                       <div className="flex items-center space-x-2">
                         <Plus className="h-5 w-5" />
-                        <span>Add to Inventory</span>
+                        <span>ইনভেন্টরিতে যোগ করুন / Add to Inventory</span>
                       </div>
                     )}
                   </Button>
