@@ -38,11 +38,13 @@ async function clearDummyData() {
         WHERE entity_type IN ('ticket', 'booking', 'ticket_batch')
       `);
       const activityResult = deleteActivityLogs.run();
-      console.log(`   ✅ Removed ${activityResult.changes} activity log entries`);
+      console.log(
+        `   ✅ Removed ${activityResult.changes} activity log entries`,
+      );
 
       // Reset auto-increment sequences (if any)
       console.log("🔄 Resetting sequences...");
-      
+
       return {
         bookings: bookingResult.changes,
         tickets: ticketResult.changes,
@@ -66,23 +68,32 @@ async function clearDummyData() {
     console.log("   - Countries and airlines");
     console.log("   - System settings");
     console.log("   - Database schema and structure");
-    
+
     // Verify the cleanup
     console.log("\n🔍 Verification:");
-    const remainingTickets = db.prepare("SELECT COUNT(*) as count FROM tickets").get();
-    const remainingBookings = db.prepare("SELECT COUNT(*) as count FROM bookings").get();
-    const remainingBatches = db.prepare("SELECT COUNT(*) as count FROM ticket_batches").get();
-    
+    const remainingTickets = db
+      .prepare("SELECT COUNT(*) as count FROM tickets")
+      .get();
+    const remainingBookings = db
+      .prepare("SELECT COUNT(*) as count FROM bookings")
+      .get();
+    const remainingBatches = db
+      .prepare("SELECT COUNT(*) as count FROM ticket_batches")
+      .get();
+
     console.log(`   - Tickets: ${remainingTickets.count}`);
     console.log(`   - Bookings: ${remainingBookings.count}`);
     console.log(`   - Batches: ${remainingBatches.count}`);
-    
-    if (remainingTickets.count === 0 && remainingBookings.count === 0 && remainingBatches.count === 0) {
+
+    if (
+      remainingTickets.count === 0 &&
+      remainingBookings.count === 0 &&
+      remainingBatches.count === 0
+    ) {
       console.log("✅ All dummy data successfully removed!");
     } else {
       console.log("⚠️ Some data may still remain. Please check manually.");
     }
-
   } catch (error) {
     console.error("❌ Failed to clear dummy data:", error);
     process.exit(1);

@@ -115,11 +115,10 @@ export default function Reports() {
         salesReport: {
           totalRevenue: stats.todaysSales?.amount || 0,
           totalBookings: stats.totalBookings || 0,
-          avgTicketPrice: stats.todaysSales?.amount && stats.todaysSales?.count
-            ? Math.round(
-                stats.todaysSales.amount / stats.todaysSales.count,
-              )
-            : 0,
+          avgTicketPrice:
+            stats.todaysSales?.amount && stats.todaysSales?.count
+              ? Math.round(stats.todaysSales.amount / stats.todaysSales.count)
+              : 0,
           profitMargin: 0, // Will be calculated when real data is available
           dailySales: [], // Will be populated with real sales data
         },

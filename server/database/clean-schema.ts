@@ -135,14 +135,15 @@ export function seedEssentialData() {
     }
 
     console.log("✅ Essential data seeded successfully!");
-    console.log("💡 No dummy tickets created - system ready for real ticket data");
+    console.log(
+      "💡 No dummy tickets created - system ready for real ticket data",
+    );
     console.log("📊 Seeded:");
     console.log("   - 8 Countries");
     console.log("   - 8 Airlines");
     console.log("   - 3 Users (admin/manager/staff)");
     console.log("   - System settings");
     console.log("   - 0 Tickets (ready for real data)");
-
   } catch (error) {
     console.error("Error seeding essential data:", error);
     throw error;

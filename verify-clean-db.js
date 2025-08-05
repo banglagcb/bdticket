@@ -12,16 +12,20 @@ function verifyDatabase() {
     const tickets = db.prepare("SELECT COUNT(*) as count FROM tickets").get();
     console.log(`📋 Tickets: ${tickets.count}`);
 
-    // Check bookings  
+    // Check bookings
     const bookings = db.prepare("SELECT COUNT(*) as count FROM bookings").get();
     console.log(`🎫 Bookings: ${bookings.count}`);
 
     // Check ticket batches
-    const batches = db.prepare("SELECT COUNT(*) as count FROM ticket_batches").get();
+    const batches = db
+      .prepare("SELECT COUNT(*) as count FROM ticket_batches")
+      .get();
     console.log(`📦 Ticket Batches: ${batches.count}`);
 
     // Check countries
-    const countries = db.prepare("SELECT COUNT(*) as count FROM countries").get();
+    const countries = db
+      .prepare("SELECT COUNT(*) as count FROM countries")
+      .get();
     console.log(`🌍 Countries: ${countries.count}`);
 
     // Check airlines
@@ -33,25 +37,33 @@ function verifyDatabase() {
     console.log(`👥 Users: ${users.count}`);
 
     // Check system settings
-    const settings = db.prepare("SELECT COUNT(*) as count FROM system_settings").get();
+    const settings = db
+      .prepare("SELECT COUNT(*) as count FROM system_settings")
+      .get();
     console.log(`⚙️ System Settings: ${settings.count}\n`);
 
     // Show countries list
     console.log("📍 Available Countries:");
-    const countryList = db.prepare("SELECT code, name FROM countries ORDER BY name").all();
-    countryList.forEach(country => {
+    const countryList = db
+      .prepare("SELECT code, name FROM countries ORDER BY name")
+      .all();
+    countryList.forEach((country) => {
       console.log(`   - ${country.code}: ${country.name}`);
     });
 
     console.log("\n✈️ Available Airlines:");
-    const airlineList = db.prepare("SELECT code, name FROM airlines ORDER BY name").all();
-    airlineList.forEach(airline => {
+    const airlineList = db
+      .prepare("SELECT code, name FROM airlines ORDER BY name")
+      .all();
+    airlineList.forEach((airline) => {
       console.log(`   - ${airline.code}: ${airline.name}`);
     });
 
     console.log("\n👤 User Accounts:");
-    const userList = db.prepare("SELECT username, role, status FROM users ORDER BY role").all();
-    userList.forEach(user => {
+    const userList = db
+      .prepare("SELECT username, role, status FROM users ORDER BY role")
+      .all();
+    userList.forEach((user) => {
       console.log(`   - ${user.username} (${user.role}) - ${user.status}`);
     });
 
@@ -69,7 +81,6 @@ function verifyDatabase() {
     } else {
       console.log("❌ ERROR: Essential data is missing");
     }
-
   } catch (error) {
     console.error("❌ Database verification failed:", error);
   } finally {

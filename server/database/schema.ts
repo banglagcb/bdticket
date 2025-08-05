@@ -293,7 +293,9 @@ export function seedDatabase() {
     // through the admin interface or API endpoints
 
     console.log("✅ Essential data seeded successfully!");
-    console.log("💡 Dummy ticket data has been excluded - system ready for real tickets");
+    console.log(
+      "💡 Dummy ticket data has been excluded - system ready for real tickets",
+    );
 
     /*
     // REMOVED: Sample ticket batches and tickets creation

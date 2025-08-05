@@ -577,7 +577,7 @@ export class BookingRepository {
 
   static findAllForFrontend() {
     const bookings = this.findAll();
-    return bookings.map(booking => this.transformForFrontend(booking));
+    return bookings.map((booking) => this.transformForFrontend(booking));
   }
 
   static findById(id: string): Booking | undefined {

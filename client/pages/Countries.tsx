@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Plane, MapPin, Ticket, RefreshCw, AlertCircle, Clock, Wifi, WifiOff } from "lucide-react";
+import {
+  Plane,
+  MapPin,
+  Ticket,
+  RefreshCw,
+  AlertCircle,
+  Clock,
+  Wifi,
+  WifiOff,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -32,9 +41,9 @@ function CountryCard({ country, index }: CountryCardProps) {
       : 0;
 
   const getAvailabilityStatus = () => {
-    if (availabilityPercentage > 50) return 'high';
-    if (availabilityPercentage > 20) return 'medium';
-    return 'low';
+    if (availabilityPercentage > 50) return "high";
+    if (availabilityPercentage > 20) return "medium";
+    return "low";
   };
 
   const availabilityStatus = getAvailabilityStatus();
@@ -52,13 +61,16 @@ function CountryCard({ country, index }: CountryCardProps) {
           <div className="absolute inset-0 bg-gradient-to-br from-luxury-gold/5 to-luxury-bronze/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
           {/* Availability Status Indicator */}
-          <div className={`absolute top-2 right-2 w-3 h-3 rounded-full z-20 ${
-            availabilityStatus === 'high'
-              ? 'bg-green-500 animate-pulse'
-              : availabilityStatus === 'medium'
-                ? 'bg-yellow-500'
-                : 'bg-red-500'
-          }`} title={`${availabilityPercentage.toFixed(0)}% available`}></div>
+          <div
+            className={`absolute top-2 right-2 w-3 h-3 rounded-full z-20 ${
+              availabilityStatus === "high"
+                ? "bg-green-500 animate-pulse"
+                : availabilityStatus === "medium"
+                  ? "bg-yellow-500"
+                  : "bg-red-500"
+            }`}
+            title={`${availabilityPercentage.toFixed(0)}% available`}
+          ></div>
           <CardHeader className="text-center pb-2 relative z-10">
             <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
               {country.flag}
@@ -86,15 +98,15 @@ function CountryCard({ country, index }: CountryCardProps) {
               <div className="w-full bg-gradient-to-r from-cream-200 to-cream-300 rounded-full h-3 overflow-hidden">
                 <div
                   className={`h-3 rounded-full transition-all duration-500 ${
-                    availabilityStatus === 'high'
-                      ? 'bg-gradient-to-r from-green-400 to-green-600 animate-glow'
-                      : availabilityStatus === 'medium'
-                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500'
-                        : 'bg-gradient-to-r from-red-400 to-red-600'
+                    availabilityStatus === "high"
+                      ? "bg-gradient-to-r from-green-400 to-green-600 animate-glow"
+                      : availabilityStatus === "medium"
+                        ? "bg-gradient-to-r from-yellow-400 to-orange-500"
+                        : "bg-gradient-to-r from-red-400 to-red-600"
                   }`}
                   style={{
                     width: `${Math.max(availabilityPercentage, 2)}%`,
-                    transition: 'width 0.5s ease-in-out'
+                    transition: "width 0.5s ease-in-out",
                   }}
                 ></div>
               </div>
@@ -119,28 +131,30 @@ function CountryCard({ country, index }: CountryCardProps) {
               <div className="flex items-center space-x-2">
                 <div
                   className={`p-1 rounded animate-float ${
-                    availabilityStatus === 'high'
-                      ? 'bg-gradient-to-br from-green-100 to-green-200'
-                      : availabilityStatus === 'medium'
-                        ? 'bg-gradient-to-br from-yellow-100 to-yellow-200'
-                        : 'bg-gradient-to-br from-red-100 to-red-200'
+                    availabilityStatus === "high"
+                      ? "bg-gradient-to-br from-green-100 to-green-200"
+                      : availabilityStatus === "medium"
+                        ? "bg-gradient-to-br from-yellow-100 to-yellow-200"
+                        : "bg-gradient-to-br from-red-100 to-red-200"
                   }`}
                   style={{ animationDelay: "0.5s" }}
                 >
-                  <Ticket className={`h-3 w-3 ${
-                    availabilityStatus === 'high'
-                      ? 'text-green-600'
-                      : availabilityStatus === 'medium'
-                        ? 'text-yellow-600'
-                        : 'text-red-600'
-                  }`} />
+                  <Ticket
+                    className={`h-3 w-3 ${
+                      availabilityStatus === "high"
+                        ? "text-green-600"
+                        : availabilityStatus === "medium"
+                          ? "text-yellow-600"
+                          : "text-red-600"
+                    }`}
+                  />
                 </div>
                 <span className="font-body text-xs text-foreground/70">
-                  {availabilityStatus === 'high'
-                    ? 'High Availability'
-                    : availabilityStatus === 'medium'
-                      ? 'Limited Stock'
-                      : 'Low Stock'}
+                  {availabilityStatus === "high"
+                    ? "High Availability"
+                    : availabilityStatus === "medium"
+                      ? "Limited Stock"
+                      : "Low Stock"}
                 </span>
               </div>
             </div>
@@ -270,12 +284,12 @@ export default function Countries() {
     };
     const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, [loadCountries, autoRefresh]);
 
@@ -321,14 +335,16 @@ export default function Countries() {
 
   // Toggle auto-refresh
   const toggleAutoRefresh = useCallback(() => {
-    setAutoRefresh(prev => !prev);
+    setAutoRefresh((prev) => !prev);
   }, []);
 
   // Format last updated time
   const formatLastUpdated = useCallback(() => {
-    if (!lastUpdated) return '';
+    if (!lastUpdated) return "";
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastUpdated.getTime()) / 1000);
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastUpdated.getTime()) / 1000,
+    );
 
     if (diffInSeconds < 60) {
       return `Updated ${diffInSeconds}s ago`;
@@ -344,7 +360,7 @@ export default function Countries() {
   useEffect(() => {
     const timer = setInterval(() => {
       // Force re-render to update the time display
-      setLastUpdated(prev => prev);
+      setLastUpdated((prev) => prev);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -356,19 +372,19 @@ export default function Countries() {
       if (event.ctrlKey || event.metaKey) return; // Ignore if modifier keys are pressed
 
       switch (event.key.toLowerCase()) {
-        case 'r':
+        case "r":
           event.preventDefault();
           handleManualRefresh();
           break;
-        case 't':
+        case "t":
           event.preventDefault();
           toggleAutoRefresh();
           break;
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [handleManualRefresh, toggleAutoRefresh]);
 
   if (loading) {
@@ -397,7 +413,9 @@ export default function Countries() {
           className="velvet-button text-primary-foreground font-body"
           disabled={loading}
         >
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+          />
           Retry
         </Button>
       </div>
@@ -438,42 +456,48 @@ export default function Countries() {
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-          {/* Connection Status */}
-          <div className="flex items-center space-x-1 text-xs">
-            {isOnline ? (
-              <Wifi className="h-3 w-3 text-green-500" />
-            ) : (
-              <WifiOff className="h-3 w-3 text-red-500" />
-            )}
-            <span className={`font-body ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
-              {isOnline ? 'Online' : 'Offline'}
-            </span>
-          </div>
+              {/* Connection Status */}
+              <div className="flex items-center space-x-1 text-xs">
+                {isOnline ? (
+                  <Wifi className="h-3 w-3 text-green-500" />
+                ) : (
+                  <WifiOff className="h-3 w-3 text-red-500" />
+                )}
+                <span
+                  className={`font-body ${isOnline ? "text-green-600" : "text-red-600"}`}
+                >
+                  {isOnline ? "Online" : "Offline"}
+                </span>
+              </div>
 
-          {/* Auto-refresh toggle */}
-          <Button
-            onClick={toggleAutoRefresh}
-            variant={autoRefresh ? "default" : "outline"}
-            size="sm"
-            className="font-body text-xs px-2 py-1"
-            title={autoRefresh ? "Disable auto-refresh" : "Enable auto-refresh"}
-          >
-            <Clock className="h-3 w-3 mr-1" />
-            Auto
-          </Button>
+              {/* Auto-refresh toggle */}
+              <Button
+                onClick={toggleAutoRefresh}
+                variant={autoRefresh ? "default" : "outline"}
+                size="sm"
+                className="font-body text-xs px-2 py-1"
+                title={
+                  autoRefresh ? "Disable auto-refresh" : "Enable auto-refresh"
+                }
+              >
+                <Clock className="h-3 w-3 mr-1" />
+                Auto
+              </Button>
 
-          {/* Manual refresh */}
-          <Button
-            onClick={handleManualRefresh}
-            variant="outline"
-            size="sm"
-            disabled={loading}
-            className="font-body hover:scale-105 transform transition-all duration-200"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-        </div>
+              {/* Manual refresh */}
+              <Button
+                onClick={handleManualRefresh}
+                variant="outline"
+                size="sm"
+                disabled={loading}
+                className="font-body hover:scale-105 transform transition-all duration-200"
+              >
+                <RefreshCw
+                  className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+                />
+                Refresh
+              </Button>
+            </div>
 
             {/* Summary Stats */}
             <div className="hidden md:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0 backdrop-blur-md">
@@ -508,9 +532,13 @@ export default function Countries() {
                   </p>
                   {autoRefresh && isOnline && (
                     <div className="flex items-center justify-center mt-1">
-                      <div className={`w-2 h-2 rounded-full ${isBackgroundLoading ? 'bg-blue-500 animate-spin' : 'bg-green-500 animate-pulse'}`}></div>
-                      <span className={`text-xs font-body ml-1 ${isBackgroundLoading ? 'text-blue-600' : 'text-green-600'}`}>
-                        {isBackgroundLoading ? 'Updating...' : 'Live'}
+                      <div
+                        className={`w-2 h-2 rounded-full ${isBackgroundLoading ? "bg-blue-500 animate-spin" : "bg-green-500 animate-pulse"}`}
+                      ></div>
+                      <span
+                        className={`text-xs font-body ml-1 ${isBackgroundLoading ? "text-blue-600" : "text-green-600"}`}
+                      >
+                        {isBackgroundLoading ? "Updating..." : "Live"}
                       </span>
                     </div>
                   )}
@@ -548,7 +576,9 @@ export default function Countries() {
           {lastUpdated && autoRefresh && isOnline && (
             <div className="flex items-center justify-center mt-1">
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-xs font-body text-green-600 ml-1">Live</span>
+              <span className="text-xs font-body text-green-600 ml-1">
+                Live
+              </span>
             </div>
           )}
         </Card>
@@ -592,7 +622,9 @@ export default function Countries() {
           {lastUpdated && (
             <p className="font-body text-xs text-foreground/40">
               Last updated: {lastUpdated.toLocaleString()} •
-              {autoRefresh && isOnline ? 'Auto-refreshing every 30s' : 'Manual refresh only'}
+              {autoRefresh && isOnline
+                ? "Auto-refreshing every 30s"
+                : "Manual refresh only"}
             </p>
           )}
           <p className="font-body text-xs text-foreground/30">

@@ -244,7 +244,7 @@ export default function Settings() {
         return acc;
       }, {});
 
-      setSystemSettings(prev => ({
+      setSystemSettings((prev) => ({
         ...prev,
         ...settingsMap,
       }));
@@ -315,7 +315,7 @@ export default function Settings() {
     });
 
     // Clear password fields
-    setUserProfile(prev => ({
+    setUserProfile((prev) => ({
       ...prev,
       currentPassword: "",
       newPassword: "",
@@ -441,7 +441,11 @@ export default function Settings() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-6 luxury-card border-0">
             <TabsTrigger value="profile" className="font-body">
               <User className="h-4 w-4 mr-2" />
@@ -490,35 +494,58 @@ export default function Settings() {
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="font-body">Full Name</Label>
+                    <Label htmlFor="name" className="font-body">
+                      Full Name
+                    </Label>
                     <Input
                       id="name"
                       value={userProfile.name}
-                      onChange={(e) => setUserProfile(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={(e) =>
+                        setUserProfile((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="font-body">Email Address</Label>
+                    <Label htmlFor="email" className="font-body">
+                      Email Address
+                    </Label>
                     <Input
                       id="email"
                       type="email"
                       value={userProfile.email}
-                      onChange={(e) => setUserProfile(prev => ({ ...prev, email: e.target.value }))}
+                      onChange={(e) =>
+                        setUserProfile((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="font-body">Phone Number</Label>
+                    <Label htmlFor="phone" className="font-body">
+                      Phone Number
+                    </Label>
                     <Input
                       id="phone"
                       value={userProfile.phone}
-                      onChange={(e) => setUserProfile(prev => ({ ...prev, phone: e.target.value }))}
+                      onChange={(e) =>
+                        setUserProfile((prev) => ({
+                          ...prev,
+                          phone: e.target.value,
+                        }))
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="role" className="font-body">Role</Label>
+                    <Label htmlFor="role" className="font-body">
+                      Role
+                    </Label>
                     <Input
                       id="role"
                       value={user?.role}
@@ -529,16 +556,25 @@ export default function Settings() {
                 </div>
 
                 <div className="border-t pt-6 space-y-4">
-                  <h3 className="font-heading font-semibold velvet-text">Change Password</h3>
+                  <h3 className="font-heading font-semibold velvet-text">
+                    Change Password
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentPassword" className="font-body">Current Password</Label>
+                      <Label htmlFor="currentPassword" className="font-body">
+                        Current Password
+                      </Label>
                       <div className="relative">
                         <Input
                           id="currentPassword"
                           type={showPassword ? "text" : "password"}
                           value={userProfile.currentPassword}
-                          onChange={(e) => setUserProfile(prev => ({ ...prev, currentPassword: e.target.value }))}
+                          onChange={(e) =>
+                            setUserProfile((prev) => ({
+                              ...prev,
+                              currentPassword: e.target.value,
+                            }))
+                          }
                           className="font-body"
                         />
                         <Button
@@ -548,27 +584,45 @@ export default function Settings() {
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                           onClick={() => setShowPassword(!showPassword)}
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="newPassword" className="font-body">New Password</Label>
+                      <Label htmlFor="newPassword" className="font-body">
+                        New Password
+                      </Label>
                       <Input
                         id="newPassword"
                         type={showPassword ? "text" : "password"}
                         value={userProfile.newPassword}
-                        onChange={(e) => setUserProfile(prev => ({ ...prev, newPassword: e.target.value }))}
+                        onChange={(e) =>
+                          setUserProfile((prev) => ({
+                            ...prev,
+                            newPassword: e.target.value,
+                          }))
+                        }
                         className="font-body"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="font-body">Confirm Password</Label>
+                      <Label htmlFor="confirmPassword" className="font-body">
+                        Confirm Password
+                      </Label>
                       <Input
                         id="confirmPassword"
                         type={showPassword ? "text" : "password"}
                         value={userProfile.confirmPassword}
-                        onChange={(e) => setUserProfile(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                        onChange={(e) =>
+                          setUserProfile((prev) => ({
+                            ...prev,
+                            confirmPassword: e.target.value,
+                          }))
+                        }
                         className="font-body"
                       />
                     </div>
@@ -608,62 +662,106 @@ export default function Settings() {
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="companyName" className="font-body">Company Name</Label>
+                    <Label htmlFor="companyName" className="font-body">
+                      Company Name
+                    </Label>
                     <Input
                       id="companyName"
                       value={systemSettings.companyName}
-                      onChange={(e) => setSystemSettings(prev => ({ ...prev, companyName: e.target.value }))}
+                      onChange={(e) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          companyName: e.target.value,
+                        }))
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="companyEmail" className="font-body">Company Email</Label>
+                    <Label htmlFor="companyEmail" className="font-body">
+                      Company Email
+                    </Label>
                     <Input
                       id="companyEmail"
                       type="email"
                       value={systemSettings.companyEmail}
-                      onChange={(e) => setSystemSettings(prev => ({ ...prev, companyEmail: e.target.value }))}
+                      onChange={(e) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          companyEmail: e.target.value,
+                        }))
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="companyPhone" className="font-body">Company Phone</Label>
+                    <Label htmlFor="companyPhone" className="font-body">
+                      Company Phone
+                    </Label>
                     <Input
                       id="companyPhone"
                       value={systemSettings.companyPhone}
-                      onChange={(e) => setSystemSettings(prev => ({ ...prev, companyPhone: e.target.value }))}
+                      onChange={(e) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          companyPhone: e.target.value,
+                        }))
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="companyWebsite" className="font-body">Website</Label>
+                    <Label htmlFor="companyWebsite" className="font-body">
+                      Website
+                    </Label>
                     <Input
                       id="companyWebsite"
                       value={systemSettings.companyWebsite}
-                      onChange={(e) => setSystemSettings(prev => ({ ...prev, companyWebsite: e.target.value }))}
+                      onChange={(e) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          companyWebsite: e.target.value,
+                        }))
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="tradeLicense" className="font-body">Trade License</Label>
+                    <Label htmlFor="tradeLicense" className="font-body">
+                      Trade License
+                    </Label>
                     <Input
                       id="tradeLicense"
                       value={systemSettings.tradeLicense}
-                      onChange={(e) => setSystemSettings(prev => ({ ...prev, tradeLicense: e.target.value }))}
+                      onChange={(e) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          tradeLicense: e.target.value,
+                        }))
+                      }
                       className="font-body"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="defaultCurrency" className="font-body">Default Currency</Label>
+                    <Label htmlFor="defaultCurrency" className="font-body">
+                      Default Currency
+                    </Label>
                     <Select
                       value={systemSettings.defaultCurrency}
-                      onValueChange={(value) => setSystemSettings(prev => ({ ...prev, defaultCurrency: value }))}
+                      onValueChange={(value) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          defaultCurrency: value,
+                        }))
+                      }
                     >
                       <SelectTrigger className="font-body">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="BDT">BDT - Bangladeshi Taka</SelectItem>
+                        <SelectItem value="BDT">
+                          BDT - Bangladeshi Taka
+                        </SelectItem>
                         <SelectItem value="USD">USD - US Dollar</SelectItem>
                         <SelectItem value="EUR">EUR - Euro</SelectItem>
                         <SelectItem value="GBP">GBP - British Pound</SelectItem>
@@ -673,11 +771,18 @@ export default function Settings() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="companyAddress" className="font-body">Company Address</Label>
+                  <Label htmlFor="companyAddress" className="font-body">
+                    Company Address
+                  </Label>
                   <Textarea
                     id="companyAddress"
                     value={systemSettings.companyAddress}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, companyAddress: e.target.value }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        companyAddress: e.target.value,
+                      }))
+                    }
                     className="font-body"
                     rows={3}
                   />
@@ -727,45 +832,73 @@ export default function Settings() {
                       </DialogTrigger>
                       <DialogContent className="max-w-md">
                         <DialogHeader>
-                          <DialogTitle className="font-heading">Add New User</DialogTitle>
+                          <DialogTitle className="font-heading">
+                            Add New User
+                          </DialogTitle>
                           <DialogDescription className="font-body">
-                            Create a new user account with appropriate permissions
+                            Create a new user account with appropriate
+                            permissions
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label htmlFor="newUserName" className="font-body">Full Name</Label>
+                            <Label htmlFor="newUserName" className="font-body">
+                              Full Name
+                            </Label>
                             <Input
                               id="newUserName"
                               value={newUser.name}
-                              onChange={(e) => setNewUser(prev => ({ ...prev, name: e.target.value }))}
+                              onChange={(e) =>
+                                setNewUser((prev) => ({
+                                  ...prev,
+                                  name: e.target.value,
+                                }))
+                              }
                               className="font-body"
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="newUserEmail" className="font-body">Email</Label>
+                            <Label htmlFor="newUserEmail" className="font-body">
+                              Email
+                            </Label>
                             <Input
                               id="newUserEmail"
                               type="email"
                               value={newUser.email}
-                              onChange={(e) => setNewUser(prev => ({ ...prev, email: e.target.value }))}
+                              onChange={(e) =>
+                                setNewUser((prev) => ({
+                                  ...prev,
+                                  email: e.target.value,
+                                }))
+                              }
                               className="font-body"
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="newUserPhone" className="font-body">Phone</Label>
+                            <Label htmlFor="newUserPhone" className="font-body">
+                              Phone
+                            </Label>
                             <Input
                               id="newUserPhone"
                               value={newUser.phone}
-                              onChange={(e) => setNewUser(prev => ({ ...prev, phone: e.target.value }))}
+                              onChange={(e) =>
+                                setNewUser((prev) => ({
+                                  ...prev,
+                                  phone: e.target.value,
+                                }))
+                              }
                               className="font-body"
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="newUserRole" className="font-body">Role</Label>
+                            <Label htmlFor="newUserRole" className="font-body">
+                              Role
+                            </Label>
                             <Select
                               value={newUser.role}
-                              onValueChange={(value) => setNewUser(prev => ({ ...prev, role: value }))}
+                              onValueChange={(value) =>
+                                setNewUser((prev) => ({ ...prev, role: value }))
+                              }
                             >
                               <SelectTrigger className="font-body">
                                 <SelectValue />
@@ -780,22 +913,42 @@ export default function Settings() {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="newUserPassword" className="font-body">Password</Label>
+                            <Label
+                              htmlFor="newUserPassword"
+                              className="font-body"
+                            >
+                              Password
+                            </Label>
                             <Input
                               id="newUserPassword"
                               type="password"
                               value={newUser.password}
-                              onChange={(e) => setNewUser(prev => ({ ...prev, password: e.target.value }))}
+                              onChange={(e) =>
+                                setNewUser((prev) => ({
+                                  ...prev,
+                                  password: e.target.value,
+                                }))
+                              }
                               className="font-body"
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="newUserConfirmPassword" className="font-body">Confirm Password</Label>
+                            <Label
+                              htmlFor="newUserConfirmPassword"
+                              className="font-body"
+                            >
+                              Confirm Password
+                            </Label>
                             <Input
                               id="newUserConfirmPassword"
                               type="password"
                               value={newUser.confirmPassword}
-                              onChange={(e) => setNewUser(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                              onChange={(e) =>
+                                setNewUser((prev) => ({
+                                  ...prev,
+                                  confirmPassword: e.target.value,
+                                }))
+                              }
                               className="font-body"
                             />
                           </div>
@@ -833,8 +986,12 @@ export default function Settings() {
                           <TableHead className="font-heading">User</TableHead>
                           <TableHead className="font-heading">Role</TableHead>
                           <TableHead className="font-heading">Status</TableHead>
-                          <TableHead className="font-heading">Last Login</TableHead>
-                          <TableHead className="font-heading">Actions</TableHead>
+                          <TableHead className="font-heading">
+                            Last Login
+                          </TableHead>
+                          <TableHead className="font-heading">
+                            Actions
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -842,9 +999,15 @@ export default function Settings() {
                           <TableRow key={userData.id}>
                             <TableCell>
                               <div>
-                                <div className="font-medium font-body">{userData.name}</div>
-                                <div className="text-sm text-foreground/60 font-body">{userData.email}</div>
-                                <div className="text-xs text-foreground/50 font-body">{userData.phone}</div>
+                                <div className="font-medium font-body">
+                                  {userData.name}
+                                </div>
+                                <div className="text-sm text-foreground/60 font-body">
+                                  {userData.email}
+                                </div>
+                                <div className="text-xs text-foreground/50 font-body">
+                                  {userData.phone}
+                                </div>
                               </div>
                             </TableCell>
                             <TableCell>
@@ -853,8 +1016,8 @@ export default function Settings() {
                                   userData.role === "admin"
                                     ? "bg-red-100 text-red-800"
                                     : userData.role === "manager"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : "bg-gray-100 text-gray-800"
+                                      ? "bg-blue-100 text-blue-800"
+                                      : "bg-gray-100 text-gray-800"
                                 } font-body capitalize`}
                               >
                                 {userData.role}
@@ -872,34 +1035,50 @@ export default function Settings() {
                               </Badge>
                             </TableCell>
                             <TableCell className="font-body text-sm">
-                              {userData.lastLogin ? 
-                                new Date(userData.lastLogin).toLocaleDateString() : 
-                                "Never"
-                              }
+                              {userData.lastLogin
+                                ? new Date(
+                                    userData.lastLogin,
+                                  ).toLocaleDateString()
+                                : "Never"}
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center space-x-2">
-                                <Button variant="ghost" size="sm" className="font-body">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="font-body"
+                                >
                                   <Edit3 className="h-4 w-4" />
                                 </Button>
                                 {userData.id !== user?.id && (
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-red-600 hover:text-red-700"
+                                      >
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                       <AlertDialogHeader>
-                                        <AlertDialogTitle className="font-heading">Delete User</AlertDialogTitle>
+                                        <AlertDialogTitle className="font-heading">
+                                          Delete User
+                                        </AlertDialogTitle>
                                         <AlertDialogDescription className="font-body">
-                                          Are you sure you want to delete this user? This action cannot be undone.
+                                          Are you sure you want to delete this
+                                          user? This action cannot be undone.
                                         </AlertDialogDescription>
                                       </AlertDialogHeader>
                                       <AlertDialogFooter>
-                                        <AlertDialogCancel className="font-body">Cancel</AlertDialogCancel>
+                                        <AlertDialogCancel className="font-body">
+                                          Cancel
+                                        </AlertDialogCancel>
                                         <AlertDialogAction
-                                          onClick={() => handleDeleteUser(userData.id)}
+                                          onClick={() =>
+                                            handleDeleteUser(userData.id)
+                                          }
                                           className="bg-red-600 hover:bg-red-700 font-body"
                                         >
                                           Delete
@@ -934,27 +1113,47 @@ export default function Settings() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="timezone" className="font-body">Timezone</Label>
+                      <Label htmlFor="timezone" className="font-body">
+                        Timezone
+                      </Label>
                       <Select
                         value={systemSettings.timezone}
-                        onValueChange={(value) => setSystemSettings(prev => ({ ...prev, timezone: value }))}
+                        onValueChange={(value) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            timezone: value,
+                          }))
+                        }
                       >
                         <SelectTrigger className="font-body">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Asia/Dhaka">Asia/Dhaka (UTC+6)</SelectItem>
-                          <SelectItem value="Asia/Karachi">Asia/Karachi (UTC+5)</SelectItem>
-                          <SelectItem value="Asia/Dubai">Asia/Dubai (UTC+4)</SelectItem>
+                          <SelectItem value="Asia/Dhaka">
+                            Asia/Dhaka (UTC+6)
+                          </SelectItem>
+                          <SelectItem value="Asia/Karachi">
+                            Asia/Karachi (UTC+5)
+                          </SelectItem>
+                          <SelectItem value="Asia/Dubai">
+                            Asia/Dubai (UTC+4)
+                          </SelectItem>
                           <SelectItem value="UTC">UTC (UTC+0)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="language" className="font-body">Language</Label>
+                      <Label htmlFor="language" className="font-body">
+                        Language
+                      </Label>
                       <Select
                         value={systemSettings.language}
-                        onValueChange={(value) => setSystemSettings(prev => ({ ...prev, language: value }))}
+                        onValueChange={(value) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            language: value,
+                          }))
+                        }
                       >
                         <SelectTrigger className="font-body">
                           <SelectValue />
@@ -967,10 +1166,17 @@ export default function Settings() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="dateFormat" className="font-body">Date Format</Label>
+                      <Label htmlFor="dateFormat" className="font-body">
+                        Date Format
+                      </Label>
                       <Select
                         value={systemSettings.dateFormat}
-                        onValueChange={(value) => setSystemSettings(prev => ({ ...prev, dateFormat: value }))}
+                        onValueChange={(value) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            dateFormat: value,
+                          }))
+                        }
                       >
                         <SelectTrigger className="font-body">
                           <SelectValue />
@@ -983,10 +1189,17 @@ export default function Settings() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="timeFormat" className="font-body">Time Format</Label>
+                      <Label htmlFor="timeFormat" className="font-body">
+                        Time Format
+                      </Label>
                       <Select
                         value={systemSettings.timeFormat}
-                        onValueChange={(value) => setSystemSettings(prev => ({ ...prev, timeFormat: value }))}
+                        onValueChange={(value) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            timeFormat: value,
+                          }))
+                        }
                       >
                         <SelectTrigger className="font-body">
                           <SelectValue />
@@ -1018,7 +1231,12 @@ export default function Settings() {
                       </div>
                       <Switch
                         checked={systemSettings.emailNotifications}
-                        onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, emailNotifications: checked }))}
+                        onCheckedChange={(checked) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            emailNotifications: checked,
+                          }))
+                        }
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -1030,7 +1248,12 @@ export default function Settings() {
                       </div>
                       <Switch
                         checked={systemSettings.smsNotifications}
-                        onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, smsNotifications: checked }))}
+                        onCheckedChange={(checked) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            smsNotifications: checked,
+                          }))
+                        }
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -1042,7 +1265,12 @@ export default function Settings() {
                       </div>
                       <Switch
                         checked={systemSettings.pushNotifications}
-                        onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, pushNotifications: checked }))}
+                        onCheckedChange={(checked) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            pushNotifications: checked,
+                          }))
+                        }
                       />
                     </div>
                   </CardContent>
@@ -1066,14 +1294,26 @@ export default function Settings() {
                       </div>
                       <Switch
                         checked={systemSettings.autoBackup}
-                        onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, autoBackup: checked }))}
+                        onCheckedChange={(checked) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            autoBackup: checked,
+                          }))
+                        }
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="backupFrequency" className="font-body">Backup Frequency</Label>
+                      <Label htmlFor="backupFrequency" className="font-body">
+                        Backup Frequency
+                      </Label>
                       <Select
                         value={systemSettings.backupFrequency}
-                        onValueChange={(value) => setSystemSettings(prev => ({ ...prev, backupFrequency: value }))}
+                        onValueChange={(value) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            backupFrequency: value,
+                          }))
+                        }
                       >
                         <SelectTrigger className="font-body">
                           <SelectValue />
@@ -1087,12 +1327,19 @@ export default function Settings() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="maxBackupFiles" className="font-body">Max Backup Files</Label>
+                      <Label htmlFor="maxBackupFiles" className="font-body">
+                        Max Backup Files
+                      </Label>
                       <Input
                         id="maxBackupFiles"
                         type="number"
                         value={systemSettings.maxBackupFiles}
-                        onChange={(e) => setSystemSettings(prev => ({ ...prev, maxBackupFiles: parseInt(e.target.value) }))}
+                        onChange={(e) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            maxBackupFiles: parseInt(e.target.value),
+                          }))
+                        }
                         className="font-body"
                         min="1"
                         max="100"
@@ -1123,12 +1370,19 @@ export default function Settings() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="bookingTimeout" className="font-body">Booking Timeout (hours)</Label>
+                      <Label htmlFor="bookingTimeout" className="font-body">
+                        Booking Timeout (hours)
+                      </Label>
                       <Input
                         id="bookingTimeout"
                         type="number"
                         value={systemSettings.bookingTimeout}
-                        onChange={(e) => setSystemSettings(prev => ({ ...prev, bookingTimeout: parseInt(e.target.value) }))}
+                        onChange={(e) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            bookingTimeout: parseInt(e.target.value),
+                          }))
+                        }
                         className="font-body"
                         min="1"
                         max="72"
@@ -1138,12 +1392,19 @@ export default function Settings() {
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="sessionTimeout" className="font-body">Session Timeout (minutes)</Label>
+                      <Label htmlFor="sessionTimeout" className="font-body">
+                        Session Timeout (minutes)
+                      </Label>
                       <Input
                         id="sessionTimeout"
                         type="number"
                         value={systemSettings.sessionTimeout}
-                        onChange={(e) => setSystemSettings(prev => ({ ...prev, sessionTimeout: parseInt(e.target.value) }))}
+                        onChange={(e) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            sessionTimeout: parseInt(e.target.value),
+                          }))
+                        }
                         className="font-body"
                         min="15"
                         max="480"
@@ -1185,12 +1446,19 @@ export default function Settings() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="maxLoginAttempts" className="font-body">Max Login Attempts</Label>
+                    <Label htmlFor="maxLoginAttempts" className="font-body">
+                      Max Login Attempts
+                    </Label>
                     <Input
                       id="maxLoginAttempts"
                       type="number"
                       value={systemSettings.maxLoginAttempts}
-                      onChange={(e) => setSystemSettings(prev => ({ ...prev, maxLoginAttempts: parseInt(e.target.value) }))}
+                      onChange={(e) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          maxLoginAttempts: parseInt(e.target.value),
+                        }))
+                      }
                       className="font-body"
                       min="3"
                       max="10"
@@ -1200,12 +1468,19 @@ export default function Settings() {
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="passwordExpiry" className="font-body">Password Expiry (days)</Label>
+                    <Label htmlFor="passwordExpiry" className="font-body">
+                      Password Expiry (days)
+                    </Label>
                     <Input
                       id="passwordExpiry"
                       type="number"
                       value={systemSettings.passwordExpiry}
-                      onChange={(e) => setSystemSettings(prev => ({ ...prev, passwordExpiry: parseInt(e.target.value) }))}
+                      onChange={(e) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          passwordExpiry: parseInt(e.target.value),
+                        }))
+                      }
                       className="font-body"
                       min="30"
                       max="365"
@@ -1216,14 +1491,21 @@ export default function Settings() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label className="font-body">Two-Factor Authentication</Label>
+                      <Label className="font-body">
+                        Two-Factor Authentication
+                      </Label>
                       <p className="text-sm text-foreground/60 font-body">
                         Require 2FA for all users
                       </p>
                     </div>
                     <Switch
                       checked={systemSettings.twoFactorAuth}
-                      onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, twoFactorAuth: checked }))}
+                      onCheckedChange={(checked) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          twoFactorAuth: checked,
+                        }))
+                      }
                     />
                   </div>
                 </CardContent>
@@ -1246,7 +1528,12 @@ export default function Settings() {
                     </div>
                     <Switch
                       checked={systemSettings.maintenanceMode}
-                      onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, maintenanceMode: checked }))}
+                      onCheckedChange={(checked) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          maintenanceMode: checked,
+                        }))
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -1258,7 +1545,12 @@ export default function Settings() {
                     </div>
                     <Switch
                       checked={systemSettings.debugMode}
-                      onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, debugMode: checked }))}
+                      onCheckedChange={(checked) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          debugMode: checked,
+                        }))
+                      }
                     />
                   </div>
                   {systemSettings.maintenanceMode && (
@@ -1313,35 +1605,57 @@ export default function Settings() {
                       <div className="space-y-3">
                         <div className="flex justify-between items-center">
                           <span className="font-body text-sm">Version</span>
-                          <Badge className="font-body">{systemInfo.version}</Badge>
+                          <Badge className="font-body">
+                            {systemInfo.version}
+                          </Badge>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="font-body text-sm">Uptime</span>
-                          <span className="font-body text-sm text-foreground/70">{systemInfo.uptime}</span>
+                          <span className="font-body text-sm text-foreground/70">
+                            {systemInfo.uptime}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="font-body text-sm">Memory Usage</span>
-                          <span className="font-body text-sm text-foreground/70">{systemInfo.memory_usage}</span>
+                          <span className="font-body text-sm">
+                            Memory Usage
+                          </span>
+                          <span className="font-body text-sm text-foreground/70">
+                            {systemInfo.memory_usage}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="font-body text-sm">CPU Usage</span>
-                          <span className="font-body text-sm text-foreground/70">{systemInfo.cpu_usage}</span>
+                          <span className="font-body text-sm text-foreground/70">
+                            {systemInfo.cpu_usage}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="font-body text-sm">Disk Usage</span>
-                          <span className="font-body text-sm text-foreground/70">{systemInfo.disk_usage}</span>
+                          <span className="font-body text-sm text-foreground/70">
+                            {systemInfo.disk_usage}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="font-body text-sm">Active Sessions</span>
-                          <Badge className="bg-green-100 text-green-800 font-body">{systemInfo.active_sessions}</Badge>
+                          <span className="font-body text-sm">
+                            Active Sessions
+                          </span>
+                          <Badge className="bg-green-100 text-green-800 font-body">
+                            {systemInfo.active_sessions}
+                          </Badge>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="font-body text-sm">Database Size</span>
-                          <span className="font-body text-sm text-foreground/70">{systemInfo.database_size}</span>
+                          <span className="font-body text-sm">
+                            Database Size
+                          </span>
+                          <span className="font-body text-sm text-foreground/70">
+                            {systemInfo.database_size}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="font-body text-sm">Last Backup</span>
-                          <span className="font-body text-sm text-foreground/70">{systemInfo.last_backup}</span>
+                          <span className="font-body text-sm text-foreground/70">
+                            {systemInfo.last_backup}
+                          </span>
                         </div>
                       </div>
                     ) : (
@@ -1374,7 +1688,9 @@ export default function Settings() {
                         <div className="flex flex-col items-center space-y-2">
                           <FileText className="h-6 w-6" />
                           <span>Export CSV</span>
-                          <span className="text-xs opacity-80">Spreadsheet Format</span>
+                          <span className="text-xs opacity-80">
+                            Spreadsheet Format
+                          </span>
                         </div>
                       </Button>
                       <Button
@@ -1386,7 +1702,9 @@ export default function Settings() {
                         <div className="flex flex-col items-center space-y-2">
                           <Database className="h-6 w-6" />
                           <span>Export JSON</span>
-                          <span className="text-xs opacity-80">Database Format</span>
+                          <span className="text-xs opacity-80">
+                            Database Format
+                          </span>
                         </div>
                       </Button>
                       <Button
@@ -1398,7 +1716,9 @@ export default function Settings() {
                         <div className="flex flex-col items-center space-y-2">
                           <FileText className="h-6 w-6" />
                           <span>Export PDF</span>
-                          <span className="text-xs opacity-80">Report Format</span>
+                          <span className="text-xs opacity-80">
+                            Report Format
+                          </span>
                         </div>
                       </Button>
                       <Button
@@ -1410,7 +1730,9 @@ export default function Settings() {
                         <div className="flex flex-col items-center space-y-2">
                           <Database className="h-6 w-6" />
                           <span>Export XML</span>
-                          <span className="text-xs opacity-80">Structured Data</span>
+                          <span className="text-xs opacity-80">
+                            Structured Data
+                          </span>
                         </div>
                       </Button>
                     </div>
@@ -1441,13 +1763,16 @@ export default function Settings() {
                             <div className="flex items-center space-x-2">
                               <Badge
                                 className={`${
-                                  log.action.includes("create") || log.action.includes("add")
+                                  log.action.includes("create") ||
+                                  log.action.includes("add")
                                     ? "bg-green-100 text-green-800"
-                                    : log.action.includes("update") || log.action.includes("edit")
-                                    ? "bg-blue-100 text-blue-800"
-                                    : log.action.includes("delete") || log.action.includes("remove")
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-gray-100 text-gray-800"
+                                    : log.action.includes("update") ||
+                                        log.action.includes("edit")
+                                      ? "bg-blue-100 text-blue-800"
+                                      : log.action.includes("delete") ||
+                                          log.action.includes("remove")
+                                        ? "bg-red-100 text-red-800"
+                                        : "bg-gray-100 text-gray-800"
                                 } text-xs font-body`}
                               >
                                 {log.action.replace(/_/g, " ")}
@@ -1457,7 +1782,8 @@ export default function Settings() {
                               </span>
                             </div>
                             <p className="font-body text-xs text-foreground/60 mt-1">
-                              By: {log.user_name} • {new Date(log.created_at).toLocaleString()}
+                              By: {log.user_name} •{" "}
+                              {new Date(log.created_at).toLocaleString()}
                             </p>
                             {log.details && (
                               <p className="font-body text-xs text-foreground/50 mt-1 line-clamp-2">

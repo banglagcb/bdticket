@@ -93,7 +93,9 @@ export default function AdminBuying() {
   });
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
   const [isFormValid, setIsFormValid] = useState(false);
   const { toast } = useToast();
 
@@ -108,12 +110,14 @@ export default function AdminBuying() {
 
     // Country validation
     if (!formData.country.trim()) {
-      errors.country = "দেশ নির্বাচন করা আবশ্যক / Country selection is required";
+      errors.country =
+        "দেশ নির্বাচন করা আবশ্যক / Country selection is required";
     }
 
     // Airline validation
     if (!formData.airline.trim()) {
-      errors.airline = "এয়ারলাইন নির্বাচন করা আবশ্যক / Airline selection is required";
+      errors.airline =
+        "এয়ারলাইন নির্বাচন করা আবশ্যক / Airline selection is required";
     }
 
     // Flight date validation
@@ -126,10 +130,12 @@ export default function AdminBuying() {
       maxDate.setFullYear(today.getFullYear() + 1); // Max 1 year in future
 
       if (flightDate < today) {
-        errors.flightDate = "ভবিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
+        errors.flightDate =
+          "ভবিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
       }
       if (flightDate > maxDate) {
-        errors.flightDate = "১ বছরের মধ্যে তারিখ নির্বাচন করুন / Please select date within 1 year";
+        errors.flightDate =
+          "১ বছরের মধ্যে তারিখ নির্বাচন করুন / Please select date within 1 year";
       }
     }
 
@@ -139,53 +145,69 @@ export default function AdminBuying() {
     } else {
       const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
       if (!timeRegex.test(formData.flightTime)) {
-        errors.flightTime = "সঠিক সময় ফরম্যাট ব্যবহার করুন (HH:MM) / Please use correct time format (HH:MM)";
+        errors.flightTime =
+          "সঠিক সময় ফরম্যাট ব্যবহার করুন (HH:MM) / Please use correct time format (HH:MM)";
       }
     }
 
     // Buying price validation
     if (!formData.buyingPrice || formData.buyingPrice <= 0) {
-      errors.buyingPrice = "ক্রয় মূল্য ০ এর চেয়ে বেশি হতে হবে / Buying price must be greater than 0";
+      errors.buyingPrice =
+        "ক্রয় মূল্য ০ এর চেয়ে বেশি হতে হবে / Buying price must be greater than 0";
     } else if (formData.buyingPrice < 1000) {
-      errors.buyingPrice = "ক্রয় মূল্য কমপক্ষে ১০০০ টাকা হতে হবে / Buying price must be at least ৳1000";
+      errors.buyingPrice =
+        "ক্রয় মূল্য কমপক্ষে ১০০০ টাকা হতে হবে / Buying price must be at least ৳1000";
     } else if (formData.buyingPrice > 200000) {
-      errors.buyingPrice = "ক্রয় মূল্য ২,০০,০০০ টাকার চেয়ে বেশি হতে পারে না / Buying price cannot exceed ৳2,00,000";
+      errors.buyingPrice =
+        "ক্রয় মূল্য ২,০০,০০০ টাকার চেয়ে বেশি হতে পারে না / Buying price cannot exceed ৳2,00,000";
     }
 
     // Quantity validation
     if (!formData.quantity || formData.quantity <= 0) {
-      errors.quantity = "টিকেটের সংখ্যা ০ ���র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
+      errors.quantity =
+        "টিকেটের সংখ্যা ০ ���র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
     } else if (formData.quantity > 1000) {
-      errors.quantity = "একবারে সর্বোচ্চ ১��০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
+      errors.quantity =
+        "একবারে সর্বোচ্চ ১��০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
     }
 
     // Agent name validation
     if (!formData.agentName.trim()) {
       errors.agentName = "এজেন্টের নাম আবশ্যক / Agent name is required";
     } else if (formData.agentName.trim().length < 3) {
-      errors.agentName = "এজেন্টের নাম কমপক্ষে ৩ অক্ষর হতে হবে / Agent name must be at least 3 characters";
+      errors.agentName =
+        "এজেন্টের নাম কমপক্ষে ৩ অক্ষর হতে হবে / Agent name must be at least 3 characters";
     }
 
     // Agent contact validation
     if (!formData.agentContact.trim()) {
-      errors.agentContact = "এজেন্টের যোগাযোগ নম্বর আবশ্���ক / Agent contact is required";
+      errors.agentContact =
+        "এজেন্টের যোগাযোগ নম্বর আবশ্���ক / Agent contact is required";
     } else {
       const phoneRegex = /^(\+880|880|0)?(1[3-9]\d{8})$/;
-      const cleanContact = formData.agentContact.replace(/[\s-]/g, '');
+      const cleanContact = formData.agentContact.replace(/[\s-]/g, "");
       if (!phoneRegex.test(cleanContact)) {
-        errors.agentContact = "সঠিক বাংলাদেশি মোবাইল নম্বর দিন / Please provide valid Bangladeshi mobile number";
+        errors.agentContact =
+          "সঠিক বাংলাদেশি মোবাইল নম্বর দিন / Please provide valid Bangladeshi mobile number";
       }
     }
 
     // Agent address validation
-    if (formData.agentAddress && formData.agentAddress.trim().length > 0 && formData.agentAddress.trim().length < 10) {
-      errors.agentAddress = "ঠিকানা কমপক্ষে ১০ অক্ষর হতে হবে / Address must be at least 10 characters";
+    if (
+      formData.agentAddress &&
+      formData.agentAddress.trim().length > 0 &&
+      formData.agentAddress.trim().length < 10
+    ) {
+      errors.agentAddress =
+        "ঠিকানা কমপক্ষে ১০ অক্ষর হতে হবে / Address must be at least 10 characters";
     }
 
     // Total cost validation
     const totalCost = formData.buyingPrice * formData.quantity;
-    if (totalCost > 50000000) { // 5 crore limit
-      errors.general = "মোট খরচ ৫ কোটি টাকার বেশি হতে পারে না / Total cost cannot exceed ৳5 crore";
+    if (totalCost > 50000000) {
+      // 5 crore limit
+      errors.general =
+        "মোট খরচ ৫ কোটি টাকার বেশি হতে পারে না / Total cost cannot exceed ৳5 crore";
     }
 
     return errors;
@@ -196,20 +218,26 @@ export default function AdminBuying() {
     const errors: Record<string, string> = {};
 
     // Check for duplicate flights on same date/time
-    const existingFlight = pastPurchases.find(p =>
-      p.country === formData.country &&
-      p.airline === formData.airline &&
-      p.flightDate === formData.flightDate
+    const existingFlight = pastPurchases.find(
+      (p) =>
+        p.country === formData.country &&
+        p.airline === formData.airline &&
+        p.flightDate === formData.flightDate,
     );
 
     if (existingFlight) {
-      errors.duplicate = "একই দিনে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
+      errors.duplicate =
+        "একই দিনে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
     }
 
     // Check minimum profit margin (20%)
     const estimatedSellingPrice = formData.buyingPrice * 1.15; // Minimum 15% markup
-    if (estimatedSellingPrice - formData.buyingPrice < formData.buyingPrice * 0.1) {
-      errors.profit = "লাভের মার্জিন কমপক্ষে ১০% রাখুন / Keep minimum 10% profit margin";
+    if (
+      estimatedSellingPrice - formData.buyingPrice <
+      formData.buyingPrice * 0.1
+    ) {
+      errors.profit =
+        "লাভের মার্জিন কমপক্ষে ১০% রাখুন / Keep minimum 10% profit margin";
     }
 
     return errors;
@@ -237,7 +265,8 @@ export default function AdminBuying() {
       estimatedSellingPrice,
       estimatedRevenue,
       estimatedProfit,
-      profitMargin: totalCost > 0 ? ((estimatedProfit / totalCost) * 100).toFixed(1) : "0"
+      profitMargin:
+        totalCost > 0 ? ((estimatedProfit / totalCost) * 100).toFixed(1) : "0",
     };
   };
 
@@ -292,7 +321,8 @@ export default function AdminBuying() {
       setValidationErrors(allErrors);
       toast({
         title: "ভ্যা���িডেশন ত্রুটি / Validation Error",
-        description: "দয়া করে সব ক্ষেত্র সঠিকভাবে পূরণ করুন / Please fill all fields correctly",
+        description:
+          "দয়া করে সব ক্ষেত্র সঠিকভাবে পূরণ করুন / Please fill all fields correctly",
         variant: "destructive",
       });
       return;
@@ -303,16 +333,18 @@ export default function AdminBuying() {
     if (financials.totalCost <= 0) {
       toast({
         title: "আর্থিক ত্রুটি / Financial Error",
-        description: "মোট খরচ শূন্যের চেয়ে বেশি হতে হবে / Total cost must be greater than zero",
+        description:
+          "মোট খরচ শূন্যের চেয়ে বেশি হতে হবে / Total cost must be greater than zero",
         variant: "destructive",
       });
       return;
     }
 
     // 3rd Check: Confirm large purchases
-    if (financials.totalCost > 1000000) { // 10 lakh
+    if (financials.totalCost > 1000000) {
+      // 10 lakh
       const confirmed = window.confirm(
-        `বড় পরিমাণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চিত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`
+        `বড় পরিমাণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চিত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`,
       );
       if (!confirmed) return;
     }
@@ -332,11 +364,26 @@ export default function AdminBuying() {
       console.log("এয়ারলাইন / Airline:", formData.airline);
       console.log("ফ্লাইট তারিখ / Flight Date:", formData.flightDate);
       console.log("পরিমাণ / Quantity:", formData.quantity);
-      console.log("ক্রয় মূল্য / Buying Price:", `৳${formData.buyingPrice.toLocaleString()}`);
-      console.log("মোট খরচ / Total Cost:", `৳${financials.totalCost.toLocaleString()}`);
-      console.log("��্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price:", `৳${financials.estimatedSellingPrice.toLocaleString()}`);
-      console.log("প্রত্যাশিত মুনাফা / Expected Profit:", `৳${financials.estimatedProfit.toLocaleString()}`);
-      console.log("মুনাফার হার / Profit Margin:", `${financials.profitMargin}%`);
+      console.log(
+        "ক্রয় মূল্য / Buying Price:",
+        `৳${formData.buyingPrice.toLocaleString()}`,
+      );
+      console.log(
+        "মোট খরচ / Total Cost:",
+        `৳${financials.totalCost.toLocaleString()}`,
+      );
+      console.log(
+        "��্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price:",
+        `৳${financials.estimatedSellingPrice.toLocaleString()}`,
+      );
+      console.log(
+        "প্রত্যাশিত মুনাফা / Expected Profit:",
+        `৳${financials.estimatedProfit.toLocaleString()}`,
+      );
+      console.log(
+        "মুনাফার হার / Profit Margin:",
+        `${financials.profitMargin}%`,
+      );
       console.log("এজেন্ট / Agent:", formData.agentName);
       console.log("যোগাযোগ / Contact:", formData.agentContact);
       console.log("সময় / Time:", new Date().toLocaleString());
@@ -344,10 +391,14 @@ export default function AdminBuying() {
 
       // Actual API call to create ticket batch
       const batchResponse = await apiClient.createTicketBatch(formData);
-      console.log("টিকেট ব্যাচ তৈরি সফল / Ticket batch created successfully:", batchResponse);
+      console.log(
+        "টিকেট ব্যাচ তৈরি সফল / Ticket batch created successfully:",
+        batchResponse,
+      );
 
       // 5th Check: Post-submission verification
-      const successMessage = `✅ সফলভাবে সম্পন্ন / Successfully Completed!\n\n` +
+      const successMessage =
+        `✅ সফলভাবে সম্পন্ন / Successfully Completed!\n\n` +
         `📊 বিস্তারিত / Details:\n` +
         `• দেশ / Country: ${formData.country}\n` +
         `• এয়ারলাইন / Airline: ${formData.airline}\n` +
@@ -359,7 +410,8 @@ export default function AdminBuying() {
       // Success notification
       toast({
         title: "সফল / Success!",
-        description: "টিকেট ব্যাচ সফলভাবে তৈরি হয়েছে / Ticket batch created successfully",
+        description:
+          "টিকেট ব্যাচ সফলভাবে তৈরি হয়েছে / Ticket batch created successfully",
       });
 
       // Reset form after successful submission
@@ -380,12 +432,12 @@ export default function AdminBuying() {
 
       // Show detailed success message
       alert(successMessage);
-
     } catch (error) {
       console.error("Error creating ticket batch:", error);
       toast({
         title: "ত্রুটি / Error",
-        description: "টিকেট ব্যাচ তৈরিতে সমস্যা হয়েছে / Failed to create ticket batch",
+        description:
+          "টিকেট ব্যাচ তৈরিতে সমস্যা হয়েছে / Failed to create ticket batch",
         variant: "destructive",
       });
     } finally {
@@ -757,27 +809,37 @@ export default function AdminBuying() {
                               </h3>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm font-body">
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
-                                  <span className="text-gray-600 block">টিকেট প্রতি দাম / Price per Ticket</span>
+                                  <span className="text-gray-600 block">
+                                    টিকেট প্রতি দাম / Price per Ticket
+                                  </span>
                                   <span className="font-bold text-blue-600 text-lg">
                                     ৳{formData.buyingPrice.toLocaleString()}
                                   </span>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
-                                  <span className="text-gray-600 block">মোট টিকেট / Total Tickets</span>
+                                  <span className="text-gray-600 block">
+                                    মোট টিকেট / Total Tickets
+                                  </span>
                                   <span className="font-bold text-blue-600 text-lg">
                                     {formData.quantity}
                                   </span>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
-                                  <span className="text-gray-600 block">মোট খরচ / Total Cost</span>
+                                  <span className="text-gray-600 block">
+                                    মোট খরচ / Total Cost
+                                  </span>
                                   <span className="font-bold text-red-600 text-lg">
                                     ৳{financials.totalCost.toLocaleString()}
                                   </span>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
-                                  <span className="text-gray-600 block">প্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price</span>
+                                  <span className="text-gray-600 block">
+                                    প্রত্যাশিত বিক্রয় মূল্য / Expected Selling
+                                    Price
+                                  </span>
                                   <span className="font-bold text-green-600 text-lg">
-                                    ৳{financials.estimatedSellingPrice.toLocaleString()}
+                                    ৳
+                                    {financials.estimatedSellingPrice.toLocaleString()}
                                   </span>
                                 </div>
                               </div>
@@ -791,23 +853,37 @@ export default function AdminBuying() {
                               </h3>
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-body">
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
-                                  <span className="text-gray-600 block">প্রত্যাশিত আয় / Expected Revenue</span>
+                                  <span className="text-gray-600 block">
+                                    প্রত্যাশিত আয় / Expected Revenue
+                                  </span>
                                   <span className="font-bold text-green-600 text-xl">
-                                    ৳{financials.estimatedRevenue.toLocaleString()}
+                                    ৳
+                                    {financials.estimatedRevenue.toLocaleString()}
                                   </span>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
-                                  <span className="text-gray-600 block">প্রত্যাশিত মুনাফা / Expected Profit</span>
+                                  <span className="text-gray-600 block">
+                                    প্রত্যাশিত মুনাফা / Expected Profit
+                                  </span>
                                   <span className="font-bold text-green-600 text-xl">
-                                    ৳{financials.estimatedProfit.toLocaleString()}
+                                    ৳
+                                    {financials.estimatedProfit.toLocaleString()}
                                   </span>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
-                                  <span className="text-gray-600 block">মুনাফার হ���র / Profit Margin</span>
-                                  <span className={`font-bold text-xl ${
-                                    parseFloat(financials.profitMargin) >= 20 ? 'text-green-600' :
-                                    parseFloat(financials.profitMargin) >= 10 ? 'text-yellow-600' : 'text-red-600'
-                                  }`}>
+                                  <span className="text-gray-600 block">
+                                    মুনাফার হ���র / Profit Margin
+                                  </span>
+                                  <span
+                                    className={`font-bold text-xl ${
+                                      parseFloat(financials.profitMargin) >= 20
+                                        ? "text-green-600"
+                                        : parseFloat(financials.profitMargin) >=
+                                            10
+                                          ? "text-yellow-600"
+                                          : "text-red-600"
+                                    }`}
+                                  >
                                     {financials.profitMargin}%
                                   </span>
                                 </div>
@@ -823,24 +899,37 @@ export default function AdminBuying() {
                               <div className="space-y-2 text-sm font-body">
                                 {financials.totalCost > 5000000 && (
                                   <div className="bg-red-100 border border-red-300 p-2 rounded flex items-center">
-                                    <span className="text-red-600 font-semibold">⚠️ উচ্চ ঝুঁকি: ৫০ লাখ টাকার বেশি বিনিয়োগ / High Risk: Investment over ৳50 lakh</span>
+                                    <span className="text-red-600 font-semibold">
+                                      ⚠️ উচ্চ ঝুঁকি: ৫০ লাখ টাকার বেশি বিনিয়োগ
+                                      / High Risk: Investment over ৳50 lakh
+                                    </span>
                                   </div>
                                 )}
                                 {parseFloat(financials.profitMargin) < 10 && (
                                   <div className="bg-orange-100 border border-orange-300 p-2 rounded flex items-center">
-                                    <span className="text-orange-600 font-semibold">⚠️ কম মুনাফা: ১০% এর কম / Low Profit: Less than 10%</span>
+                                    <span className="text-orange-600 font-semibold">
+                                      ⚠️ কম মুনাফা: ১০% এর কম / Low Profit: Less
+                                      than 10%
+                                    </span>
                                   </div>
                                 )}
                                 {formData.quantity > 500 && (
                                   <div className="bg-yellow-100 border border-yellow-300 p-2 rounded flex items-center">
-                                    <span className="text-yellow-600 font-semibold">⚠️ বড় পরিমাণ: ৫০০+ টিকেট / Large Quantity: 500+ tickets</span>
+                                    <span className="text-yellow-600 font-semibold">
+                                      ⚠️ বড় পরিমাণ: ৫০০+ টিকেট / Large
+                                      Quantity: 500+ tickets
+                                    </span>
                                   </div>
                                 )}
-                                {parseFloat(financials.profitMargin) >= 20 && financials.totalCost <= 1000000 && (
-                                  <div className="bg-green-100 border border-green-300 p-2 rounded flex items-center">
-                                    <span className="text-green-600 font-semibold">✅ নিরাপদ বিনিয়োগ: ভাল মুনাফার হার / Safe Investment: Good profit margin</span>
-                                  </div>
-                                )}
+                                {parseFloat(financials.profitMargin) >= 20 &&
+                                  financials.totalCost <= 1000000 && (
+                                    <div className="bg-green-100 border border-green-300 p-2 rounded flex items-center">
+                                      <span className="text-green-600 font-semibold">
+                                        ✅ নিরাপদ বিনিয়োগ: ভাল মুনাফার হার /
+                                        Safe Investment: Good profit margin
+                                      </span>
+                                    </div>
+                                  )}
                               </div>
                             </div>
                           </>
@@ -871,18 +960,24 @@ export default function AdminBuying() {
                     disabled={isSubmitting || !isFormValid}
                     className={`w-full font-body text-lg py-3 hover:scale-105 transform transition-all duration-200 ${
                       isFormValid
-                        ? 'velvet-button text-primary-foreground'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? "velvet-button text-primary-foreground"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   >
                     {isSubmitting ? (
                       <div className="flex items-center space-x-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        <span>টিকেট ইনভেন্টরিতে যোগ করা হচ্ছে... / Adding to Inventory...</span>
+                        <span>
+                          টিকেট ইনভেন্টরিতে যোগ করা হচ্ছে... / Adding to
+                          Inventory...
+                        </span>
                       </div>
                     ) : !isFormValid ? (
                       <div className="flex items-center space-x-2">
-                        <span>সব তথ্য সঠিকভাবে পূরণ করুন / Please fill all fields correctly</span>
+                        <span>
+                          সব তথ্য সঠিকভাবে পূরণ করুন / Please fill all fields
+                          correctly
+                        </span>
                       </div>
                     ) : (
                       <div className="flex items-center space-x-2">
