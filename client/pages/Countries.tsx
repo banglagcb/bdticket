@@ -203,7 +203,7 @@ export default function Countries() {
         {
           code: "QAT",
           name: "Qatar",
-          flag: "🇶🇦",
+          flag: "����🇦",
           totalTickets: 33,
           availableTickets: 28,
         },
@@ -508,8 +508,10 @@ export default function Countries() {
                   </p>
                   {autoRefresh && isOnline && (
                     <div className="flex items-center justify-center mt-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-xs font-body text-green-600 ml-1">Live</span>
+                      <div className={`w-2 h-2 rounded-full ${isBackgroundLoading ? 'bg-blue-500 animate-spin' : 'bg-green-500 animate-pulse'}`}></div>
+                      <span className={`text-xs font-body ml-1 ${isBackgroundLoading ? 'text-blue-600' : 'text-green-600'}`}>
+                        {isBackgroundLoading ? 'Updating...' : 'Live'}
+                      </span>
                     </div>
                   )}
                 </div>
