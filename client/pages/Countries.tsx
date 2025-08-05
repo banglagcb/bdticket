@@ -586,6 +586,9 @@ export default function Countries() {
               {autoRefresh && isOnline ? 'Auto-refreshing every 30s' : 'Manual refresh only'}
             </p>
           )}
+          <p className="font-body text-xs text-foreground/30">
+            Press 'R' to refresh • Press 'T' to toggle auto-refresh
+          </p>
         </div>
       </motion.div>
     </div>
