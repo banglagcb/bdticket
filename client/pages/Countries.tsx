@@ -224,7 +224,7 @@ export default function Countries() {
         {
           code: "BHR",
           name: "Bahrain",
-          flag: "🇧���",
+          flag: "🇧🇭",
           totalTickets: 45,
           availableTickets: 38,
         },
@@ -250,8 +250,12 @@ export default function Countries() {
         setError(null); // Clear error since we're showing demo data
       }
     } finally {
-      if (showLoader && mountedRef.current) {
-        setLoading(false);
+      if (mountedRef.current) {
+        if (showLoader) {
+          setLoading(false);
+        } else {
+          setIsBackgroundLoading(false);
+        }
       }
     }
   }, []);
