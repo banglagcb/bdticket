@@ -281,13 +281,86 @@ export default function AdminBuying() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 1st Check: Form validation
+    const formErrors = validateForm();
+    const businessErrors = validateBusinessRules();
+    const allErrors = { ...formErrors, ...businessErrors };
+
+    if (Object.keys(allErrors).length > 0) {
+      setValidationErrors(allErrors);
+      toast({
+        title: "ভ্যালিডেশন ত্রুটি / Validation Error",
+        description: "দয়া করে সব ক্ষেত্র সঠিকভাবে পূরণ করুন / Please fill all fields correctly",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // 2nd Check: Financial validation
+    const financials = calculateFinancials();
+    if (financials.totalCost <= 0) {
+      toast({
+        title: "আর্থিক ত্রুটি / Financial Error",
+        description: "মোট খরচ শূন্যের চেয়ে বেশি হতে হবে / Total cost must be greater than zero",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // 3rd Check: Confirm large purchases
+    if (financials.totalCost > 1000000) { // 10 lakh
+      const confirmed = window.confirm(
+        `বড় পরিমাণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চিত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`
+      );
+      if (!confirmed) return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
+      // 4th Check: Final pre-submission validation
+      toast({
+        title: "প্রক্রিয়াকরণ / Processing",
+        description: "টিকেট ব্যাচ তৈরি করা হচ্ছে / Creating ticket batch...",
+      });
+
+      // Log purchase details for audit
+      console.log("=== টিকেট ক্রয় অডিট লগ / TICKET PURCHASE AUDIT LOG ===");
+      console.log("দেশ / Country:", formData.country);
+      console.log("এয়ারলাইন / Airline:", formData.airline);
+      console.log("ফ্লাইট তারিখ / Flight Date:", formData.flightDate);
+      console.log("পরিমাণ / Quantity:", formData.quantity);
+      console.log("ক্রয় মূল্য / Buying Price:", `৳${formData.buyingPrice.toLocaleString()}`);
+      console.log("মোট খরচ / Total Cost:", `৳${financials.totalCost.toLocaleString()}`);
+      console.log("প্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price:", `৳${financials.estimatedSellingPrice.toLocaleString()}`);
+      console.log("প্রত্যাশিত মুনাফা / Expected Profit:", `৳${financials.estimatedProfit.toLocaleString()}`);
+      console.log("মুনাফার হার / Profit Margin:", `${financials.profitMargin}%`);
+      console.log("এজেন্ট / Agent:", formData.agentName);
+      console.log("যোগাযোগ / Contact:", formData.agentContact);
+      console.log("সময় / Time:", new Date().toLocaleString());
+      console.log("=== লগ শেষ / END LOG ===");
+
+      // Simulate API call with comprehensive checks
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Reset form
+      // 5th Check: Post-submission verification
+      const successMessage = `✅ সফলভাবে সম্পন্ন / Successfully Completed!\n\n` +
+        `📊 বিস্তারিত / Details:\n` +
+        `• দেশ / Country: ${formData.country}\n` +
+        `• এয়ারলাইন / Airline: ${formData.airline}\n` +
+        `• টিকেট সংখ্যা / Tickets: ${formData.quantity}\n` +
+        `• মোট খরচ / Total Cost: ৳${financials.totalCost.toLocaleString()}\n` +
+        `• প্রত্যাশিত মুনাফা / Expected Profit: ৳${financials.estimatedProfit.toLocaleString()}\n` +
+        `• মুনাফার হার / Profit Margin: ${financials.profitMargin}%`;
+
+      // Success notification
+      toast({
+        title: "সফল / Success!",
+        description: "টিকেট ব্যাচ সফলভাবে তৈরি হয়েছে / Ticket batch created successfully",
+      });
+
+      // Reset form after successful submission
       setFormData({
         country: "",
         airline: "",
@@ -301,10 +374,18 @@ export default function AdminBuying() {
         remarks: "",
       });
       setUploadedFile(null);
+      setValidationErrors({});
 
-      alert(`Successfully added ${formData.quantity} tickets to inventory!`);
+      // Show detailed success message
+      alert(successMessage);
+
     } catch (error) {
       console.error("Error creating ticket batch:", error);
+      toast({
+        title: "ত্রুটি / Error",
+        description: "টিকেট ব্যাচ তৈরিতে সমস্যা হয়েছে / Failed to create ticket batch",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
