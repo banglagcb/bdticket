@@ -94,53 +94,7 @@ export default function AdminBuying() {
 
   // Mock data for past purchases
   const pastPurchases: PastPurchase[] = [
-    {
-      id: "1",
-      country: "KSA",
-      airline: "Air Arabia",
-      flightDate: "Dec 20, 2024",
-      quantity: 20,
-      buyingPrice: 18000,
-      totalCost: 360000,
-      agentName: "Ahmed Travel",
-      agentContact: "+8801234567890",
-      sold: 12,
-      locked: 3,
-      available: 5,
-      profit: 48000,
-      createdAt: "2024-12-18",
-    },
-    {
-      id: "2",
-      country: "UAE",
-      airline: "Emirates",
-      flightDate: "Dec 22, 2024",
-      quantity: 15,
-      buyingPrice: 38000,
-      totalCost: 570000,
-      agentName: "Gulf Air Agency",
-      agentContact: "+8801987654321",
-      sold: 8,
-      locked: 2,
-      available: 5,
-      profit: 72000,
-      createdAt: "2024-12-19",
-    },
-    {
-      id: "3",
-      country: "QAT",
-      airline: "Qatar Airways",
-      flightDate: "Dec 25, 2024",
-      quantity: 10,
-      buyingPrice: 44000,
-      totalCost: 440000,
-      agentName: "Royal Travel",
-      sold: 6,
-      locked: 1,
-      available: 3,
-      profit: 48000,
-      createdAt: "2024-12-20",
-    },
+    // Will be populated with real purchase data
   ];
 
   const countries = [
