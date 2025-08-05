@@ -158,6 +158,7 @@ export default function Countries() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const mountedRef = useRef(true);
 
