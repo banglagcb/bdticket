@@ -333,7 +333,7 @@ export default function AdminBuying() {
       console.log("পরিমাণ / Quantity:", formData.quantity);
       console.log("ক্রয় মূল্য / Buying Price:", `৳${formData.buyingPrice.toLocaleString()}`);
       console.log("মোট খরচ / Total Cost:", `৳${financials.totalCost.toLocaleString()}`);
-      console.log("প্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price:", `৳${financials.estimatedSellingPrice.toLocaleString()}`);
+      console.log("��্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price:", `৳${financials.estimatedSellingPrice.toLocaleString()}`);
       console.log("প্রত্যাশিত মুনাফা / Expected Profit:", `৳${financials.estimatedProfit.toLocaleString()}`);
       console.log("মুনাফার হার / Profit Margin:", `${financials.profitMargin}%`);
       console.log("এজেন্ট / Agent:", formData.agentName);
@@ -736,45 +736,114 @@ export default function AdminBuying() {
                     </div>
                   </div>
 
-                  {/* Cost Summary */}
+                  {/* Comprehensive Financial Calculator */}
                   {formData.quantity > 0 && formData.buyingPrice > 0 && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="p-4 bg-gradient-to-br from-cream-100 to-cream-200 rounded-lg border border-border/30"
+                      className="space-y-4"
                     >
-                      <h3 className="font-heading font-semibold velvet-text mb-2">
-                        Cost Summary
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-body">
-                        <div>
-                          <span className="text-foreground/70">
-                            Price per ticket:
-                          </span>
-                          <span className="font-semibold text-foreground ml-2">
-                            ৳{formData.buyingPrice.toLocaleString()}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-foreground/70">
-                            Total tickets:
-                          </span>
-                          <span className="font-semibold text-foreground ml-2">
-                            {formData.quantity}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-foreground/70">
-                            Total cost:
-                          </span>
-                          <span className="font-semibold text-primary ml-2">
-                            ৳
-                            {(
-                              formData.buyingPrice * formData.quantity
-                            ).toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
+                      {(() => {
+                        const financials = calculateFinancials();
+                        return (
+                          <>
+                            {/* Cost Breakdown */}
+                            <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                              <h3 className="font-heading font-semibold text-blue-800 mb-3 flex items-center">
+                                <DollarSign className="h-5 w-5 mr-2" />
+                                আর্থিক বিশ্লেষণ / Financial Analysis
+                              </h3>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm font-body">
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <span className="text-gray-600 block">টিকেট প্রতি দাম / Price per Ticket</span>
+                                  <span className="font-bold text-blue-600 text-lg">
+                                    ৳{formData.buyingPrice.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <span className="text-gray-600 block">মোট টিকেট / Total Tickets</span>
+                                  <span className="font-bold text-blue-600 text-lg">
+                                    {formData.quantity}
+                                  </span>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <span className="text-gray-600 block">মোট খরচ / Total Cost</span>
+                                  <span className="font-bold text-red-600 text-lg">
+                                    ৳{financials.totalCost.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <span className="text-gray-600 block">প্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price</span>
+                                  <span className="font-bold text-green-600 text-lg">
+                                    ৳{financials.estimatedSellingPrice.toLocaleString()}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Profit Analysis */}
+                            <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                              <h3 className="font-heading font-semibold text-green-800 mb-3 flex items-center">
+                                <TrendingUp className="h-5 w-5 mr-2" />
+                                মুনাফা বিশ্লেষণ / Profit Analysis
+                              </h3>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-body">
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <span className="text-gray-600 block">প্রত্যাশিত আয় / Expected Revenue</span>
+                                  <span className="font-bold text-green-600 text-xl">
+                                    ৳{financials.estimatedRevenue.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <span className="text-gray-600 block">প্রত্যাশিত মুনাফা / Expected Profit</span>
+                                  <span className="font-bold text-green-600 text-xl">
+                                    ৳{financials.estimatedProfit.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <span className="text-gray-600 block">মুনাফার হার / Profit Margin</span>
+                                  <span className={`font-bold text-xl ${
+                                    parseFloat(financials.profitMargin) >= 20 ? 'text-green-600' :
+                                    parseFloat(financials.profitMargin) >= 10 ? 'text-yellow-600' : 'text-red-600'
+                                  }`}>
+                                    {financials.profitMargin}%
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Risk Assessment */}
+                            <div className="p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200">
+                              <h3 className="font-heading font-semibold text-yellow-800 mb-3 flex items-center">
+                                <Package className="h-5 w-5 mr-2" />
+                                ঝুঁকি মূল্যায়ন / Risk Assessment
+                              </h3>
+                              <div className="space-y-2 text-sm font-body">
+                                {financials.totalCost > 5000000 && (
+                                  <div className="bg-red-100 border border-red-300 p-2 rounded flex items-center">
+                                    <span className="text-red-600 font-semibold">⚠️ উচ্চ ঝুঁকি: ৫০ লাখ টাকার বেশি বিনিয়োগ / High Risk: Investment over ৳50 lakh</span>
+                                  </div>
+                                )}
+                                {parseFloat(financials.profitMargin) < 10 && (
+                                  <div className="bg-orange-100 border border-orange-300 p-2 rounded flex items-center">
+                                    <span className="text-orange-600 font-semibold">⚠️ কম মুনাফা: ১০% এর কম / Low Profit: Less than 10%</span>
+                                  </div>
+                                )}
+                                {formData.quantity > 500 && (
+                                  <div className="bg-yellow-100 border border-yellow-300 p-2 rounded flex items-center">
+                                    <span className="text-yellow-600 font-semibold">⚠️ বড় পরিমাণ: ৫০০+ টিকেট / Large Quantity: 500+ tickets</span>
+                                  </div>
+                                )}
+                                {parseFloat(financials.profitMargin) >= 20 && financials.totalCost <= 1000000 && (
+                                  <div className="bg-green-100 border border-green-300 p-2 rounded flex items-center">
+                                    <span className="text-green-600 font-semibold">✅ নিরাপদ বিনিয়োগ: ভাল মুনাফার হার / Safe Investment: Good profit margin</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </>
+                        );
+                      })()}
                     </motion.div>
                   )}
 
