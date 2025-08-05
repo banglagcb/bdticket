@@ -83,10 +83,19 @@ function CountryCard({ country, index }: CountryCardProps) {
                 </span>
               </div>
 
-              <div className="w-full bg-gradient-to-r from-cream-200 to-cream-300 rounded-full h-2">
+              <div className="w-full bg-gradient-to-r from-cream-200 to-cream-300 rounded-full h-3 overflow-hidden">
                 <div
-                  className="bg-gradient-to-r from-luxury-gold to-luxury-bronze h-2 rounded-full transition-all duration-300 animate-glow"
-                  style={{ width: `${availabilityPercentage}%` }}
+                  className={`h-3 rounded-full transition-all duration-500 ${
+                    availabilityStatus === 'high'
+                      ? 'bg-gradient-to-r from-green-400 to-green-600 animate-glow'
+                      : availabilityStatus === 'medium'
+                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500'
+                        : 'bg-gradient-to-r from-red-400 to-red-600'
+                  }`}
+                  style={{
+                    width: `${Math.max(availabilityPercentage, 2)}%`,
+                    transition: 'width 0.5s ease-in-out'
+                  }}
                 ></div>
               </div>
 
