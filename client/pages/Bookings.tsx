@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "../hooks/use-toast";
+import { validateStatusTransition } from "../lib/validation";
 import { useAuth } from "../context/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -183,7 +184,7 @@ export default function Bookings() {
       console.log("বুকিং আইডি / Booking ID:", bookingId);
       console.log("যাত্রীর নাম / Passenger Name:", booking.passengerInfo?.name);
       console.log("পূর্বের স্ট্যাটাস / Previous Status:", currentStatus);
-      console.log("নতুন স্ট্যাটাস / New Status:", newStatus);
+      console.log("নতুন স্ট্য��টাস / New Status:", newStatus);
       console.log("ব্যবহারকারী / User:", user?.name);
       console.log("সময় / Time:", new Date().toLocaleString());
       console.log("=== লগ শেষ / END LOG ===");
