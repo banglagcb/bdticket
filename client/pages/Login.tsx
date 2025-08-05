@@ -176,7 +176,7 @@ export default function Login() {
         </Card>
 
         <div className="text-center mt-6 text-sm text-foreground/60 font-body">
-          © 2024 BD TicketPro. Travel Agency Management System.
+          © 2024 Travel Agency Management System.
         </div>
       </motion.div>
     </div>
