@@ -184,7 +184,7 @@ export default function Bookings() {
       console.log("বুকিং আইডি / Booking ID:", bookingId);
       console.log("যাত্রীর নাম / Passenger Name:", booking.passengerInfo?.name);
       console.log("পূর্বের স্ট্যাটাস / Previous Status:", currentStatus);
-      console.log("নতুন স্ট্য��টাস / New Status:", newStatus);
+      console.log("নতুন স্ট্যাটাস / New Status:", newStatus);
       console.log("ব্যবহারকারী / User:", user?.name);
       console.log("সময় / Time:", new Date().toLocaleString());
       console.log("=== লগ শেষ / END LOG ===");
@@ -193,7 +193,7 @@ export default function Bookings() {
       await apiClient.updateBookingStatus(bookingId, newStatus);
       await loadBookings(); // Refresh the list
 
-      // Success notification
+      // Success toast notification
       toast({
         title: "সফল / Success!",
         description: `বুকিং স্ট্যাটাস আপডেট হয়েছে: ${currentStatus} → ${newStatus} / Booking status updated: ${currentStatus} → ${newStatus}`,
