@@ -1,5 +1,5 @@
 // Comprehensive validation utilities for BD TicketPro
-// টিকেট ক্রয় বিক্রয়ের জন্য সম্পূর্ণ validation utilities
+// টিকেট ক্রয় বিক্রয়ের জন্য সম্পূর্ণ বাংলা ভ্যালিডেশন utilities
 
 export interface ValidationResult {
   isValid: boolean;
@@ -351,7 +351,7 @@ export const validateBusinessRules = (formData: any, existingData: any[] = []): 
   );
 
   if (existingFlight) {
-    errors.push("একই দিনে, একই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date");
+    errors.push("একই দিনে, একই এয়��রলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date");
   }
 
   // Check minimum profit margin (10%)
