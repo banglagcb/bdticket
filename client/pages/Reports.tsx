@@ -113,21 +113,15 @@ export default function Reports() {
       // Process real data to create report structure
       const mockData: ReportData = {
         salesReport: {
-          totalRevenue: stats.todaysSales?.amount || 2850000,
-          totalBookings: stats.totalBookings || 156,
-          avgTicketPrice: stats.todaysSales?.amount
+          totalRevenue: stats.todaysSales?.amount || 0,
+          totalBookings: stats.totalBookings || 0,
+          avgTicketPrice: stats.todaysSales?.amount && stats.todaysSales?.count
             ? Math.round(
-                stats.todaysSales.amount / (stats.todaysSales.count || 1),
+                stats.todaysSales.amount / stats.todaysSales.count,
               )
-            : 18269,
-          profitMargin: 18.5, // This would need separate calculation
-          dailySales: Array.from({ length: 30 }, (_, i) => ({
-            date: new Date(Date.now() - i * 24 * 60 * 60 * 1000)
-              .toISOString()
-              .split("T")[0],
-            amount: Math.floor(Math.random() * 150000) + 50000,
-            bookings: Math.floor(Math.random() * 10) + 2,
-          })).reverse(),
+            : 0,
+          profitMargin: 0, // Will be calculated when real data is available
+          dailySales: [], // Will be populated with real sales data
         },
         countryReport: {
           topCountries: countries.countries
