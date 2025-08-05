@@ -1,5 +1,5 @@
-const Database = require("better-sqlite3");
-const { join } = require("path");
+import Database from "better-sqlite3";
+import { join } from "path";
 
 const dbPath = join(process.cwd(), "bd-ticketpro.db");
 const db = new Database(dbPath);
