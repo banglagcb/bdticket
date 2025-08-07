@@ -83,7 +83,7 @@ router.get("/", async (req: Request, res: Response) => {
 // Get all tickets from all countries
 router.get("/all", async (req: Request, res: Response) => {
   try {
-    const { status, airline, limit = 200, offset = 0 } = req.query;
+    const { status, airline, limit = 1000, offset = 0 } = req.query;
 
     let tickets = TicketRepository.findAll();
 
