@@ -300,24 +300,37 @@ class APIClient {
     status?: string;
     limit?: number;
     offset?: number;
-  }): Promise<any[]> {
-    const params = new URLSearchParams();
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined) {
-          params.append(key, value.toString());
-        }
-      });
-    }
+  }, retryCount = 0): Promise<any[]> {
+    try {
+      const params = new URLSearchParams();
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            params.append(key, value.toString());
+          }
+        });
+      }
 
-    const endpoint = `/bookings${params.toString() ? `?${params.toString()}` : ""}`;
-    const result = await this.request<any>(endpoint);
+      const endpoint = `/bookings${params.toString() ? `?${params.toString()}` : ""}`;
+      const result = await this.request<any>(endpoint);
 
-    if (result.success && result.data) {
-      // Return the bookings array from the nested data structure
-      return result.data.bookings || [];
+      if (result.success && result.data) {
+        // Return the bookings array from the nested data structure
+        return result.data.bookings || [];
+      }
+      throw new Error(result.message || "Failed to get bookings");
+    } catch (error) {
+      // Retry up to 2 times for network errors
+      if (retryCount < 2 && error instanceof Error &&
+          (error.message.includes('Failed to fetch') ||
+           error.message.includes('Network error') ||
+           error.message.includes('Unable to connect'))) {
+        console.log(`Retrying getBookings (attempt ${retryCount + 1})`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1))); // Progressive delay
+        return this.getBookings(filters, retryCount + 1);
+      }
+      throw error;
     }
-    throw new Error(result.message || "Failed to get bookings");
   }
 
   async createBooking(
