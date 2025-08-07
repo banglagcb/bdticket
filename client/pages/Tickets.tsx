@@ -374,6 +374,15 @@ export default function Tickets() {
         // Log a sample ticket to see the data structure
         if (data.length > 0) {
           console.log("Sample ticket structure:", data[0]);
+          console.log("Sample ticket batch:", data[0].batch);
+          console.log("Available date fields:", {
+            batch_flight_date: data[0].batch?.flight_date,
+            flight_date: data[0].flight_date,
+            departure_date: data[0].departure_date,
+            batch_departure_time: data[0].batch?.departure_time,
+            flight_time: data[0].flight_time,
+            departure_time: data[0].departure_time,
+          });
         }
 
         // Validate and clean ticket data
