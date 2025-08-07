@@ -382,11 +382,23 @@ router.get("/countries/stats", async (req: Request, res: Response) => {
       return result;
     });
 
+    // Calculate grand totals for validation
+    const grandTotal = countriesWithStats.reduce((sum, c) => sum + c.totalTickets, 0);
+    const grandAvailable = countriesWithStats.reduce((sum, c) => sum + c.availableTickets, 0);
+
+    console.log(`✅ Grand totals: ${grandTotal} total, ${grandAvailable} available`);
     console.log("✅ Sending countries response");
+
     res.json({
       success: true,
       message: "Countries with statistics retrieved successfully",
-      data: { countries: countriesWithStats },
+      data: {
+        countries: countriesWithStats,
+        totals: {
+          total: grandTotal,
+          available: grandAvailable
+        }
+      },
     });
   } catch (error) {
     console.error("❌ Get countries stats error:", error);
