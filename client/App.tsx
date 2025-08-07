@@ -52,116 +52,118 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AuthProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/countries-demo" element={<CountriesDemo />} />
-              <Route path="/booking-demo" element={<BookingSystemDemo />} />
+    <NetworkErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <AuthProvider>
+            <BrowserRouter>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/countries-demo" element={<CountriesDemo />} />
+                <Route path="/booking-demo" element={<BookingSystemDemo />} />
 
-              {/* Protected Routes with Layout */}
-              <Route
-                path="/dashboard"
-                element={
-                  <Layout>
-                    <Dashboard />
-                  </Layout>
-                }
-              />
+                {/* Protected Routes with Layout */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <Layout>
+                      <Dashboard />
+                    </Layout>
+                  }
+                />
 
-              <Route
-                path="/countries"
-                element={
-                  <Layout>
-                    <Countries />
-                  </Layout>
-                }
-              />
+                <Route
+                  path="/countries"
+                  element={
+                    <Layout>
+                      <Countries />
+                    </Layout>
+                  }
+                />
 
-              <Route
-                path="/tickets"
-                element={
-                  <Layout>
-                    <Tickets />
-                  </Layout>
-                }
-              />
+                <Route
+                  path="/tickets"
+                  element={
+                    <Layout>
+                      <Tickets />
+                    </Layout>
+                  }
+                />
 
-              <Route
-                path="/tickets/:country"
-                element={
-                  <Layout>
-                    <CountryTickets />
-                  </Layout>
-                }
-              />
+                <Route
+                  path="/tickets/:country"
+                  element={
+                    <Layout>
+                      <CountryTickets />
+                    </Layout>
+                  }
+                />
 
-              <Route
-                path="/admin/buying"
-                element={
-                  <Layout>
-                    <AdminBuying />
-                  </Layout>
-                }
-              />
+                <Route
+                  path="/admin/buying"
+                  element={
+                    <Layout>
+                      <AdminBuying />
+                    </Layout>
+                  }
+                />
 
-              {/* Redirect old URL to new one */}
-              <Route
-                path="/admin-buying"
-                element={<Navigate to="/admin/buying" replace />}
-              />
+                {/* Redirect old URL to new one */}
+                <Route
+                  path="/admin-buying"
+                  element={<Navigate to="/admin/buying" replace />}
+                />
 
-              <Route
-                path="/bookings"
-                element={
-                  <Layout>
-                    <Bookings />
-                  </Layout>
-                }
-              />
+                <Route
+                  path="/bookings"
+                  element={
+                    <Layout>
+                      <Bookings />
+                    </Layout>
+                  }
+                />
 
-              <Route
-                path="/umrah"
-                element={
-                  <Layout>
-                    <UmrahManagement />
-                  </Layout>
-                }
-              />
+                <Route
+                  path="/umrah"
+                  element={
+                    <Layout>
+                      <UmrahManagement />
+                    </Layout>
+                  }
+                />
 
-              <Route
-                path="/settings"
-                element={
-                  <Layout>
-                    <Settings />
-                  </Layout>
-                }
-              />
+                <Route
+                  path="/settings"
+                  element={
+                    <Layout>
+                      <Settings />
+                    </Layout>
+                  }
+                />
 
-              <Route
-                path="/reports"
-                element={
-                  <Layout>
-                    <Reports />
-                  </Layout>
-                }
-              />
+                <Route
+                  path="/reports"
+                  element={
+                    <Layout>
+                      <Reports />
+                    </Layout>
+                  }
+                />
 
-              {/* Root redirect */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                {/* Root redirect */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-              {/* 404 */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+                {/* 404 */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </NetworkErrorBoundary>
   </ErrorBoundary>
 );
 
