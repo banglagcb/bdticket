@@ -366,9 +366,10 @@ export default function Tickets() {
       }
       setError(null);
 
-      // Get all tickets from all countries
-      const data = await apiClient.getAllTickets();
-      console.log("Raw ticket data:", data);
+      // Get all tickets from all countries with high limit
+      const data = await apiClient.getAllTickets({ limit: 1000 });
+      console.log("🎫 Raw ticket data:", data);
+      console.log(`📊 Loaded ${data.length} tickets`);
 
       if (Array.isArray(data)) {
         // Log a sample ticket to see the data structure
