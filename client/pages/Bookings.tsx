@@ -670,13 +670,13 @@ export default function Bookings() {
               {filteredBookings.length === 0 && (
                 <div className="text-center py-12">
                   <Package className="h-12 w-12 text-foreground/30 mx-auto mb-4" />
-                  <h3 className="text-lg font-heading font-bold text-foreground mb-2">
-                    No Bookings Found
+                  <h3 className="text-lg font-heading font-bold text-green-600 mb-2">
+                    Database Clean - Ready for Real Bookings!
                   </h3>
                   <p className="text-foreground/70 font-body">
                     {searchTerm || statusFilter !== "all"
                       ? "Try adjusting your search or filter criteria."
-                      : "No booking requests have been made yet."}
+                      : "All demo bookings have been removed. New bookings will appear here once tickets are added and booked."}
                   </p>
                 </div>
               )}
