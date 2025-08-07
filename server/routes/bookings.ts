@@ -145,6 +145,14 @@ router.post("/", async (req: Request, res: Response) => {
       });
     }
 
+    // Enforce 1 Passenger = 1 Ticket rule
+    if (bookingData.passengerInfo.paxCount !== 1) {
+      return res.status(400).json({
+        success: false,
+        message: `নিয়ম লঙ্ঘন: ১ জন যাত্রী = ১ টি টিকেট। ${bookingData.passengerInfo.paxCount} জন যাত্রীর জন্য ${bookingData.passengerInfo.paxCount} টি আলাদা টিকেট বুক করুন / Rule violation: 1 Passenger = 1 Ticket. Please book ${bookingData.passengerInfo.paxCount} separate tickets for ${bookingData.passengerInfo.paxCount} passengers`,
+      });
+    }
+
     // Validate partial payment amount
     if (bookingData.paymentType === "partial") {
       if (!bookingData.partialAmount || bookingData.partialAmount <= 0) {
