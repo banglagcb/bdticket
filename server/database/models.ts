@@ -224,13 +224,14 @@ export class TicketBatchRepository {
     return db
       .prepare(
         `
-      SELECT 
+      SELECT
         tb.country_code,
-        COALESCE(SUM(tb.quantity), 0) as total_tickets,
-        COALESCE(SUM(CASE WHEN t.status = 'available' THEN 1 ELSE 0 END), 0) as available_tickets
+        COUNT(t.id) as total_tickets,
+        SUM(CASE WHEN t.status = 'available' THEN 1 ELSE 0 END) as available_tickets
       FROM ticket_batches tb
       LEFT JOIN tickets t ON tb.id = t.batch_id
       GROUP BY tb.country_code
+      HAVING COUNT(t.id) > 0
     `,
       )
       .all() as Array<{
