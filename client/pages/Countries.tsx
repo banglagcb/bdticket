@@ -690,6 +690,31 @@ Available Discrepancy: ${debugData.data.discrepancy.available}`);
         </Card>
       </motion.div>
 
+      {/* Information Box */}
+      {showInfoBox && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="luxury-card p-4 border-l-4 border-blue-500 bg-blue-50/50"
+        >
+          <div className="flex items-start space-x-3">
+            <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+            <div>
+              <h4 className="font-heading font-semibold text-blue-900 mb-1">
+                Ticket Count Information
+              </h4>
+              <p className="text-sm text-blue-800 mb-2">
+                This page shows summary statistics by country. The <Link to="/tickets" className="underline hover:text-blue-900">All Tickets page</Link> shows individual ticket records with pagination limits.
+              </p>
+              <p className="text-xs text-blue-700">
+                Countries Total: {totalTickets} tickets | Click any country card to see detailed tickets for that destination.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Countries Grid */}
       {countries.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
