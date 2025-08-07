@@ -200,6 +200,13 @@ export function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_bookings_created_by ON bookings(created_by);
     CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id);
     CREATE INDEX IF NOT EXISTS idx_activity_logs_created_at ON activity_logs(created_at);
+    CREATE INDEX IF NOT EXISTS idx_umrah_with_transport_passenger_name ON umrah_with_transport(passenger_name);
+    CREATE INDEX IF NOT EXISTS idx_umrah_with_transport_passport ON umrah_with_transport(passport_number);
+    CREATE INDEX IF NOT EXISTS idx_umrah_with_transport_departure ON umrah_with_transport(departure_date);
+    CREATE INDEX IF NOT EXISTS idx_umrah_without_transport_passenger_name ON umrah_without_transport(passenger_name);
+    CREATE INDEX IF NOT EXISTS idx_umrah_without_transport_passport ON umrah_without_transport(passport_number);
+    CREATE INDEX IF NOT EXISTS idx_umrah_without_transport_departure ON umrah_without_transport(flight_departure_date);
+    CREATE INDEX IF NOT EXISTS idx_umrah_without_transport_remaining ON umrah_without_transport(remaining_amount);
   `);
 
   console.log("Database schema initialized successfully");
