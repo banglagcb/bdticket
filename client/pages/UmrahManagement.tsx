@@ -337,6 +337,8 @@ export default function UmrahManagement() {
       setIsFormDialogOpen(false);
       resetWithoutTransportForm();
     } catch (error) {
+      console.error("Umrah without transport creation error:", error);
+      console.log("Form data sent:", apiData);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to create record",
