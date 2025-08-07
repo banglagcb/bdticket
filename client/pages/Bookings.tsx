@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "../hooks/use-toast";
 import { validateStatusTransition } from "../lib/validation";
+import { useNetworkErrorHandler } from "../components/NetworkErrorBoundary";
 import { useAuth } from "../context/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
