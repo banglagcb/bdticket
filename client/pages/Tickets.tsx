@@ -17,6 +17,7 @@ import {
   FileText,
   Download,
   Users,
+  User,
   MapPin,
   AlertCircle,
 } from "lucide-react";
