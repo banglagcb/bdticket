@@ -590,18 +590,30 @@ export default function UmrahManagement() {
           </div>
 
           <div className="flex items-center space-x-2">
-            <Button
-              onClick={() => exportToCSV(
-                activeTab === "with-transport" ? filteredWithTransportRecords : filteredWithoutTransportRecords,
-                `umrah-${activeTab}`
-              )}
-              variant="outline"
-              size="sm"
-              className="font-body"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="font-body">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => exportToCSV(
+                    activeTab === "with-transport" ? filteredWithTransportRecords : filteredWithoutTransportRecords,
+                    `umrah-${activeTab}`
+                  )}
+                >
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Export as CSV/Excel
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={printRecords}>
+                  <Printer className="h-4 w-4 mr-2" />
+                  Print Records
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
               <DialogTrigger asChild>
