@@ -813,8 +813,8 @@ export default function Tickets() {
       >
         <Card className="luxury-card border-0">
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border/20">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-gradient-to-r from-cream-100 to-cream-200 border-b border-border/30">
                   <tr>
                     <th className="px-4 py-3 text-left font-heading font-semibold text-sm text-foreground velvet-text">
