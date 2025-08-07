@@ -1107,17 +1107,17 @@ export default function UmrahManagement() {
                       <TableBody>
                         {filteredWithTransportRecords.map((record) => (
                           <TableRow key={record.id}>
-                            <TableCell className="font-medium">{record.passengerName}</TableCell>
+                            <TableCell className="font-medium">{record.passengerName || record.passenger_name}</TableCell>
                             <TableCell>{record.pnr}</TableCell>
-                            <TableCell>{record.passportNumber}</TableCell>
-                            <TableCell>{record.flightAirlineName}</TableCell>
+                            <TableCell>{record.passportNumber || record.passport_number}</TableCell>
+                            <TableCell>{record.flightAirlineName || record.flight_airline_name}</TableCell>
                             <TableCell>
-                              {new Date(record.departureDate).toLocaleDateString()}
+                              {new Date(record.departureDate || record.departure_date).toLocaleDateString()}
                             </TableCell>
                             <TableCell>
-                              {new Date(record.returnDate).toLocaleDateString()}
+                              {new Date(record.returnDate || record.return_date).toLocaleDateString()}
                             </TableCell>
-                            <TableCell>{record.passengerMobile}</TableCell>
+                            <TableCell>{record.passengerMobile || record.passenger_mobile}</TableCell>
                             <TableCell>
                               <div className="flex space-x-1">
                                 <Button
