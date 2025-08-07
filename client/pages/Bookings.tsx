@@ -200,7 +200,7 @@ export default function Bookings() {
       );
       console.log("বুকিং আইডি / Booking ID:", bookingId);
       console.log("যাত্রীর নাম / Passenger Name:", booking.passengerInfo?.name);
-      console.log("পূর্বের স্ট্যাটাস / Previous Status:", currentStatus);
+      console.log("পূর্বের স্ট্য���টাস / Previous Status:", currentStatus);
       console.log("নতুন স্ট্যাটাস / New Status:", newStatus);
       console.log("ব্যবহারকারী / User:", user?.name);
       console.log("সময় / Time:", new Date().toLocaleString());
@@ -260,21 +260,59 @@ export default function Bookings() {
     );
   }
 
-  if (error) {
+  if (error || networkError) {
+    const displayError = networkError || error;
+    const isNetworkError = displayError?.includes('Failed to fetch') ||
+                          displayError?.includes('Network error') ||
+                          displayError?.includes('Unable to connect');
+
     return (
       <div className="text-center py-12">
-        <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+        <div className="mx-auto mb-4 p-3 bg-red-100 rounded-full w-fit">
+          {isNetworkError ? (
+            <AlertCircle className="h-8 w-8 text-red-600" />
+          ) : (
+            <XCircle className="h-8 w-8 text-red-600" />
+          )}
+        </div>
         <h3 className="text-lg font-heading font-bold text-foreground mb-2">
-          Error Loading Bookings
+          {isNetworkError ? "Connection Problem" : "Error Loading Bookings"}
         </h3>
-        <p className="text-foreground/70 font-body mb-4">{error}</p>
-        <Button
-          onClick={loadBookings}
-          className="velvet-button text-primary-foreground font-body"
-        >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Retry
-        </Button>
+        <p className="text-foreground/70 font-body mb-4">{displayError}</p>
+
+        {isNetworkError && (
+          <div className="text-sm text-muted-foreground mb-6 p-4 bg-muted rounded-lg max-w-md mx-auto">
+            <p className="font-medium mb-2">Troubleshooting tips:</p>
+            <ul className="text-left space-y-1">
+              <li>• Check your internet connection</li>
+              <li>• Refresh the page</li>
+              <li>• Try again in a few moments</li>
+            </ul>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+          <Button
+            onClick={() => {
+              clearNetworkError();
+              setError(null);
+              loadBookings();
+            }}
+            className="velvet-button text-primary-foreground font-body"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+          {isNetworkError && (
+            <Button
+              variant="outline"
+              onClick={() => window.location.reload()}
+              className="font-body"
+            >
+              Refresh Page
+            </Button>
+          )}
+        </div>
       </div>
     );
   }
