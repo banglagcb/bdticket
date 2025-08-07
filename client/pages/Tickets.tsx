@@ -650,9 +650,17 @@ export default function Tickets() {
                 <div className="px-3 py-1 bg-gray-100 rounded-full inline-flex items-center space-x-2">
                   <TicketIcon className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-800">
-                    Showing {tickets.length} tickets {tickets.length >= 200 ? "(max 1000)" : ""}
+                    Showing {tickets.length} tickets {tickets.length >= 1000 ? "(reached limit)" : "(all tickets)"}
                   </span>
                 </div>
+                {tickets.length >= 1000 && (
+                  <div className="px-3 py-1 bg-orange-100 rounded-full inline-flex items-center space-x-2">
+                    <AlertCircle className="h-4 w-4 text-orange-600" />
+                    <span className="text-sm font-medium text-orange-800">
+                      More tickets may exist - contact admin to see all
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
