@@ -560,6 +560,8 @@ export function seedDatabase() {
           "4h 15m", // Sample duration
           1, // Available seats for this ticket
           1, // Total seats for this ticket
+          now,
+          now,
         );
       }
     }
