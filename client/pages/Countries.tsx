@@ -286,7 +286,7 @@ export default function Countries() {
           {
             code: "JOR",
             name: "Jordan",
-            flag: "��🇴",
+            flag: "🇯🇴",
             totalTickets: 20,
             availableTickets: 17,
           },
@@ -561,11 +561,35 @@ export default function Countries() {
 
               {/* Debug button */}
               <Button
-                onClick={() => {
+                onClick={async () => {
                   console.log("🔍 Debug: Current countries data:", countries);
                   console.log("🔍 Debug: Last updated:", lastUpdated);
                   console.log("🔍 Debug: Loading state:", loading);
                   console.log("🔍 Debug: Error state:", error);
+
+                  try {
+                    // Call debug endpoint
+                    const response = await fetch('/api/tickets/debug/counts', {
+                      headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("bd_ticket_pro_token")}`
+                      }
+                    });
+                    const debugData = await response.json();
+                    console.log("🔍 Debug API Response:", debugData);
+
+                    if (debugData.success) {
+                      alert(`Debug Info:
+Countries Stats Total: ${debugData.data.fromStats.total}
+Direct Tickets Total: ${debugData.data.fromTickets.total}
+Discrepancy: ${debugData.data.discrepancy.total}
+
+Available from Stats: ${debugData.data.fromStats.available}
+Available from Tickets: ${debugData.data.fromTickets.available}
+Available Discrepancy: ${debugData.data.discrepancy.available}`);
+                    }
+                  } catch (err) {
+                    console.error("Debug API failed:", err);
+                  }
                 }}
                 variant="outline"
                 size="sm"
