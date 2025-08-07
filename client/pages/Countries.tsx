@@ -184,84 +184,103 @@ export default function Countries() {
         setIsBackgroundLoading(true);
       }
       setError(null);
-      console.log("Loading countries data...");
+      console.log("🌍 Loading countries data...");
       const data = await apiClient.getCountries();
-      console.log("Countries API response:", data);
-      console.log("Countries array:", data.countries);
+      console.log("✅ Countries API response:", data);
+      console.log("📊 Countries array:", data.countries);
 
       if (mountedRef.current) {
-        setCountries(data.countries || []);
+        // Ensure we have valid data with proper ticket counts
+        const validCountries = (data.countries || []).map(country => ({
+          ...country,
+          totalTickets: Number(country.totalTickets) || 0,
+          availableTickets: Number(country.availableTickets) || 0,
+        }));
+
+        setCountries(validCountries);
         setLastUpdated(new Date());
         setError(null);
+        console.log("✅ Countries data loaded successfully:", validCountries);
       }
     } catch (err) {
-      console.error("Failed to load countries:", err);
-      console.log("Using demo data due to authentication...");
+      console.error("❌ Failed to load countries:", err);
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
 
-      // Show clean countries data (no dummy tickets)
-      const demoCountries: Country[] = [
-        {
-          code: "KSA",
-          name: "Saudi Arabia",
-          flag: "🇸🇦",
-          totalTickets: 0,
-          availableTickets: 0,
-        },
-        {
-          code: "UAE",
-          name: "United Arab Emirates",
-          flag: "🇦🇪",
-          totalTickets: 0,
-          availableTickets: 0,
-        },
-        {
-          code: "QAT",
-          name: "Qatar",
-          flag: "🇶🇦",
-          totalTickets: 0,
-          availableTickets: 0,
-        },
-        {
-          code: "KWT",
-          name: "Kuwait",
-          flag: "🇰🇼",
-          totalTickets: 0,
-          availableTickets: 0,
-        },
-        {
-          code: "OMN",
-          name: "Oman",
-          flag: "🇴🇲",
-          totalTickets: 0,
-          availableTickets: 0,
-        },
-        {
-          code: "BHR",
-          name: "Bahrain",
-          flag: "🇧🇭",
-          totalTickets: 0,
-          availableTickets: 0,
-        },
-        {
-          code: "JOR",
-          name: "Jordan",
-          flag: "🇯🇴",
-          totalTickets: 0,
-          availableTickets: 0,
-        },
-        {
-          code: "LBN",
-          name: "Lebanon",
-          flag: "🇱🇧",
-          totalTickets: 0,
-          availableTickets: 0,
-        },
-      ];
+      // Only use demo data for authentication errors, show real errors for other issues
+      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('authentication')) {
+        console.log("🔑 Using demo data due to authentication...");
 
-      if (mountedRef.current) {
-        setCountries(demoCountries);
-        setLastUpdated(new Date());
-        setError(null); // Clear error since we're showing demo data
+        // Show clean countries data (no dummy tickets)
+        const demoCountries: Country[] = [
+          {
+            code: "KSA",
+            name: "Saudi Arabia",
+            flag: "🇸🇦",
+            totalTickets: 0,
+            availableTickets: 0,
+          },
+          {
+            code: "UAE",
+            name: "United Arab Emirates",
+            flag: "🇦🇪",
+            totalTickets: 0,
+            availableTickets: 0,
+          },
+          {
+            code: "QAT",
+            name: "Qatar",
+            flag: "🇶🇦",
+            totalTickets: 0,
+            availableTickets: 0,
+          },
+          {
+            code: "KWT",
+            name: "Kuwait",
+            flag: "🇰🇼",
+            totalTickets: 0,
+            availableTickets: 0,
+          },
+          {
+            code: "OMN",
+            name: "Oman",
+            flag: "🇴🇲",
+            totalTickets: 0,
+            availableTickets: 0,
+          },
+          {
+            code: "BHR",
+            name: "Bahrain",
+            flag: "🇧🇭",
+            totalTickets: 0,
+            availableTickets: 0,
+          },
+          {
+            code: "JOR",
+            name: "Jordan",
+            flag: "🇯🇴",
+            totalTickets: 0,
+            availableTickets: 0,
+          },
+          {
+            code: "LBN",
+            name: "Lebanon",
+            flag: "🇱🇧",
+            totalTickets: 0,
+            availableTickets: 0,
+          },
+        ];
+
+        if (mountedRef.current) {
+          setCountries(demoCountries);
+          setLastUpdated(new Date());
+          setError(null); // Clear error since we're showing demo data
+        }
+      } else {
+        // Show actual error for non-authentication issues
+        if (mountedRef.current) {
+          setError(errorMessage);
+          setCountries([]);
+        }
       }
     } finally {
       if (mountedRef.current) {
