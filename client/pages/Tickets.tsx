@@ -471,10 +471,13 @@ export default function Tickets() {
 
   const handleView = (ticket: Ticket) => {
     setSelectedTicket(ticket);
+    const airlineName = ticket.batch?.airline || ticket.airline_name || ticket.airline || "Unknown Airline";
+    const flightNumber = ticket.batch?.flight_number || ticket.flight_number || "";
+
     // Could open a detailed view dialog here
     toast({
       title: "Ticket Details",
-      description: `Viewing ${ticket.batch?.airline || ticket.airline || "ticket"} details`,
+      description: `Viewing ${airlineName} ${flightNumber ? `(${flightNumber})` : ''} details`,
     });
   };
 
