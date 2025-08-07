@@ -519,6 +519,10 @@ export function seedDatabase() {
       },
     ];
 
+    // Get admin user for creating ticket batches
+    const adminUser = db.prepare("SELECT * FROM users WHERE role = 'admin' LIMIT 1").get() as any;
+    const now = new Date().toISOString();
+
     for (const batch of sampleBatches) {
       insertBatch.run(
         batch.id,
@@ -531,6 +535,7 @@ export function seedDatabase() {
         batch.agentName,
         batch.agentContact,
         adminUser.id,
+        now,
       );
 
       // Create individual tickets for this batch
