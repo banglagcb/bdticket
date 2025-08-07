@@ -116,6 +116,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream-50 via-luxury-pearl to-cream-100">
+      <OnlineStatusIndicator />
       {/* Top Navigation Bar */}
       <header className="luxury-card shadow-lg border-b border-border/30 backdrop-blur-md bg-gradient-to-r from-card to-cream-100">
         <div className="flex items-center justify-between px-4 py-3">
