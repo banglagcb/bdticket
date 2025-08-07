@@ -149,6 +149,48 @@ export function initializeDatabase() {
     )
   `);
 
+  // Umrah with transport packages table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS umrah_with_transport (
+      id TEXT PRIMARY KEY,
+      passenger_name TEXT NOT NULL,
+      pnr TEXT NOT NULL,
+      passport_number TEXT NOT NULL,
+      flight_airline_name TEXT NOT NULL,
+      departure_date TEXT NOT NULL,
+      return_date TEXT NOT NULL,
+      approved_by TEXT NOT NULL,
+      reference_agency TEXT NOT NULL,
+      emergency_flight_contact TEXT NOT NULL,
+      passenger_mobile TEXT NOT NULL,
+      created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    )
+  `);
+
+  // Umrah without transport packages table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS umrah_without_transport (
+      id TEXT PRIMARY KEY,
+      flight_departure_date TEXT NOT NULL,
+      return_date TEXT NOT NULL,
+      passenger_name TEXT NOT NULL,
+      passport_number TEXT NOT NULL,
+      entry_recorded_by TEXT NOT NULL,
+      total_amount INTEGER NOT NULL,
+      amount_paid INTEGER NOT NULL DEFAULT 0,
+      remaining_amount INTEGER NOT NULL DEFAULT 0,
+      last_payment_date TEXT,
+      remarks TEXT,
+      created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    )
+  `);
+
   // Create indexes for better performance
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_tickets_batch_id ON tickets(batch_id);
