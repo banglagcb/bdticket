@@ -581,14 +581,14 @@ export default function UmrahManagement() {
   };
 
   const filteredWithTransportRecords = withTransportRecords.filter(record =>
-    record.passengerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    record.pnr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    record.passportNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    (record.passengerName || record.passenger_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (record.pnr || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (record.passportNumber || record.passport_number || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredWithoutTransportRecords = withoutTransportRecords.filter(record =>
-    record.passengerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    record.passportNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    (record.passengerName || record.passenger_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (record.passportNumber || record.passport_number || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
