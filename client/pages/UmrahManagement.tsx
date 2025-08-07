@@ -159,15 +159,12 @@ export default function UmrahManagement() {
   const loadRecords = async () => {
     try {
       setLoading(true);
-      // TODO: Replace with actual API calls
-      // const withTransport = await apiClient.getUmrahWithTransport();
-      // const withoutTransport = await apiClient.getUmrahWithoutTransport();
-      // setWithTransportRecords(withTransport);
-      // setWithoutTransportRecords(withoutTransport);
-      
-      // Mock data for now
-      setWithTransportRecords([]);
-      setWithoutTransportRecords([]);
+      const [withTransport, withoutTransport] = await Promise.all([
+        apiClient.getUmrahWithTransport(),
+        apiClient.getUmrahWithoutTransport()
+      ]);
+      setWithTransportRecords(withTransport || []);
+      setWithoutTransportRecords(withoutTransport || []);
     } catch (error) {
       console.error("Error loading records:", error);
       toast({
