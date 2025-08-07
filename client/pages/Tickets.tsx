@@ -432,16 +432,16 @@ export default function Tickets() {
 
   // Filter tickets
   const filteredTickets = tickets.filter((ticket) => {
+    // Get airline name from various possible sources
+    const airlineName = ticket.batch?.airline || ticket.airline_name || ticket.airline || "";
+    const countryName = ticket.country?.name || "";
+    const flightNumber = ticket.batch?.flight_number || ticket.flight_number || "";
+
     const matchesSearch =
-      (ticket.batch?.airline || ticket.airline || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (ticket.country?.name || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (ticket.batch?.flight_number || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+      !searchTerm ||
+      airlineName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      countryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      flightNumber.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === "all" || ticket.status === statusFilter;
@@ -451,8 +451,7 @@ export default function Tickets() {
 
     const matchesAirline =
       airlineFilter === "all" ||
-      ticket.batch?.airline === airlineFilter ||
-      ticket.airline === airlineFilter;
+      airlineName === airlineFilter;
 
     return matchesSearch && matchesStatus && matchesCountry && matchesAirline;
   });
