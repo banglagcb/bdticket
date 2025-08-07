@@ -12,6 +12,7 @@ import {
   AlertCircle,
   Users,
   RefreshCw,
+  MapPin,
 } from "lucide-react";
 import {
   Card,
@@ -226,6 +227,10 @@ export default function Dashboard() {
     navigate("/bookings");
   };
 
+  const handleUmrahManagement = () => {
+    navigate("/umrah");
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
@@ -284,7 +289,7 @@ export default function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <motion.div
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
@@ -338,6 +343,25 @@ export default function Dashboard() {
                 </h3>
                 <p className="text-sm text-foreground/70 font-body">
                   Process customer requests
+                </p>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                onClick={handleUmrahManagement}
+                className="p-4 border border-border/30 rounded-lg cursor-pointer bg-gradient-to-br from-emerald-100 to-teal-200 hover:from-emerald-200 hover:to-teal-300 transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                <MapPin
+                  className="h-8 w-8 text-emerald-600 mb-2 animate-float"
+                  style={{ animationDelay: "1.5s" }}
+                />
+                <h3 className="font-heading font-semibold velvet-text">
+                  Umrah Management
+                </h3>
+                <p className="text-sm text-foreground/70 font-body">
+                  Manage Umrah packages
                 </p>
               </motion.div>
             </div>
