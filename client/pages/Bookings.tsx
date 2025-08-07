@@ -91,6 +91,7 @@ export default function Bookings() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const { networkError, clearNetworkError, retryWithErrorHandler } = useNetworkErrorHandler();
 
   // Set initial filter from URL params
   useEffect(() => {
