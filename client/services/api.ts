@@ -85,6 +85,13 @@ class APIClient {
       return result;
     } catch (error) {
       console.error(`API request failed: ${endpoint}`, error);
+
+      // Check if it's a network error
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        console.error('Network error detected. Server may be down or unreachable.');
+        throw new Error('Unable to connect to server. Please check your connection and try again.');
+      }
+
       throw error;
     }
   }
