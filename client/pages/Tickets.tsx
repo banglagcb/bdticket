@@ -316,6 +316,15 @@ export default function Tickets() {
 
       // Get all tickets from all countries
       const data = await apiClient.getAllTickets();
+      console.log("Raw ticket data:", data);
+
+      if (Array.isArray(data)) {
+        // Log a sample ticket to see the data structure
+        if (data.length > 0) {
+          console.log("Sample ticket structure:", data[0]);
+        }
+      }
+
       setTickets(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to load tickets:", err);
