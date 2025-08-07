@@ -27,6 +27,7 @@ import Tickets from "./pages/Tickets";
 import CountryTickets from "./pages/CountryTickets";
 import AdminBuying from "./pages/AdminBuying";
 import Bookings from "./pages/Bookings";
+import UmrahManagement from "./pages/UmrahManagement";
 import Settings from "./pages/Settings";
 import Reports from "./pages/Reports";
 import CountriesDemo from "./pages/CountriesDemo";
@@ -119,6 +120,15 @@ const App = () => (
                 element={
                   <Layout>
                     <Bookings />
+                  </Layout>
+                }
+              />
+
+              <Route
+                path="/umrah"
+                element={
+                  <Layout>
+                    <UmrahManagement />
                   </Layout>
                 }
               />
