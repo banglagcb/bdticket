@@ -375,9 +375,28 @@ export default function Tickets() {
         if (data.length > 0) {
           console.log("Sample ticket structure:", data[0]);
         }
-      }
 
-      setTickets(Array.isArray(data) ? data : []);
+        // Validate and clean ticket data
+        const cleanedTickets = data.map(ticket => ({
+          ...ticket,
+          // Ensure all required fields have fallback values
+          selling_price: ticket.selling_price || 0,
+          available_seats: ticket.available_seats || 0,
+          total_seats: ticket.total_seats || 1,
+          status: ticket.status || 'available',
+          // Ensure country object exists
+          country: ticket.country || {
+            code: 'N/A',
+            name: 'Unknown',
+            flag: '🏳️'
+          }
+        }));
+
+        setTickets(cleanedTickets);
+      } else {
+        console.warn("Invalid ticket data received:", data);
+        setTickets([]);
+      }
     } catch (err) {
       console.error("Failed to load tickets:", err);
       setError("Failed to load tickets");
