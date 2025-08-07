@@ -250,7 +250,7 @@ export default function Countries() {
           {
             code: "BHR",
             name: "Bahrain",
-            flag: "🇧🇭",
+            flag: "🇧����",
             totalTickets: 0,
             availableTickets: 0,
           },
@@ -520,6 +520,21 @@ export default function Countries() {
                   className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
                 />
                 Refresh
+              </Button>
+
+              {/* Debug button */}
+              <Button
+                onClick={() => {
+                  console.log("🔍 Debug: Current countries data:", countries);
+                  console.log("🔍 Debug: Last updated:", lastUpdated);
+                  console.log("🔍 Debug: Loading state:", loading);
+                  console.log("🔍 Debug: Error state:", error);
+                }}
+                variant="outline"
+                size="sm"
+                className="font-body text-xs"
+              >
+                Debug
               </Button>
             </div>
 
