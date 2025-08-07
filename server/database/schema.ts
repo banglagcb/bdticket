@@ -346,11 +346,16 @@ export function seedDatabase() {
       "💡 Dummy ticket data has been excluded - system ready for real tickets",
     );
 
-    /*
-    // REMOVED: Sample ticket batches and tickets creation
-    // This section previously created dummy ticket data
-    // Real tickets should now be added through the application interface
-    */
+    // Add sample ticket batches and tickets for testing
+    const insertBatch = db.prepare(`
+      INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, created_by, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const insertTicket = db.prepare(`
+      INSERT INTO tickets (id, batch_id, flight_number, status, selling_price, aircraft, terminal, arrival_time, duration, available_seats, total_seats, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
 
     // Sample data - More comprehensive data for all countries
     const sampleBatches = [
