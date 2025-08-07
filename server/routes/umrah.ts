@@ -43,7 +43,7 @@ const paymentUpdateSchema = z.object({
 });
 
 // Umrah With Transport routes
-router.get("/with-transport", authenticateToken, (req, res) => {
+router.get("/with-transport", authenticate, (req, res) => {
   try {
     const { search } = req.query;
     let packages: UmrahWithTransport[];
