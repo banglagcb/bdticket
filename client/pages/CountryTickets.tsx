@@ -150,12 +150,16 @@ export default function CountryTickets() {
       setError(null);
 
       const countryCode = country.toUpperCase();
+      console.log(`🎫 Loading tickets for country: ${countryCode}`);
 
       // Use the apiClient directly instead of the destructured method
       const response = await apiClient.getTicketsByCountry(countryCode);
+      console.log(`✅ Tickets response for ${countryCode}:`, response);
+      console.log(`📊 Found ${response.tickets?.length || 0} tickets`);
+
       setTickets(response.tickets || []);
     } catch (err: any) {
-      console.error("Error loading tickets:", err);
+      console.error(`❌ Error loading tickets for ${country}:`, err);
       setError(err.message || "Failed to load tickets");
       toast({
         title: "Error",
