@@ -252,18 +252,6 @@ export function BookingDialog({
                 />
               </div>
               <div>
-                <Label htmlFor="paxCount">Number of Passengers</Label>
-                <Input
-                  id="paxCount"
-                  type="number"
-                  min="1"
-                  value={formData.paxCount}
-                  onChange={(e) =>
-                    updateFormData("paxCount", parseInt(e.target.value))
-                  }
-                />
-              </div>
-              <div>
                 <Label htmlFor="emergencyContact">Emergency Contact</Label>
                 <Input
                   id="emergencyContact"
