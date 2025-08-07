@@ -24,7 +24,7 @@ const createBookingSchema = z.object({
     name: z.string().min(1, "Passenger name is required"),
     passportNo: z.string().min(1, "Passport number is required"),
     phone: z.string().min(1, "Passenger phone is required"),
-    paxCount: z.number().min(1, "Passenger count must be at least 1"),
+    paxCount: z.number().min(1).max(1, "Only 1 passenger allowed per ticket"),
     email: z.string().email().optional(),
   }),
   sellingPrice: z.number().min(0, "Selling price must be positive"),
