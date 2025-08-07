@@ -397,4 +397,61 @@ router.get("/countries/stats", async (req: Request, res: Response) => {
   }
 });
 
+// Debug endpoint to compare counts
+router.get("/debug/counts", async (req: Request, res: Response) => {
+  try {
+    // Get all tickets from database
+    const allTickets = TicketRepository.findAll();
+    console.log(`🔍 Debug: Found ${allTickets.length} tickets in database`);
+
+    // Get countries stats
+    const stats = TicketBatchRepository.getStatsByCountry();
+    console.log(`🔍 Debug: Countries stats:`, stats);
+
+    // Calculate totals from countries stats
+    const totalFromStats = stats.reduce((sum, stat) => sum + stat.total_tickets, 0);
+    const availableFromStats = stats.reduce((sum, stat) => sum + stat.available_tickets, 0);
+
+    // Calculate totals from direct ticket query
+    const totalFromTickets = allTickets.length;
+    const availableFromTickets = allTickets.filter(t => t.status === 'available').length;
+
+    const debugInfo = {
+      fromStats: {
+        total: totalFromStats,
+        available: availableFromStats,
+        breakdown: stats
+      },
+      fromTickets: {
+        total: totalFromTickets,
+        available: availableFromTickets,
+        statusBreakdown: {
+          available: allTickets.filter(t => t.status === 'available').length,
+          booked: allTickets.filter(t => t.status === 'booked').length,
+          locked: allTickets.filter(t => t.status === 'locked').length,
+          sold: allTickets.filter(t => t.status === 'sold').length
+        }
+      },
+      discrepancy: {
+        total: totalFromTickets - totalFromStats,
+        available: availableFromTickets - availableFromStats
+      }
+    };
+
+    console.log("🔍 Debug info:", debugInfo);
+
+    res.json({
+      success: true,
+      message: "Debug information retrieved",
+      data: debugInfo
+    });
+  } catch (error) {
+    console.error("Debug counts error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+});
+
 export default router;
