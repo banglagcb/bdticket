@@ -47,8 +47,7 @@ class APIClient {
     try {
       console.log(`API Request: ${options.method || 'GET'} ${url}`);
 
-      // Store original fetch in case it's been overridden by third-party scripts
-      const originalFetch = (window as any).__originalFetch || window.fetch;
+      // Use stored original fetch to bypass third-party script interference
       const response = await originalFetch(url, config);
       console.log(`API Response: ${response.status} ${response.statusText}`);
 
