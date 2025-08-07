@@ -14,6 +14,10 @@ import {
 // API configuration
 const API_BASE_URL = "/api";
 
+// Store original fetch before any third-party scripts can override it
+const originalFetch = window.fetch.bind(window);
+(window as any).__originalFetch = originalFetch;
+
 // API client class
 class APIClient {
   private baseURL: string;
