@@ -96,7 +96,7 @@ export function BookingDialog({
           passportNo: formData.passportNo,
           phone: formData.passengerPhone,
           email: formData.passengerEmail,
-          paxCount: formData.paxCount,
+          paxCount: 1, // Always 1 passenger per ticket
         },
         sellingPrice: formData.sellingPrice,
         paymentType: formData.paymentType,
