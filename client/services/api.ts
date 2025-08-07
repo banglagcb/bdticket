@@ -485,6 +485,173 @@ class APIClient {
     }
     throw new Error(result.message || "Failed to create backup");
   }
+
+  // Umrah With Transport methods
+  async getUmrahWithTransport(search?: string): Promise<any> {
+    const params = search ? `?search=${encodeURIComponent(search)}` : "";
+    const result = await this.request<any>(`/umrah/with-transport${params}`);
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get umrah with transport packages");
+  }
+
+  async getUmrahWithTransportById(id: string): Promise<any> {
+    const result = await this.request<any>(`/umrah/with-transport/${id}`);
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get umrah with transport package");
+  }
+
+  async createUmrahWithTransport(packageData: {
+    passenger_name: string;
+    pnr: string;
+    passport_number: string;
+    flight_airline_name: string;
+    departure_date: string;
+    return_date: string;
+    approved_by: string;
+    reference_agency: string;
+    emergency_flight_contact: string;
+    passenger_mobile: string;
+  }): Promise<any> {
+    const result = await this.request<any>("/umrah/with-transport", {
+      method: "POST",
+      body: JSON.stringify(packageData),
+    });
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to create umrah with transport package");
+  }
+
+  async updateUmrahWithTransport(id: string, packageData: any): Promise<any> {
+    const result = await this.request<any>(`/umrah/with-transport/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(packageData),
+    });
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to update umrah with transport package");
+  }
+
+  async deleteUmrahWithTransport(id: string): Promise<void> {
+    const result = await this.request<any>(`/umrah/with-transport/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to delete umrah with transport package");
+    }
+  }
+
+  // Umrah Without Transport methods
+  async getUmrahWithoutTransport(search?: string, pendingOnly?: boolean): Promise<any> {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (pendingOnly) params.append("pending_only", "true");
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const result = await this.request<any>(`/umrah/without-transport${queryString}`);
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get umrah without transport packages");
+  }
+
+  async getUmrahWithoutTransportById(id: string): Promise<any> {
+    const result = await this.request<any>(`/umrah/without-transport/${id}`);
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get umrah without transport package");
+  }
+
+  async createUmrahWithoutTransport(packageData: {
+    flight_departure_date: string;
+    return_date: string;
+    passenger_name: string;
+    passport_number: string;
+    entry_recorded_by: string;
+    total_amount: number;
+    amount_paid: number;
+    last_payment_date?: string;
+    remarks?: string;
+  }): Promise<any> {
+    const result = await this.request<any>("/umrah/without-transport", {
+      method: "POST",
+      body: JSON.stringify(packageData),
+    });
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to create umrah without transport package");
+  }
+
+  async updateUmrahWithoutTransport(id: string, packageData: any): Promise<any> {
+    const result = await this.request<any>(`/umrah/without-transport/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(packageData),
+    });
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to update umrah without transport package");
+  }
+
+  async recordUmrahPayment(id: string, paymentData: {
+    amount: number;
+    payment_date?: string;
+  }): Promise<any> {
+    const result = await this.request<any>(`/umrah/without-transport/${id}/payment`, {
+      method: "POST",
+      body: JSON.stringify(paymentData),
+    });
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to record payment");
+  }
+
+  async deleteUmrahWithoutTransport(id: string): Promise<void> {
+    const result = await this.request<any>(`/umrah/without-transport/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to delete umrah without transport package");
+    }
+  }
+
+  // Umrah statistics and summary methods
+  async getUmrahPaymentSummary(): Promise<any> {
+    const result = await this.request<any>("/umrah/payment-summary");
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get payment summary");
+  }
+
+  async getUmrahStats(): Promise<any> {
+    const result = await this.request<any>("/umrah/stats");
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get umrah statistics");
+  }
 }
 
 // Create and export API client instance
