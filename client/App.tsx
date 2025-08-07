@@ -20,6 +20,7 @@ import { AuthProvider } from "./context/AuthContext";
 // Components and Pages
 import Layout from "./components/Layout";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { NetworkErrorBoundary } from "./components/NetworkErrorBoundary";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Countries from "./pages/Countries";
