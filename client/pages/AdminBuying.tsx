@@ -392,7 +392,7 @@ export default function AdminBuying() {
       // Actual API call to create ticket batch
       const batchResponse = await apiClient.createTicketBatch(formData);
       console.log(
-        "টিকেট ব্যাচ তৈরি সফল / Ticket batch created successfully:",
+        "টিকেট ব্যাচ তৈর��� সফল / Ticket batch created successfully:",
         batchResponse,
       );
 
@@ -489,6 +489,12 @@ export default function AdminBuying() {
               <p className="text-foreground/70 font-body">
                 Purchase and manage flight ticket inventory
               </p>
+              <div className="mt-2 px-3 py-1 bg-blue-100 rounded-full inline-flex items-center space-x-2">
+                <User className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">
+                  ১ জন যাত্রী = ১ টি টিকেট | 1 Passenger = 1 Ticket
+                </span>
+              </div>
             </div>
           </div>
 
@@ -863,7 +869,7 @@ export default function AdminBuying() {
                                 </div>
                                 <div className="bg-white p-3 rounded-lg shadow-sm">
                                   <span className="text-gray-600 block">
-                                    প্রত্যাশিত মুনাফা / Expected Profit
+                                    প্রত্যাশিত মু��াফা / Expected Profit
                                   </span>
                                   <span className="font-bold text-green-600 text-xl">
                                     ৳
