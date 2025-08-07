@@ -312,7 +312,19 @@ export default function UmrahManagement() {
 
     try {
       setLoading(true);
-      const newRecord = await apiClient.createUmrahWithoutTransport(withoutTransportForm);
+      // Transform camelCase to snake_case for API
+      const apiData = {
+        flight_departure_date: withoutTransportForm.flightDepartureDate,
+        return_date: withoutTransportForm.returnDate,
+        passenger_name: withoutTransportForm.passengerName,
+        passport_number: withoutTransportForm.passportNumber,
+        entry_recorded_by: withoutTransportForm.entryRecordedBy,
+        total_amount: withoutTransportForm.totalAmount,
+        amount_paid: withoutTransportForm.amountPaid,
+        last_payment_date: withoutTransportForm.lastPaymentDate || undefined,
+        remarks: withoutTransportForm.remarks || undefined,
+      };
+      const newRecord = await apiClient.createUmrahWithoutTransport(apiData);
       setWithoutTransportRecords(prev => [newRecord, ...prev]);
 
       toast({
