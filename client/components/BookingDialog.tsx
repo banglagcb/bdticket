@@ -54,7 +54,6 @@ export function BookingDialog({
     passportNo: "",
     passengerPhone: "",
     passengerEmail: "",
-    paxCount: 1,
 
     // Payment Information
     sellingPrice: ticket?.selling_price || 0,
