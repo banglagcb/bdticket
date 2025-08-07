@@ -506,11 +506,13 @@ export default function Countries() {
                     ১ জন যাত্রী = ১ টি টিকেট | 1 Passenger = 1 Ticket
                   </span>
                 </div>
-                <div className="px-3 py-1 bg-green-100 border border-green-300 rounded-md inline-block">
-                  <span className="text-sm font-medium text-green-800">
-                    Total: {totalTickets} | Available: {totalAvailable}
-                  </span>
-                </div>
+                <Link to="/tickets">
+                  <div className="px-3 py-1 bg-green-100 border border-green-300 rounded-md inline-block hover:bg-green-200 transition-colors cursor-pointer">
+                    <span className="text-sm font-medium text-green-800">
+                      Total: {totalTickets} | Available: {totalAvailable} → View All Tickets
+                    </span>
+                  </div>
+                </Link>
               </div>
             </div>
           </div>
