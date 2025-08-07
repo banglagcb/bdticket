@@ -470,6 +470,11 @@ export default function Countries() {
               <p className="text-foreground/70 font-body">
                 Browse tickets by destination country
               </p>
+              <div className="mt-2 px-3 py-1 bg-blue-100 border border-blue-300 rounded-md inline-block">
+                <span className="text-sm font-medium text-blue-800">
+                  ১ জন যাত্রী = ১ টি টিকেট | 1 Passenger = 1 Ticket
+                </span>
+              </div>
             </div>
           </div>
 
