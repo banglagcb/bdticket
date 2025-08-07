@@ -363,17 +363,64 @@ export default function UmrahManagement() {
       return;
     }
 
-    const headers = Object.keys(records[0]).join(",");
+    // Create headers with proper formatting
+    const headers = activeTab === "with-transport"
+      ? ["Passenger Name", "PNR", "Passport Number", "Flight/Airline", "Departure Date", "Return Date", "Approved By", "Reference Agency", "Emergency Contact", "Passenger Mobile", "Created Date"]
+      : ["Passenger Name", "Passport Number", "Departure Date", "Return Date", "Entry Recorded By", "Total Amount (BDT)", "Amount Paid (BDT)", "Remaining Amount (BDT)", "Last Payment Date", "Remarks", "Created Date"];
+
+    // Format data based on package type
+    const csvData = records.map(record => {
+      if (activeTab === "with-transport") {
+        return [
+          record.passenger_name || record.passengerName,
+          record.pnr,
+          record.passport_number || record.passportNumber,
+          record.flight_airline_name || record.flightAirlineName,
+          record.departure_date || record.departureDate,
+          record.return_date || record.returnDate,
+          record.approved_by || record.approvedBy,
+          record.reference_agency || record.referenceAgency,
+          record.emergency_flight_contact || record.emergencyFlightContact,
+          record.passenger_mobile || record.passengerMobile,
+          record.created_at || record.createdAt || new Date().toISOString().split('T')[0]
+        ];
+      } else {
+        return [
+          record.passenger_name || record.passengerName,
+          record.passport_number || record.passportNumber,
+          record.flight_departure_date || record.flightDepartureDate,
+          record.return_date || record.returnDate,
+          record.entry_recorded_by || record.entryRecordedBy,
+          record.total_amount || record.totalAmount || 0,
+          record.amount_paid || record.amountPaid || 0,
+          record.remaining_amount || record.remainingAmount || 0,
+          record.last_payment_date || record.lastPaymentDate || "",
+          record.remarks || "",
+          record.created_at || record.createdAt || new Date().toISOString().split('T')[0]
+        ];
+      }
+    });
+
+    // Create CSV content
     const csvContent = [
-      headers,
-      ...records.map(record => 
-        Object.values(record).map(value => 
-          typeof value === 'string' && value.includes(',') ? `"${value}"` : value
-        ).join(",")
+      headers.join(","),
+      ...csvData.map(row =>
+        row.map(value => {
+          const stringValue = String(value || "");
+          // Escape quotes and wrap in quotes if contains comma or quotes
+          return stringValue.includes(',') || stringValue.includes('"')
+            ? `"${stringValue.replace(/"/g, '""')}"`
+            : stringValue;
+        }).join(",")
       )
     ].join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    // Add BOM for better Excel compatibility
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csvContent], {
+      type: "text/csv;charset=utf-8;"
+    });
+
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -383,8 +430,120 @@ export default function UmrahManagement() {
 
     toast({
       title: "Export Complete",
-      description: `${filename} exported successfully`,
+      description: `${filename} exported successfully as CSV (Excel compatible)`,
     });
+  };
+
+  const printRecords = () => {
+    const records = activeTab === "with-transport" ? filteredWithTransportRecords : filteredWithoutTransportRecords;
+
+    if (records.length === 0) {
+      toast({
+        title: "No Data",
+        description: "No records to print",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const title = activeTab === "with-transport" ? "Umrah With Transport Packages" : "Umrah Without Transport Packages";
+
+    let tableHeaders = "";
+    let tableRows = "";
+
+    if (activeTab === "with-transport") {
+      tableHeaders = `
+        <tr>
+          <th>Passenger Name</th>
+          <th>PNR</th>
+          <th>Passport</th>
+          <th>Flight/Airline</th>
+          <th>Departure</th>
+          <th>Return</th>
+          <th>Mobile</th>
+        </tr>
+      `;
+
+      tableRows = records.map(record => `
+        <tr>
+          <td>${record.passenger_name || record.passengerName}</td>
+          <td>${record.pnr}</td>
+          <td>${record.passport_number || record.passportNumber}</td>
+          <td>${record.flight_airline_name || record.flightAirlineName}</td>
+          <td>${new Date(record.departure_date || record.departureDate).toLocaleDateString()}</td>
+          <td>${new Date(record.return_date || record.returnDate).toLocaleDateString()}</td>
+          <td>${record.passenger_mobile || record.passengerMobile}</td>
+        </tr>
+      `).join("");
+    } else {
+      tableHeaders = `
+        <tr>
+          <th>Passenger Name</th>
+          <th>Passport</th>
+          <th>Departure</th>
+          <th>Total Amount</th>
+          <th>Amount Paid</th>
+          <th>Remaining</th>
+          <th>Status</th>
+        </tr>
+      `;
+
+      tableRows = records.map(record => `
+        <tr>
+          <td>${record.passenger_name || record.passengerName}</td>
+          <td>${record.passport_number || record.passportNumber}</td>
+          <td>${new Date(record.flight_departure_date || record.flightDepartureDate).toLocaleDateString()}</td>
+          <td>${formatCurrency(record.total_amount || record.totalAmount || 0)}</td>
+          <td>${formatCurrency(record.amount_paid || record.amountPaid || 0)}</td>
+          <td>${formatCurrency(record.remaining_amount || record.remainingAmount || 0)}</td>
+          <td>${(record.remaining_amount || record.remainingAmount || 0) > 0 ? "Pending" : "Paid"}</td>
+        </tr>
+      `).join("");
+    }
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${title}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #333; text-align: center; margin-bottom: 30px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; font-weight: bold; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            .print-date { text-align: center; margin-top: 20px; color: #666; }
+            @media print {
+              body { margin: 0; }
+              .print-date { position: fixed; bottom: 10px; width: 100%; }
+            }
+          </style>
+        </head>
+        <body>
+          <h1>${title}</h1>
+          <table>
+            ${tableHeaders}
+            ${tableRows}
+          </table>
+          <div class="print-date">
+            Generated on: ${new Date().toLocaleString()} | Total Records: ${records.length}
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+
+    // Auto print after a short delay
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);
   };
 
   const filteredWithTransportRecords = withTransportRecords.filter(record =>
