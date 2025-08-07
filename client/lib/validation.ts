@@ -230,6 +230,23 @@ export const calculateFinancials = (
   };
 };
 
+// ✈️ Passenger Count Validation (1 Passenger = 1 Ticket Rule)
+export const validatePassengerCount = (paxCount: number): ValidationResult => {
+  const errors: string[] = [];
+
+  if (paxCount !== 1) {
+    errors.push(
+      `নিয়ম লঙ্ঘন: ১ জন যাত্��ী = ১ টি টিকেট। ${paxCount} জন যাত্রীর জন্য ${paxCount} টি আলাদা টিকেট বুক করুন / Rule violation: 1 Passenger = 1 Ticket. Please book ${paxCount} separate tickets for ${paxCount} passengers`,
+    );
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    data: { paxCount: 1 }, // Always enforce 1 passenger
+  };
+};
+
 // 🔄 Booking Status Validation
 export const validateStatusTransition = (
   currentStatus: string,
