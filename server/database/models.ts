@@ -790,3 +790,292 @@ export class ActivityLogRepository {
       .all(limit) as ActivityLog[];
   }
 }
+
+// Umrah With Transport model
+export interface UmrahWithTransport {
+  id: string;
+  passenger_name: string;
+  pnr: string;
+  passport_number: string;
+  flight_airline_name: string;
+  departure_date: string;
+  return_date: string;
+  approved_by: string;
+  reference_agency: string;
+  emergency_flight_contact: string;
+  passenger_mobile: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export class UmrahWithTransportRepository {
+  static findAll(): UmrahWithTransport[] {
+    return db
+      .prepare("SELECT * FROM umrah_with_transport ORDER BY created_at DESC")
+      .all() as UmrahWithTransport[];
+  }
+
+  static findById(id: string): UmrahWithTransport | undefined {
+    return db
+      .prepare("SELECT * FROM umrah_with_transport WHERE id = ?")
+      .get(id) as UmrahWithTransport;
+  }
+
+  static findByPassenger(passengerName: string): UmrahWithTransport[] {
+    return db
+      .prepare("SELECT * FROM umrah_with_transport WHERE passenger_name LIKE ? ORDER BY created_at DESC")
+      .all(`%${passengerName}%`) as UmrahWithTransport[];
+  }
+
+  static create(
+    packageData: Omit<UmrahWithTransport, "id" | "created_at" | "updated_at">,
+  ): UmrahWithTransport {
+    const id = uuidv4();
+    const now = new Date().toISOString();
+
+    const stmt = db.prepare(`
+      INSERT INTO umrah_with_transport (
+        id, passenger_name, pnr, passport_number, flight_airline_name,
+        departure_date, return_date, approved_by, reference_agency,
+        emergency_flight_contact, passenger_mobile, created_by, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      id,
+      packageData.passenger_name,
+      packageData.pnr,
+      packageData.passport_number,
+      packageData.flight_airline_name,
+      packageData.departure_date,
+      packageData.return_date,
+      packageData.approved_by,
+      packageData.reference_agency,
+      packageData.emergency_flight_contact,
+      packageData.passenger_mobile,
+      packageData.created_by,
+      now,
+      now,
+    );
+
+    return this.findById(id)!;
+  }
+
+  static update(
+    id: string,
+    updateData: Partial<Omit<UmrahWithTransport, "id" | "created_at" | "updated_at">>,
+  ): UmrahWithTransport | undefined {
+    const now = new Date().toISOString();
+    const fields = Object.keys(updateData).map(key => `${key} = ?`).join(", ");
+    const values = Object.values(updateData);
+
+    const stmt = db.prepare(`
+      UPDATE umrah_with_transport
+      SET ${fields}, updated_at = ?
+      WHERE id = ?
+    `);
+
+    stmt.run(...values, now, id);
+    return this.findById(id);
+  }
+
+  static delete(id: string): boolean {
+    const stmt = db.prepare("DELETE FROM umrah_with_transport WHERE id = ?");
+    const result = stmt.run(id);
+    return result.changes > 0;
+  }
+
+  static search(searchTerm: string): UmrahWithTransport[] {
+    return db
+      .prepare(`
+        SELECT * FROM umrah_with_transport
+        WHERE passenger_name LIKE ? OR pnr LIKE ? OR passport_number LIKE ?
+        ORDER BY created_at DESC
+      `)
+      .all(`%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`) as UmrahWithTransport[];
+  }
+}
+
+// Umrah Without Transport model
+export interface UmrahWithoutTransport {
+  id: string;
+  flight_departure_date: string;
+  return_date: string;
+  passenger_name: string;
+  passport_number: string;
+  entry_recorded_by: string;
+  total_amount: number;
+  amount_paid: number;
+  remaining_amount: number;
+  last_payment_date?: string;
+  remarks?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export class UmrahWithoutTransportRepository {
+  static findAll(): UmrahWithoutTransport[] {
+    return db
+      .prepare("SELECT * FROM umrah_without_transport ORDER BY created_at DESC")
+      .all() as UmrahWithoutTransport[];
+  }
+
+  static findById(id: string): UmrahWithoutTransport | undefined {
+    return db
+      .prepare("SELECT * FROM umrah_without_transport WHERE id = ?")
+      .get(id) as UmrahWithoutTransport;
+  }
+
+  static findByPassenger(passengerName: string): UmrahWithoutTransport[] {
+    return db
+      .prepare("SELECT * FROM umrah_without_transport WHERE passenger_name LIKE ? ORDER BY created_at DESC")
+      .all(`%${passengerName}%`) as UmrahWithoutTransport[];
+  }
+
+  static findPendingPayments(): UmrahWithoutTransport[] {
+    return db
+      .prepare("SELECT * FROM umrah_without_transport WHERE remaining_amount > 0 ORDER BY created_at DESC")
+      .all() as UmrahWithoutTransport[];
+  }
+
+  static create(
+    packageData: Omit<UmrahWithoutTransport, "id" | "created_at" | "updated_at">,
+  ): UmrahWithoutTransport {
+    const id = uuidv4();
+    const now = new Date().toISOString();
+
+    // Ensure remaining amount is calculated correctly
+    const remainingAmount = packageData.total_amount - packageData.amount_paid;
+
+    const stmt = db.prepare(`
+      INSERT INTO umrah_without_transport (
+        id, flight_departure_date, return_date, passenger_name, passport_number,
+        entry_recorded_by, total_amount, amount_paid, remaining_amount,
+        last_payment_date, remarks, created_by, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      id,
+      packageData.flight_departure_date,
+      packageData.return_date,
+      packageData.passenger_name,
+      packageData.passport_number,
+      packageData.entry_recorded_by,
+      packageData.total_amount,
+      packageData.amount_paid,
+      remainingAmount,
+      packageData.last_payment_date,
+      packageData.remarks,
+      packageData.created_by,
+      now,
+      now,
+    );
+
+    return this.findById(id)!;
+  }
+
+  static update(
+    id: string,
+    updateData: Partial<Omit<UmrahWithoutTransport, "id" | "created_at" | "updated_at">>,
+  ): UmrahWithoutTransport | undefined {
+    const now = new Date().toISOString();
+
+    // If total_amount or amount_paid is being updated, recalculate remaining_amount
+    if (updateData.total_amount !== undefined || updateData.amount_paid !== undefined) {
+      const current = this.findById(id);
+      if (current) {
+        const totalAmount = updateData.total_amount ?? current.total_amount;
+        const amountPaid = updateData.amount_paid ?? current.amount_paid;
+        updateData.remaining_amount = totalAmount - amountPaid;
+      }
+    }
+
+    const fields = Object.keys(updateData).map(key => `${key} = ?`).join(", ");
+    const values = Object.values(updateData);
+
+    const stmt = db.prepare(`
+      UPDATE umrah_without_transport
+      SET ${fields}, updated_at = ?
+      WHERE id = ?
+    `);
+
+    stmt.run(...values, now, id);
+    return this.findById(id);
+  }
+
+  static updatePayment(
+    id: string,
+    amountPaid: number,
+    lastPaymentDate?: string,
+  ): UmrahWithoutTransport | undefined {
+    const current = this.findById(id);
+    if (!current) return undefined;
+
+    const newAmountPaid = current.amount_paid + amountPaid;
+    const remainingAmount = current.total_amount - newAmountPaid;
+    const now = new Date().toISOString();
+
+    const stmt = db.prepare(`
+      UPDATE umrah_without_transport
+      SET amount_paid = ?, remaining_amount = ?, last_payment_date = ?, updated_at = ?
+      WHERE id = ?
+    `);
+
+    stmt.run(
+      newAmountPaid,
+      remainingAmount,
+      lastPaymentDate || now.split('T')[0], // Use current date if not provided
+      now,
+      id,
+    );
+
+    return this.findById(id);
+  }
+
+  static delete(id: string): boolean {
+    const stmt = db.prepare("DELETE FROM umrah_without_transport WHERE id = ?");
+    const result = stmt.run(id);
+    return result.changes > 0;
+  }
+
+  static search(searchTerm: string): UmrahWithoutTransport[] {
+    return db
+      .prepare(`
+        SELECT * FROM umrah_without_transport
+        WHERE passenger_name LIKE ? OR passport_number LIKE ?
+        ORDER BY created_at DESC
+      `)
+      .all(`%${searchTerm}%`, `%${searchTerm}%`) as UmrahWithoutTransport[];
+  }
+
+  static getPaymentSummary(): {
+    totalPackages: number;
+    totalAmount: number;
+    totalPaid: number;
+    totalRemaining: number;
+    pendingPackages: number;
+  } {
+    const result = db
+      .prepare(`
+        SELECT
+          COUNT(*) as total_packages,
+          SUM(total_amount) as total_amount,
+          SUM(amount_paid) as total_paid,
+          SUM(remaining_amount) as total_remaining,
+          SUM(CASE WHEN remaining_amount > 0 THEN 1 ELSE 0 END) as pending_packages
+        FROM umrah_without_transport
+      `)
+      .get() as any;
+
+    return {
+      totalPackages: result.total_packages || 0,
+      totalAmount: result.total_amount || 0,
+      totalPaid: result.total_paid || 0,
+      totalRemaining: result.total_remaining || 0,
+      pendingPackages: result.pending_packages || 0,
+    };
+  }
+}
