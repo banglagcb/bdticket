@@ -111,6 +111,7 @@ export const PERMISSIONS = {
     "view_all_bookings",
     "confirm_bookings",
     "confirm_sales",
+    "delete_bookings",
     "system_settings",
   ],
   manager: [
