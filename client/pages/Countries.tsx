@@ -207,10 +207,11 @@ export default function Countries() {
         setError(null);
         console.log("✅ Countries data loaded successfully:", validCountries);
 
-        // Log summary for debugging
-        const totalTickets = validCountries.reduce((sum, c) => sum + c.totalTickets, 0);
-        const totalAvailable = validCountries.reduce((sum, c) => sum + c.availableTickets, 0);
+        // Log summary for debugging (use API totals if available)
+        const totalTickets = data.totals?.total || validCountries.reduce((sum, c) => sum + c.totalTickets, 0);
+        const totalAvailable = data.totals?.available || validCountries.reduce((sum, c) => sum + c.availableTickets, 0);
         console.log(`📈 Summary: ${totalTickets} total tickets, ${totalAvailable} available across ${validCountries.length} countries`);
+        console.log(`📊 API provided totals:`, data.totals);
       }
     } catch (err) {
       console.error("❌ Failed to load countries:", err);
