@@ -187,13 +187,20 @@ function TicketRow({
           <MapPin className="h-4 w-4 text-foreground/40" />
           <div>
             <div className="font-body font-medium text-sm text-foreground">
-              {ticket.batch?.origin || "Origin"} →{" "}
-              {ticket.batch?.destination ||
-                ticket.country?.name ||
-                "Destination"}
+              {(() => {
+                const origin = ticket.batch?.origin || ticket.origin || "Dhaka";
+                const destination = ticket.batch?.destination ||
+                                  ticket.destination ||
+                                  ticket.country?.name ||
+                                  "Destination";
+                return `${origin} → ${destination}`;
+              })()}
             </div>
             <div className="font-body text-xs text-foreground/50 flex items-center">
-              {ticket.country?.flag} {ticket.country?.name}
+              {ticket.country?.flag && (
+                <span className="mr-1">{ticket.country.flag}</span>
+              )}
+              {ticket.country?.name || "Country not set"}
             </div>
           </div>
         </div>
