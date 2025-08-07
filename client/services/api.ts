@@ -42,7 +42,10 @@ class APIClient {
 
     try {
       console.log(`API Request: ${options.method || 'GET'} ${url}`);
-      const response = await fetch(url, config);
+
+      // Store original fetch in case it's been overridden by third-party scripts
+      const originalFetch = (window as any).__originalFetch || window.fetch;
+      const response = await originalFetch(url, config);
       console.log(`API Response: ${response.status} ${response.statusText}`);
 
       // Check if response has content
