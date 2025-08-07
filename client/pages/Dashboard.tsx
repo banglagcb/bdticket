@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   AlertCircle,
   Users,
+  User,
   RefreshCw,
   MapPin,
 } from "lucide-react";
