@@ -1189,25 +1189,25 @@ export default function UmrahManagement() {
                       <TableBody>
                         {filteredWithoutTransportRecords.map((record) => (
                           <TableRow key={record.id}>
-                            <TableCell className="font-medium">{record.passengerName}</TableCell>
-                            <TableCell>{record.passportNumber}</TableCell>
+                            <TableCell className="font-medium">{record.passengerName || record.passenger_name}</TableCell>
+                            <TableCell>{record.passportNumber || record.passport_number}</TableCell>
                             <TableCell>
-                              {new Date(record.flightDepartureDate).toLocaleDateString()}
+                              {new Date(record.flightDepartureDate || record.flight_departure_date).toLocaleDateString()}
                               <br />
                               <span className="text-xs text-muted-foreground">
-                                {getDayOfWeek(record.flightDepartureDate)}
+                                {getDayOfWeek(record.flightDepartureDate || record.flight_departure_date)}
                               </span>
                             </TableCell>
-                            <TableCell>{formatCurrency(record.totalAmount)}</TableCell>
-                            <TableCell>{formatCurrency(record.amountPaid)}</TableCell>
+                            <TableCell>{formatCurrency(record.totalAmount || record.total_amount || 0)}</TableCell>
+                            <TableCell>{formatCurrency(record.amountPaid || record.amount_paid || 0)}</TableCell>
                             <TableCell>
-                              <span className={record.remainingAmount > 0 ? "text-orange-600 font-bold" : "text-green-600 font-bold"}>
-                                {formatCurrency(record.remainingAmount)}
+                              <span className={(record.remainingAmount || record.remaining_amount || 0) > 0 ? "text-orange-600 font-bold" : "text-green-600 font-bold"}>
+                                {formatCurrency(record.remainingAmount || record.remaining_amount || 0)}
                               </span>
                             </TableCell>
                             <TableCell>
-                              <Badge variant={record.remainingAmount > 0 ? "destructive" : "default"}>
-                                {record.remainingAmount > 0 ? "Pending" : "Paid"}
+                              <Badge variant={(record.remainingAmount || record.remaining_amount || 0) > 0 ? "destructive" : "default"}>
+                                {(record.remainingAmount || record.remaining_amount || 0) > 0 ? "Pending" : "Paid"}
                               </Badge>
                             </TableCell>
                             <TableCell>
