@@ -234,13 +234,26 @@ function TicketRow({
           <Clock className="h-4 w-4 text-foreground/40" />
           <div>
             <div className="font-body text-sm text-foreground">
-              {ticket.batch?.departure_time || ticket.departure_time || "N/A"}
+              {(() => {
+                // Try multiple sources for departure time
+                const timeSource = ticket.batch?.departure_time ||
+                                 ticket.flight_time ||
+                                 ticket.departure_time;
+
+                return timeSource || "Time not set";
+              })()}
             </div>
-            {ticket.batch?.arrival_time && (
-              <div className="font-body text-xs text-foreground/50">
-                Arr: {ticket.batch.arrival_time}
-              </div>
-            )}
+            {(() => {
+              const arrivalTime = ticket.batch?.arrival_time || ticket.arrival_time;
+              if (arrivalTime) {
+                return (
+                  <div className="font-body text-xs text-foreground/50">
+                    Arr: {arrivalTime}
+                  </div>
+                );
+              }
+              return null;
+            })()}
           </div>
         </div>
       </td>
