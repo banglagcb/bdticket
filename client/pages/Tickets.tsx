@@ -846,7 +846,7 @@ export default function Tickets() {
                   {filteredTickets.length > 0 ? (
                     filteredTickets.map((ticket, index) => (
                       <TicketRow
-                        key={ticket.id}
+                        key={ticket.id || `ticket-${index}`}
                         ticket={ticket}
                         index={index}
                         showBuyingPrice={showBuyingPrice}
@@ -864,11 +864,28 @@ export default function Tickets() {
                           <TicketIcon className="h-12 w-12 text-foreground/30" />
                           <div>
                             <h3 className="font-heading font-medium text-foreground mb-1">
-                              No tickets found
+                              {searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all"
+                                ? "No tickets match your criteria"
+                                : "No tickets available"}
                             </h3>
                             <p className="font-body text-sm text-foreground/60">
-                              Try adjusting your filters or search terms
+                              {searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all"
+                                ? "Try adjusting your filters or search terms"
+                                : "Please check back later or contact admin"}
                             </p>
+                            {(searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all") && (
+                              <button
+                                onClick={() => {
+                                  setSearchTerm("");
+                                  setStatusFilter("all");
+                                  setCountryFilter("all");
+                                  setAirlineFilter("all");
+                                }}
+                                className="mt-2 text-primary hover:underline text-sm font-medium"
+                              >
+                                Clear all filters
+                              </button>
+                            )}
                           </div>
                         </div>
                       </td>
