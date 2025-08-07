@@ -372,8 +372,13 @@ router.get("/countries/stats", async (req: Request, res: Response) => {
         availableTickets: countryStats?.available_tickets || 0,
       };
       console.log(
-        `🏁 ${country.name}: ${result.totalTickets} total, ${result.availableTickets} available`,
+        `🏁 ${country.name} (${country.code}): ${result.totalTickets} total, ${result.availableTickets} available`,
       );
+      if (countryStats) {
+        console.log(`   📈 Raw stats for ${country.code}:`, countryStats);
+      } else {
+        console.log(`   ⚠️  No stats found for ${country.code}`);
+      }
       return result;
     });
 
