@@ -66,7 +66,7 @@ export interface PassengerInfo {
   name: string;
   passportNo: string;
   phone: string;
-  paxCount: number;
+  paxCount: 1; // Always 1 passenger per ticket - business rule enforced
   email?: string;
 }
 
