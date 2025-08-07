@@ -164,10 +164,20 @@ function TicketRow({
           <Plane className="h-4 w-4 text-foreground/40" />
           <div>
             <div className="font-body font-medium text-sm text-foreground">
-              {ticket.batch?.airline || ticket.airline || "N/A"}
+              {(() => {
+                const airline = ticket.batch?.airline ||
+                              ticket.airline_name ||
+                              ticket.airline;
+                return airline || "Airline not set";
+              })()}
             </div>
             <div className="font-body text-xs text-foreground/50">
-              {ticket.batch?.flight_number || "Flight"}
+              {(() => {
+                const flightNumber = ticket.batch?.flight_number ||
+                                   ticket.flight_number ||
+                                   ticket.flight_code;
+                return flightNumber || "Flight number not set";
+              })()}
             </div>
           </div>
         </div>
