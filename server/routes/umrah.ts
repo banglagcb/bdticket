@@ -67,7 +67,7 @@ router.get("/with-transport", authenticate, (req, res) => {
   }
 });
 
-router.get("/with-transport/:id", authenticateToken, (req, res) => {
+router.get("/with-transport/:id", authenticate, (req, res) => {
   try {
     const { id } = req.params;
     const umrahPackage = UmrahWithTransportRepository.findById(id);
@@ -92,7 +92,7 @@ router.get("/with-transport/:id", authenticateToken, (req, res) => {
   }
 });
 
-router.post("/with-transport", authenticateToken, (req, res) => {
+router.post("/with-transport", authenticate, (req, res) => {
   try {
     const validatedData = umrahWithTransportSchema.parse(req.body);
     
@@ -148,7 +148,7 @@ router.post("/with-transport", authenticateToken, (req, res) => {
   }
 });
 
-router.put("/with-transport/:id", authenticateToken, (req, res) => {
+router.put("/with-transport/:id", authenticate, (req, res) => {
   try {
     const { id } = req.params;
     const validatedData = umrahWithTransportSchema.partial().parse(req.body);
@@ -209,7 +209,7 @@ router.put("/with-transport/:id", authenticateToken, (req, res) => {
   }
 });
 
-router.delete("/with-transport/:id", authenticateToken, requirePermission("delete_bookings"), (req, res) => {
+router.delete("/with-transport/:id", authenticate, requirePermission("delete_bookings"), (req, res) => {
   try {
     const { id } = req.params;
     
@@ -258,7 +258,7 @@ router.delete("/with-transport/:id", authenticateToken, requirePermission("delet
 });
 
 // Umrah Without Transport routes
-router.get("/without-transport", authenticateToken, (req, res) => {
+router.get("/without-transport", authenticate, (req, res) => {
   try {
     const { search, pending_only } = req.query;
     let packages: UmrahWithoutTransport[];
@@ -284,7 +284,7 @@ router.get("/without-transport", authenticateToken, (req, res) => {
   }
 });
 
-router.get("/without-transport/:id", authenticateToken, (req, res) => {
+router.get("/without-transport/:id", authenticate, (req, res) => {
   try {
     const { id } = req.params;
     const umrahPackage = UmrahWithoutTransportRepository.findById(id);
@@ -309,7 +309,7 @@ router.get("/without-transport/:id", authenticateToken, (req, res) => {
   }
 });
 
-router.post("/without-transport", authenticateToken, (req, res) => {
+router.post("/without-transport", authenticate, (req, res) => {
   try {
     const validatedData = umrahWithoutTransportSchema.parse(req.body);
     
@@ -374,7 +374,7 @@ router.post("/without-transport", authenticateToken, (req, res) => {
   }
 });
 
-router.put("/without-transport/:id", authenticateToken, (req, res) => {
+router.put("/without-transport/:id", authenticate, (req, res) => {
   try {
     const { id } = req.params;
     const validatedData = umrahWithoutTransportSchema.partial().parse(req.body);
@@ -448,7 +448,7 @@ router.put("/without-transport/:id", authenticateToken, (req, res) => {
   }
 });
 
-router.post("/without-transport/:id/payment", authenticateToken, (req, res) => {
+router.post("/without-transport/:id/payment", authenticate, (req, res) => {
   try {
     const { id } = req.params;
     const validatedData = paymentUpdateSchema.parse(req.body);
@@ -514,7 +514,7 @@ router.post("/without-transport/:id/payment", authenticateToken, (req, res) => {
   }
 });
 
-router.delete("/without-transport/:id", authenticateToken, requirePermission("delete_bookings"), (req, res) => {
+router.delete("/without-transport/:id", authenticate, requirePermission("delete_bookings"), (req, res) => {
   try {
     const { id } = req.params;
     
@@ -563,7 +563,7 @@ router.delete("/without-transport/:id", authenticateToken, requirePermission("de
 });
 
 // Summary and statistics
-router.get("/payment-summary", authenticateToken, requirePermission("view_profit"), (req, res) => {
+router.get("/payment-summary", authenticate, requirePermission("view_profit"), (req, res) => {
   try {
     const summary = UmrahWithoutTransportRepository.getPaymentSummary();
     
@@ -580,7 +580,7 @@ router.get("/payment-summary", authenticateToken, requirePermission("view_profit
   }
 });
 
-router.get("/stats", authenticateToken, (req, res) => {
+router.get("/stats", authenticate, (req, res) => {
   try {
     const withTransportPackages = UmrahWithTransportRepository.findAll();
     const withoutTransportPackages = UmrahWithoutTransportRepository.findAll();
