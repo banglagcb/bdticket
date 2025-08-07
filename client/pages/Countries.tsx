@@ -450,6 +450,9 @@ export default function Countries() {
     );
   }
 
+  // Add information box about ticket counting differences
+  const showInfoBox = totalTickets > 0;
+
   if (error) {
     return (
       <div className="text-center py-12">
