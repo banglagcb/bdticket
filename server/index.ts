@@ -9,6 +9,7 @@ import ticketBatchRoutes from "./routes/ticket-batches";
 import bookingRoutes from "./routes/bookings";
 import userRoutes from "./routes/users";
 import settingsRoutes from "./routes/settings";
+import umrahRoutes from "./routes/umrah";
 
 export function createServer() {
   const app = express();
