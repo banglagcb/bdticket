@@ -108,33 +108,15 @@ export default function Bookings() {
     try {
       setLoading(true);
       setError(null);
+      clearNetworkError();
 
-      // Add timeout and retry logic
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const data = await retryWithErrorHandler(
+        () => apiClient.getBookings(),
+        2 // Max 2 retries
+      );
 
-      try {
-        const data = await apiClient.getBookings();
-        clearTimeout(timeoutId);
-        // Ensure data is always an array
-        setBookings(Array.isArray(data) ? data : []);
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-
-        if (fetchError instanceof Error) {
-          if (fetchError.name === 'AbortError') {
-            throw new Error('Request timed out. Please try again.');
-          }
-          if (fetchError.message.includes('Failed to fetch') || fetchError.message.includes('Network error')) {
-            // Try to fallback to an empty state instead of failing completely
-            console.warn('Network error detected, setting empty bookings array');
-            setBookings([]);
-            setError("Unable to load bookings. Please check your connection and refresh the page.");
-            return;
-          }
-        }
-        throw fetchError;
-      }
+      // Ensure data is always an array
+      setBookings(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to load bookings:", err);
       const errorMessage = err instanceof Error ? err.message : "Failed to load bookings";
