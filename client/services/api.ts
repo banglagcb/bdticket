@@ -41,7 +41,9 @@ class APIClient {
     };
 
     try {
+      console.log(`API Request: ${options.method || 'GET'} ${url}`);
       const response = await fetch(url, config);
+      console.log(`API Response: ${response.status} ${response.statusText}`);
 
       // Check if response has content
       const contentType = response.headers.get("content-type");
@@ -51,6 +53,7 @@ class APIClient {
         try {
           result = await response.json();
         } catch (jsonError) {
+          console.error("JSON parsing error:", jsonError);
           // If JSON parsing fails, create a fallback result without reading body again
           result = {
             success: response.ok,
