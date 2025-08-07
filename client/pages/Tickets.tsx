@@ -762,7 +762,14 @@ export default function Tickets() {
             <div className="text-2xl font-heading font-bold text-foreground velvet-text">
               {stats.total}
             </div>
-            <div className="text-sm font-body text-foreground/60">Total</div>
+            <div className="text-sm font-body text-foreground/60">
+              Total
+              {tickets.length >= 200 && (
+                <div className="text-xs text-orange-600 mt-1">
+                  (May be limited)
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
