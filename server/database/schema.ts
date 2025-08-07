@@ -349,7 +349,19 @@ export function seedDatabase() {
     // Note: Demo data creation has been removed
     // The system is now ready for real ticket data to be added through the admin interface
 
-    // Sample data - More comprehensive data for all countries
+    /*
+    // REMOVED: All demo data creation has been disabled
+    // The system is now ready for real ticket data entry
+    */
+
+    console.log("✅ Essential data seeded successfully!");
+    console.log("🎯 Database is clean and ready for real ticket data!");
+    console.log("💼 You can now:");
+    console.log("   - Add real ticket batches through Admin → Buy Tickets");
+    console.log("   - Create real bookings through the booking system");
+    console.log("   - Start managing real customer data");
+
+    console.log("Database seeded successfully - ready for real ticket data");
     const sampleBatches = [
       // Saudi Arabia (KSA)
       {
