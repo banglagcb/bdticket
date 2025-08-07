@@ -60,6 +60,7 @@ export function createServer() {
   app.use("/api/bookings", bookingRoutes);
   app.use("/api/users", userRoutes);
   app.use("/api/settings", settingsRoutes);
+  app.use("/api/umrah", umrahRoutes);
 
   // Global error handler
   app.use(
