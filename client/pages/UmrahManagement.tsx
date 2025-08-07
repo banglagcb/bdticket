@@ -290,28 +290,20 @@ export default function UmrahManagement() {
 
     try {
       setLoading(true);
-      // TODO: Replace with actual API call
-      // await apiClient.createUmrahWithoutTransport(withoutTransportForm);
-      
-      // Mock success
-      const newRecord = {
-        ...withoutTransportForm,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-      };
+      const newRecord = await apiClient.createUmrahWithoutTransport(withoutTransportForm);
       setWithoutTransportRecords(prev => [newRecord, ...prev]);
-      
+
       toast({
         title: "Success",
         description: "Umrah without transport record created successfully",
       });
-      
+
       setIsFormDialogOpen(false);
       resetWithoutTransportForm();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create record",
+        description: error instanceof Error ? error.message : "Failed to create record",
         variant: "destructive",
       });
     } finally {
