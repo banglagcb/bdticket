@@ -896,15 +896,15 @@ export default function Tickets() {
                         <div className="flex flex-col items-center space-y-3">
                           <TicketIcon className="h-12 w-12 text-foreground/30" />
                           <div>
-                            <h3 className="font-heading font-medium text-foreground mb-1">
+                            <h3 className="font-heading font-medium text-green-600 mb-1">
                               {searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all"
                                 ? "No tickets match your criteria"
-                                : "No tickets available"}
+                                : "Database is Clean & Ready for Real Data!"}
                             </h3>
                             <p className="font-body text-sm text-foreground/60">
                               {searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all"
                                 ? "Try adjusting your filters or search terms"
-                                : "Please check back later or contact admin"}
+                                : "All demo tickets have been removed. Add real tickets through Admin → Buy Tickets"}
                             </p>
                             {(searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all") && (
                               <button
