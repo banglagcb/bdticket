@@ -6,7 +6,7 @@ import {
   type UmrahWithTransport,
   type UmrahWithoutTransport 
 } from "../database/models";
-import { authenticateToken, requirePermission } from "../middleware/auth";
+import { authenticate, requirePermission } from "../middleware/auth";
 import { z } from "zod";
 
 const router = Router();
