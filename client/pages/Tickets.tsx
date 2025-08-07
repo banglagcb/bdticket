@@ -424,7 +424,7 @@ export default function Tickets() {
     );
 
   const airlines = tickets
-    .map((t) => t.batch?.airline || t.airline)
+    .map((t) => t.batch?.airline || t.airline_name || t.airline)
     .filter(
       (airline, index, self) => airline && self.indexOf(airline) === index,
     )
