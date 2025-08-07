@@ -193,16 +193,38 @@ function TicketRow({
           <Calendar className="h-4 w-4 text-foreground/40" />
           <div>
             <div className="font-body font-medium text-sm text-foreground">
-              {ticket.batch?.flight_date
-                ? new Date(ticket.batch.flight_date).toLocaleDateString()
-                : ticket.departure_date || "N/A"}
+              {(() => {
+                // Try multiple sources for flight date
+                const dateSource = ticket.batch?.flight_date ||
+                                 ticket.flight_date ||
+                                 ticket.departure_date;
+
+                if (dateSource) {
+                  try {
+                    return new Date(dateSource).toLocaleDateString();
+                  } catch (e) {
+                    console.warn("Invalid date format:", dateSource);
+                    return dateSource;
+                  }
+                }
+                return "Date not set";
+              })()}
             </div>
             <div className="font-body text-xs text-foreground/50">
-              {new Date(
-                ticket.batch?.flight_date ||
-                  ticket.departure_date ||
-                  new Date(),
-              ).toLocaleDateString("en-US", { weekday: "long" })}
+              {(() => {
+                const dateSource = ticket.batch?.flight_date ||
+                                 ticket.flight_date ||
+                                 ticket.departure_date;
+
+                if (dateSource) {
+                  try {
+                    return new Date(dateSource).toLocaleDateString("en-US", { weekday: "long" });
+                  } catch (e) {
+                    return "Invalid date";
+                  }
+                }
+                return "No date";
+              })()}
             </div>
           </div>
         </div>
