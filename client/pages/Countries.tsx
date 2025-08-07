@@ -450,6 +450,15 @@ export default function Countries() {
     );
   }
 
+  const totalAvailable = countries.reduce(
+    (sum, country) => sum + country.availableTickets,
+    0,
+  );
+  const totalTickets = countries.reduce(
+    (sum, country) => sum + country.totalTickets,
+    0,
+  );
+
   // Add information box about ticket counting differences
   const showInfoBox = totalTickets > 0;
 
@@ -474,15 +483,6 @@ export default function Countries() {
       </div>
     );
   }
-
-  const totalAvailable = countries.reduce(
-    (sum, country) => sum + country.availableTickets,
-    0,
-  );
-  const totalTickets = countries.reduce(
-    (sum, country) => sum + country.totalTickets,
-    0,
-  );
 
   return (
     <div className="space-y-6">
