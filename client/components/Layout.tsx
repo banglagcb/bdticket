@@ -15,6 +15,7 @@ import {
   User,
   Menu,
   X,
+  MapPin,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { NotificationCenter } from "./NotificationCenter";
@@ -60,6 +61,11 @@ export default function Layout({ children }: LayoutProps) {
       path: "/bookings",
       label: "Bookings",
       icon: <Package className="h-4 w-4" />,
+    },
+    {
+      path: "/umrah",
+      label: "Umrah Management",
+      icon: <MapPin className="h-4 w-4" />,
     },
     {
       path: "/admin/buying",
