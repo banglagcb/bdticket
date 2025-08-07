@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { NotificationCenter } from "./NotificationCenter";
+import { OnlineStatusIndicator } from "./OnlineStatusIndicator";
 import { useState } from "react";
 
 interface LayoutProps {
