@@ -229,7 +229,7 @@ export default function AdminBuying() {
       const cleanContact = formData.agentContact.replace(/[\s-]/g, "");
       if (!phoneRegex.test(cleanContact)) {
         errors.agentContact =
-          "সঠিক বাংলাদেশি মোবাইল নম্বর দিন / Please provide valid Bangladeshi mobile number";
+          "সঠিক ব��ংলাদেশি মোবাইল নম্বর দিন / Please provide valid Bangladeshi mobile number";
       }
     }
 
@@ -268,7 +268,7 @@ export default function AdminBuying() {
 
     if (existingFlight) {
       errors.duplicate =
-        "একই দিনে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
+        "একই দি��ে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
     }
 
     // Check minimum profit margin (20%)
@@ -481,7 +481,7 @@ export default function AdminBuying() {
       toast({
         title: "ত্রুটি / Error",
         description:
-          "টিকেট ব্যাচ তৈরিতে সমস্যা হয়েছে / Failed to create ticket batch",
+          "টিকেট ব্য���চ তৈরিতে সমস্যা হয়েছে / Failed to create ticket batch",
         variant: "destructive",
       });
     } finally {
@@ -1137,96 +1137,155 @@ export default function AdminBuying() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredPurchases.map((purchase, index) => (
-                        <motion.tr
-                          key={purchase.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1, duration: 0.3 }}
-                          className="border-b border-border/20 hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent transition-all duration-300"
-                        >
-                          <td className="px-4 py-3">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-lg">
-                                {
-                                  countries.find(
-                                    (c) => c.code === purchase.country,
-                                  )?.flag
+                      {loadingPurchases ? (
+                        <tr>
+                          <td colSpan={9} className="px-4 py-12 text-center">
+                            <div className="flex flex-col items-center space-y-3">
+                              <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                              <span className="font-body text-foreground/70">Loading purchases...</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : purchasesError ? (
+                        <tr>
+                          <td colSpan={9} className="px-4 py-12 text-center">
+                            <div className="flex flex-col items-center space-y-3">
+                              <div className="text-6xl">⚠️</div>
+                              <h3 className="font-heading font-bold text-foreground">Error Loading Purchases</h3>
+                              <p className="font-body text-foreground/70">{purchasesError}</p>
+                              <Button
+                                onClick={loadPastPurchases}
+                                variant="outline"
+                                size="sm"
+                                className="font-body"
+                              >
+                                Retry
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : filteredPurchases.length === 0 ? (
+                        <tr>
+                          <td colSpan={9} className="px-4 py-12 text-center">
+                            <div className="flex flex-col items-center space-y-3">
+                              <div className="text-6xl">🎯</div>
+                              <h3 className="font-heading font-bold text-green-600">Ready for New Purchases!</h3>
+                              <p className="font-body text-foreground/70">
+                                {searchTerm || countryFilter !== "all" || dateFrom || dateTo
+                                  ? "No purchases match your filters. Try adjusting your search criteria."
+                                  : "No ticket purchases yet. Start by adding new tickets through the 'Add New Tickets' tab."
                                 }
-                              </span>
-                              <span className="font-body font-medium text-sm text-foreground">
-                                {purchase.country}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center space-x-2">
-                              <Plane className="h-4 w-4 text-foreground/40" />
-                              <span className="font-body text-sm text-foreground">
-                                {purchase.airline}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 font-body text-sm text-foreground">
-                            {purchase.flightDate}
-                          </td>
-                          <td className="px-4 py-3 font-body text-sm text-foreground">
-                            {purchase.quantity}
-                          </td>
-                          <td className="px-4 py-3 font-body text-sm text-foreground">
-                            ৳{purchase.buyingPrice.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 font-body font-semibold text-sm text-foreground">
-                            ৳{purchase.totalCost.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3">
-                            <div>
-                              <p className="font-body font-medium text-sm text-foreground">
-                                {purchase.agentName}
                               </p>
-                              {purchase.agentContact && (
-                                <p className="font-body text-xs text-foreground/60">
-                                  {purchase.agentContact}
-                                </p>
+                              {(searchTerm || countryFilter !== "all" || dateFrom || dateTo) && (
+                                <Button
+                                  onClick={() => {
+                                    setSearchTerm("");
+                                    setCountryFilter("all");
+                                    setDateFrom("");
+                                    setDateTo("");
+                                  }}
+                                  variant="outline"
+                                  size="sm"
+                                  className="font-body"
+                                >
+                                  Clear Filters
+                                </Button>
                               )}
                             </div>
                           </td>
-                          <td className="px-4 py-3">
-                            <div className="space-y-1">
-                              <div className="flex space-x-1">
-                                <Badge
-                                  variant="outline"
-                                  className="bg-green-50 text-green-700 border-green-200 text-xs"
-                                >
-                                  {purchase.sold} Sold
-                                </Badge>
+                        </tr>
+                      ) : (
+                        filteredPurchases.map((purchase, index) => (
+                          <motion.tr
+                            key={purchase.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1, duration: 0.3 }}
+                            className="border-b border-border/20 hover:bg-gradient-to-r hover:from-cream-100/50 hover:to-transparent transition-all duration-300"
+                          >
+                            <td className="px-4 py-3">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg">
+                                  {
+                                    countries.find(
+                                      (c) => c.code === purchase.country,
+                                    )?.flag
+                                  }
+                                </span>
+                                <span className="font-body font-medium text-sm text-foreground">
+                                  {purchase.country}
+                                </span>
                               </div>
-                              <div className="flex space-x-1">
-                                <Badge
-                                  variant="outline"
-                                  className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs"
-                                >
-                                  {purchase.locked} Locked
-                                </Badge>
-                                <Badge
-                                  variant="outline"
-                                  className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
-                                >
-                                  {purchase.available} Available
-                                </Badge>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center space-x-2">
+                                <Plane className="h-4 w-4 text-foreground/40" />
+                                <span className="font-body text-sm text-foreground">
+                                  {purchase.airline}
+                                </span>
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center space-x-2">
-                              <TrendingUp className="h-4 w-4 text-green-600" />
-                              <span className="font-body font-semibold text-sm text-green-600">
-                                ৳{purchase.profit.toLocaleString()}
-                              </span>
-                            </div>
-                          </td>
-                        </motion.tr>
-                      ))}
+                            </td>
+                            <td className="px-4 py-3 font-body text-sm text-foreground">
+                              {purchase.flightDate}
+                            </td>
+                            <td className="px-4 py-3 font-body text-sm text-foreground">
+                              {purchase.quantity}
+                            </td>
+                            <td className="px-4 py-3 font-body text-sm text-foreground">
+                              ৳{purchase.buyingPrice.toLocaleString()}
+                            </td>
+                            <td className="px-4 py-3 font-body font-semibold text-sm text-foreground">
+                              ৳{purchase.totalCost.toLocaleString()}
+                            </td>
+                            <td className="px-4 py-3">
+                              <div>
+                                <p className="font-body font-medium text-sm text-foreground">
+                                  {purchase.agentName}
+                                </p>
+                                {purchase.agentContact && (
+                                  <p className="font-body text-xs text-foreground/60">
+                                    {purchase.agentContact}
+                                  </p>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="space-y-1">
+                                <div className="flex space-x-1">
+                                  <Badge
+                                    variant="outline"
+                                    className="bg-green-50 text-green-700 border-green-200 text-xs"
+                                  >
+                                    {purchase.sold} Sold
+                                  </Badge>
+                                </div>
+                                <div className="flex space-x-1">
+                                  <Badge
+                                    variant="outline"
+                                    className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs"
+                                  >
+                                    {purchase.locked} Locked
+                                  </Badge>
+                                  <Badge
+                                    variant="outline"
+                                    className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
+                                  >
+                                    {purchase.available} Available
+                                  </Badge>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center space-x-2">
+                                <TrendingUp className="h-4 w-4 text-green-600" />
+                                <span className="font-body font-semibold text-sm text-green-600">
+                                  ৳{purchase.profit.toLocaleString()}
+                                </span>
+                              </div>
+                            </td>
+                          </motion.tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
