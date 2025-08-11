@@ -365,12 +365,16 @@ layer(fonts);
       box-shadow:
         0 4px 16px rgba(0, 0, 0, 0.08),
         0 2px 8px rgba(0, 0, 0, 0.04);
+      margin: 0.5rem 0;
     }
 
     .velvet-button {
       box-shadow:
         0 2px 8px rgba(0, 0, 0, 0.15),
         0 1px 4px rgba(0, 0, 0, 0.1);
+      min-height: 48px;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
     }
 
     .velvet-button:hover {
@@ -378,6 +382,51 @@ layer(fonts);
       box-shadow:
         0 4px 12px rgba(0, 0, 0, 0.2),
         0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mobile-specific layouts */
+    .mobile-stack {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-full-width {
+      width: 100% !important;
+    }
+
+    .mobile-text-sm {
+      font-size: 0.875rem;
+    }
+
+    .mobile-p-4 {
+      padding: 1rem;
+    }
+
+    /* Touch-friendly spacing */
+    .mobile-touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Responsive tables */
+    .mobile-table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .mobile-table-scroll table {
+      min-width: 600px;
+    }
+  }
+
+  /* Tablet optimizations */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .tablet-grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tablet-text-base {
+      font-size: 1rem;
     }
   }
 
@@ -445,5 +494,58 @@ layer(fonts);
   /* Container queries support */
   .container-query {
     container-type: inline-size;
+  }
+
+  /* Responsive utilities */
+  .responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .responsive-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .responsive-text {
+    font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+  }
+
+  .responsive-heading {
+    font-size: clamp(1.25rem, 4vw, 2rem);
+  }
+
+  .responsive-padding {
+    padding: clamp(0.5rem, 2vw, 1.5rem);
+  }
+
+  .responsive-margin {
+    margin: clamp(0.5rem, 2vw, 1.5rem);
+  }
+
+  /* Touch-friendly interactive elements */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem;
+  }
+
+  /* Safe area support for mobile devices */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-area-right {
+    padding-right: env(safe-area-inset-right);
   }
 }
