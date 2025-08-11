@@ -130,21 +130,21 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     const bookingData = createBookingSchema.parse(req.body);
 
-    // Check if ticket exists and is available
-    const ticket = TicketRepository.findById(bookingData.ticketId);
-    if (!ticket) {
-      return res.status(404).json({
+    // Validate booking with financial checks
+    const validation = validateBooking(bookingData.ticketId, bookingData.sellingPrice);
+    if (!validation.valid) {
+      return res.status(400).json({
         success: false,
-        message: "Ticket not found",
+        message: validation.error,
       });
     }
 
-    if (ticket.status !== "available") {
-      return res.status(400).json({
-        success: false,
-        message: "Ticket is not available for booking",
-      });
-    }
+    const ticket = validation.ticketData;
+
+    // Calculate potential profit for this booking
+    const potentialProfit = calculatePotentialProfit(bookingData.ticketId, bookingData.sellingPrice);
+
+    console.log(`💰 Booking validation - Buying Price: ৳${ticket.buying_price}, Selling Price: ৳${bookingData.sellingPrice}, Potential Profit: ৳${potentialProfit}`);
 
     // Enforce 1 Passenger = 1 Ticket rule
     if (bookingData.passengerInfo.paxCount !== 1) {
