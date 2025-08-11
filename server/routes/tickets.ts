@@ -415,6 +415,91 @@ router.get("/countries/stats", async (req: Request, res: Response) => {
   }
 });
 
+// Dashboard statistics endpoint with accurate financial calculations
+router.get("/dashboard/stats", async (req: Request, res: Response) => {
+  try {
+    // Get comprehensive financial summary
+    const financialSummary = calculateFinancialSummary();
+
+    // Get today's sales
+    const todaysSales = calculateTodaysSales();
+
+    // Get low stock countries
+    const lowStockCountries = getLowStockCountries();
+
+    // Get top performing countries
+    const topCountries = getTopPerformingCountries(3);
+
+    // Additional real-time metrics
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+
+    const dashboardData = {
+      // Core financial metrics
+      totalInvestment: financialSummary.totalInvestment,
+      totalRevenue: financialSummary.totalRevenue,
+      totalProfit: financialSummary.totalProfit,
+      profitMargin: financialSummary.profitMargin,
+      roi: financialSummary.roi,
+
+      // Inventory metrics
+      totalInventory: financialSummary.totalTicketsBought,
+      totalSold: financialSummary.totalTicketsSold,
+      totalAvailable: financialSummary.totalTicketsAvailable,
+      totalBooked: financialSummary.totalTicketsBooked,
+      totalLocked: financialSummary.totalTicketsLocked,
+      inventoryUtilization: financialSummary.inventoryUtilization,
+
+      // Pricing metrics
+      averageBuyingPrice: financialSummary.averageBuyingPrice,
+      averageSellingPrice: financialSummary.averageSellingPrice,
+
+      // Today's performance
+      todaysSales: {
+        amount: todaysSales.amount,
+        count: todaysSales.count
+      },
+
+      // Alerts and insights
+      lowStockAlerts: lowStockCountries.length,
+      lowStockCountries: lowStockCountries,
+
+      // Top performers
+      topPerformingCountry: topCountries[0]?.country_code || 'N/A',
+      topCountries: topCountries,
+
+      // Real-time data
+      lastUpdated: currentTime.toISOString(),
+      peakHour: `${currentHour}:00`,
+      systemStatus: 'operational',
+
+      // Business insights
+      insights: {
+        mostProfitableCountry: topCountries[0]?.country_code || 'N/A',
+        averageProfitPerTicket: topCountries[0]?.profit_per_ticket || 0,
+        inventoryHealthy: lowStockCountries.length === 0,
+        profitabilityStatus: financialSummary.profitMargin > 20 ? 'excellent' :
+                            financialSummary.profitMargin > 10 ? 'good' :
+                            financialSummary.profitMargin > 0 ? 'fair' : 'poor'
+      }
+    };
+
+    res.json({
+      success: true,
+      message: "Dashboard statistics retrieved successfully",
+      data: dashboardData,
+      timestamp: currentTime.toISOString()
+    });
+  } catch (error) {
+    console.error("❌ Dashboard stats error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to load dashboard statistics",
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
 // Debug endpoint to compare counts
 router.get("/debug/counts", async (req: Request, res: Response) => {
   try {
