@@ -171,13 +171,14 @@ export default function AdminBuying() {
         const inventoryUtilization = totalQuantity > 0 ? (totalSold / totalQuantity * 100) : 0;
         const avgPurchaseValue = transformedData.length > 0 ? (totalInvestment / transformedData.length) : 0;
 
-        // Group by country for top performer
+        // Group by country for top performer (only sold tickets count for profit)
         const countryStats = transformedData.reduce((acc, p) => {
-          if (!acc[p.country]) acc[p.country] = { sold: 0, profit: 0 };
+          if (!acc[p.country]) acc[p.country] = { sold: 0, profit: 0, investment: 0 };
           acc[p.country].sold += p.sold;
-          acc[p.country].profit += p.profit;
+          acc[p.country].profit += p.profit; // This already uses only sold tickets
+          acc[p.country].investment += p.totalCost;
           return acc;
-        }, {} as Record<string, { sold: number; profit: number }>);
+        }, {} as Record<string, { sold: number; profit: number; investment: number }>);
 
         const topCountry = Object.entries(countryStats)
           .sort(([,a], [,b]) => b.profit - a.profit)[0]?.[0] || 'N/A';
@@ -186,6 +187,16 @@ export default function AdminBuying() {
         const lowStockCount = transformedData.filter(p =>
           p.quantity > 0 && (p.available / p.quantity) < 0.2
         ).length;
+
+        // Verify calculations
+        console.log('📊 Real-time metrics calculation:', {
+          totalInvestment,
+          totalProfit,
+          profitMargin: totalInvestment > 0 ? (totalProfit / totalInvestment * 100) : 0,
+          inventoryUtilization: totalQuantity > 0 ? (totalSold / totalQuantity * 100) : 0,
+          countryStats,
+          topCountry
+        });
 
         setRealtimeMetrics({
           profitMargin: Math.max(0, profitMargin),
@@ -252,7 +263,7 @@ export default function AdminBuying() {
 
       if (flightDate < today) {
         errors.flightDate =
-          "���বিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
+          "ভবিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
       }
       if (flightDate > maxDate) {
         errors.flightDate =
@@ -303,7 +314,7 @@ export default function AdminBuying() {
     // Agent contact validation
     if (!formData.agentContact.trim()) {
       errors.agentContact =
-        "���জেন্টের যোগাযোগ নম্বর আবশ্���ক / Agent contact is required";
+        "এজেন্টের যোগাযোগ নম্বর আবশ্���ক / Agent contact is required";
     } else {
       const phoneRegex = /^(\+880|880|0)?(1[3-9]\d{8})$/;
       const cleanContact = formData.agentContact.replace(/[\s-]/g, "");
@@ -486,7 +497,7 @@ export default function AdminBuying() {
       console.log("ফ্লাইট তারিখ / Flight Date:", formData.flightDate);
       console.log("পরিমাণ / Quantity:", formData.quantity);
       console.log(
-        "ক্রয় ম��ল্য / Buying Price:",
+        "ক্রয় মূল্য / Buying Price:",
         `৳${formData.buyingPrice.toLocaleString()}`,
       );
       console.log(
