@@ -55,6 +55,7 @@ import {
 import { CreateTicketBatchRequest } from "@shared/api";
 import { useToast } from "../hooks/use-toast";
 import { apiClient } from "../services/api";
+import { formatCurrency, calculateProfit, calculatePercentage, calculateFinancialMetrics } from "../lib/currency";
 
 interface PastPurchase {
   id: string;
@@ -1139,7 +1140,7 @@ export default function AdminBuying() {
                             <div className="p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200">
                               <h3 className="font-heading font-semibold text-yellow-800 mb-3 flex items-center">
                                 <Package className="h-5 w-5 mr-2" />
-                                ঝুঁকি মূল্যায়ন / Risk Assessment
+                                ঝুঁকি মূল্যায়�� / Risk Assessment
                               </h3>
                               <div className="space-y-2 text-sm font-body">
                                 {financials.totalCost > 5000000 && (
