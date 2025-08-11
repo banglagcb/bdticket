@@ -277,7 +277,7 @@ export default function AdminBuying() {
         "ক্রয় মূল্য কমপক্ষে ১০০০ টাকা হতে হবে / Buying price must be at least ৳1000";
     } else if (formData.buyingPrice > 200000) {
       errors.buyingPrice =
-        "ক্রয় মূল্য ২,০০,০০০ টাকার চেয়ে বেশি হতে পারে না / Buying price cannot exceed ৳2,00,000";
+        "ক্রয় মূল্য ২,০০,০০০ টাকার চেয়ে বেশি হতে ���ারে না / Buying price cannot exceed ৳2,00,000";
     }
 
     // Quantity validation
@@ -473,7 +473,7 @@ export default function AdminBuying() {
       // 4th Check: Final pre-submission validation
       toast({
         title: "প্রক্রিয়াকরণ / Processing",
-        description: "ট���কেট ব্যাচ তৈরি করা হচ্ছে / Creating ticket batch...",
+        description: "টিকেট ব্যাচ তৈরি করা হচ্ছে / Creating ticket batch...",
       });
 
       // Log purchase details for audit
@@ -766,7 +766,7 @@ export default function AdminBuying() {
       </motion.div>
 
       <Tabs defaultValue="add-tickets" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 luxury-card border-0 p-1">
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 luxury-card border-0 p-1 gap-1 sm:gap-0">
           <TabsTrigger
             value="add-tickets"
             className="data-[state=active]:velvet-button data-[state=active]:text-primary-foreground font-body"
