@@ -473,7 +473,7 @@ export default function AdminBuying() {
       // 4th Check: Final pre-submission validation
       toast({
         title: "প্রক্রিয়াকরণ / Processing",
-        description: "টিকেট ব্যাচ তৈরি করা হচ্ছে / Creating ticket batch...",
+        description: "ট���কেট ব্যাচ তৈরি করা হচ্ছে / Creating ticket batch...",
       });
 
       // Log purchase details for audit
@@ -683,6 +683,86 @@ export default function AdminBuying() {
             </div>
           </div>
         </div>
+      </motion.div>
+
+      {/* Real-time Analytics Dashboard */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="grid grid-cols-1 lg:grid-cols-4 gap-4"
+      >
+        {/* Profit Margin */}
+        <Card className="luxury-card border-0">
+          <CardContent className="responsive-padding pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-body text-foreground/70">Profit Margin</p>
+                <p className="text-2xl font-heading font-bold text-green-600">
+                  {realtimeMetrics.profitMargin.toFixed(1)}%
+                </p>
+              </div>
+              <Percent className="h-8 w-8 text-green-500" />
+            </div>
+            <Progress value={Math.min(realtimeMetrics.profitMargin, 100)} className="mt-3 h-2" />
+          </CardContent>
+        </Card>
+
+        {/* Inventory Utilization */}
+        <Card className="luxury-card border-0">
+          <CardContent className="responsive-padding pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-body text-foreground/70">Inventory Utilization</p>
+                <p className="text-2xl font-heading font-bold text-blue-600">
+                  {realtimeMetrics.inventoryUtilization.toFixed(1)}%
+                </p>
+              </div>
+              <BarChart3 className="h-8 w-8 text-blue-500" />
+            </div>
+            <Progress value={realtimeMetrics.inventoryUtilization} className="mt-3 h-2" />
+          </CardContent>
+        </Card>
+
+        {/* Average Purchase Value */}
+        <Card className="luxury-card border-0">
+          <CardContent className="responsive-padding pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-body text-foreground/70">Avg Purchase Value</p>
+                <p className="text-2xl font-heading font-bold text-purple-600">
+                  ৳{realtimeMetrics.avgPurchaseValue.toLocaleString()}
+                </p>
+              </div>
+              <Target className="h-8 w-8 text-purple-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Stats */}
+        <Card className="luxury-card border-0">
+          <CardContent className="responsive-padding pt-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-body text-foreground/70">Top Country</span>
+                <span className="font-heading font-bold text-yellow-600">
+                  {realtimeMetrics.topPerformingCountry}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-body text-foreground/70">Low Stock Alerts</span>
+                <Badge variant={realtimeMetrics.lowStockAlerts > 0 ? "destructive" : "secondary"}>
+                  {realtimeMetrics.lowStockAlerts}
+                </Badge>
+              </div>
+              <div className="pt-2 border-t border-border/20">
+                <p className="text-xs text-foreground/50 font-body">
+                  Last updated: {lastUpdated.toLocaleTimeString()}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </motion.div>
 
       <Tabs defaultValue="add-tickets" className="space-y-6">
