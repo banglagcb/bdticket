@@ -539,37 +539,37 @@ export default function AdminBuying() {
           {/* Summary Stats */}
           <div className="hidden lg:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0">
             <div className="text-center">
-              <p className="text-xl font-heading font-bold text-primary velvet-text">
+              <div className="text-xl font-heading font-bold text-primary velvet-text">
                 {loadingPurchases ? (
-                  <div className="w-16 h-6 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="w-16 h-6 bg-gray-200 rounded animate-pulse mx-auto"></div>
                 ) : (
                   `৳${totalStats.totalInvestment.toLocaleString()}`
                 )}
-              </p>
+              </div>
               <p className="text-xs font-body text-foreground/60">
                 Total Investment
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xl font-heading font-bold text-green-600 velvet-text">
+              <div className="text-xl font-heading font-bold text-green-600 velvet-text">
                 {loadingPurchases ? (
-                  <div className="w-16 h-6 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="w-16 h-6 bg-gray-200 rounded animate-pulse mx-auto"></div>
                 ) : (
                   `৳${totalStats.totalProfit.toLocaleString()}`
                 )}
-              </p>
+              </div>
               <p className="text-xs font-body text-foreground/60">
                 Total Profit
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xl font-heading font-bold text-blue-600 velvet-text">
+              <div className="text-xl font-heading font-bold text-blue-600 velvet-text">
                 {loadingPurchases ? (
-                  <div className="w-12 h-6 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="w-12 h-6 bg-gray-200 rounded animate-pulse mx-auto"></div>
                 ) : (
                   `${totalStats.totalSold}/${totalStats.totalTickets}`
                 )}
-              </p>
+              </div>
               <p className="text-xs font-body text-foreground/60">Sold/Total</p>
             </div>
           </div>
