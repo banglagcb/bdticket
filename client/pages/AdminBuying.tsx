@@ -385,7 +385,7 @@ export default function AdminBuying() {
     if (financials.totalCost > 1000000) {
       // 10 lakh
       const confirmed = window.confirm(
-        `বড় পরিমাণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চিত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`,
+        `বড় পরিমাণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চ���ত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`,
       );
       if (!confirmed) return;
     }
@@ -540,7 +540,11 @@ export default function AdminBuying() {
           <div className="hidden lg:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0">
             <div className="text-center">
               <p className="text-xl font-heading font-bold text-primary velvet-text">
-                ৳{totalStats.totalInvestment.toLocaleString()}
+                {loadingPurchases ? (
+                  <div className="w-16 h-6 bg-gray-200 rounded animate-pulse"></div>
+                ) : (
+                  `৳${totalStats.totalInvestment.toLocaleString()}`
+                )}
               </p>
               <p className="text-xs font-body text-foreground/60">
                 Total Investment
@@ -548,7 +552,11 @@ export default function AdminBuying() {
             </div>
             <div className="text-center">
               <p className="text-xl font-heading font-bold text-green-600 velvet-text">
-                ৳{totalStats.totalProfit.toLocaleString()}
+                {loadingPurchases ? (
+                  <div className="w-16 h-6 bg-gray-200 rounded animate-pulse"></div>
+                ) : (
+                  `৳${totalStats.totalProfit.toLocaleString()}`
+                )}
               </p>
               <p className="text-xs font-body text-foreground/60">
                 Total Profit
@@ -556,7 +564,11 @@ export default function AdminBuying() {
             </div>
             <div className="text-center">
               <p className="text-xl font-heading font-bold text-blue-600 velvet-text">
-                {totalStats.totalSold}/{totalStats.totalTickets}
+                {loadingPurchases ? (
+                  <div className="w-12 h-6 bg-gray-200 rounded animate-pulse"></div>
+                ) : (
+                  `${totalStats.totalSold}/${totalStats.totalTickets}`
+                )}
               </p>
               <p className="text-xs font-body text-foreground/60">Sold/Total</p>
             </div>
