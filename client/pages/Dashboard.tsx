@@ -252,12 +252,6 @@ export default function Dashboard() {
               <p className="text-foreground/70 font-body capitalize">
                 {user.role} Dashboard • BD TicketPro
               </p>
-              <div className="mt-2 px-3 py-1 bg-blue-100 rounded-full inline-flex items-center space-x-2">
-                <User className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-800">
-                  ১ জন যাত্রী = ১ টি টিকেট | 1 Passenger = 1 Ticket
-                </span>
-              </div>
             </div>
           </div>
 
