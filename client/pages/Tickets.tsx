@@ -641,12 +641,6 @@ export default function Tickets() {
                 Manage and book flight tickets from all destinations
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                <div className="px-3 py-1 bg-blue-100 rounded-full inline-flex items-center space-x-2">
-                  <User className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-800">
-                    ১ জন যাত্রী = ১ টি টিকেট | 1 Passenger = 1 Ticket
-                  </span>
-                </div>
                 <div className="px-3 py-1 bg-gray-100 rounded-full inline-flex items-center space-x-2">
                   <TicketIcon className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-800">
