@@ -254,7 +254,7 @@ export default function AdminBuying() {
       }
       if (flightDate > maxDate) {
         errors.flightDate =
-          "১ বছরের ম��্যে তারিখ নির্বাচন করুন / Please select date within 1 year";
+          "১ বছরের ম���্যে তারিখ নির্বাচন করুন / Please select date within 1 year";
       }
     }
 
@@ -463,7 +463,7 @@ export default function AdminBuying() {
     if (financials.totalCost > 1000000) {
       // 10 lakh
       const confirmed = window.confirm(
-        `বড় পরি��াণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চ���ত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`,
+        `বড় পরি���াণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চ���ত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`,
       );
       if (!confirmed) return;
     }
@@ -732,7 +732,7 @@ export default function AdminBuying() {
               <div>
                 <p className="text-sm font-body text-foreground/70">Avg Purchase Value</p>
                 <p className="text-2xl font-heading font-bold text-purple-600">
-                  ৳{realtimeMetrics.avgPurchaseValue.toLocaleString()}
+                  {formatCurrency(realtimeMetrics.avgPurchaseValue)}
                 </p>
               </div>
               <Target className="h-8 w-8 text-purple-500" />
