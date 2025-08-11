@@ -55,7 +55,12 @@ import {
 import { CreateTicketBatchRequest } from "@shared/api";
 import { useToast } from "../hooks/use-toast";
 import { apiClient } from "../services/api";
-import { formatCurrency, calculateProfit, calculatePercentage, calculateFinancialMetrics } from "../lib/currency";
+import {
+  formatCurrency,
+  calculateProfit,
+  calculatePercentage,
+  calculateFinancialMetrics,
+} from "../lib/currency";
 
 interface PastPurchase {
   id: string;
@@ -91,7 +96,7 @@ export default function AdminBuying() {
     inventoryUtilization: 0,
     avgPurchaseValue: 0,
     salesVelocity: 0,
-    topPerformingCountry: '',
+    topPerformingCountry: "",
     lowStockAlerts: 0,
   });
 
@@ -150,7 +155,7 @@ export default function AdminBuying() {
           profit: calculateProfit(
             batch.selling_price || 0,
             batch.buying_price || 0,
-            batch.sold_count || 0
+            batch.sold_count || 0,
           ),
           createdAt: batch.created_at,
         }),
@@ -161,49 +166,74 @@ export default function AdminBuying() {
 
       // Calculate real-time metrics
       if (transformedData.length > 0) {
-        const totalInvestment = transformedData.reduce((sum, p) => sum + p.totalCost, 0);
-        const totalProfit = transformedData.reduce((sum, p) => sum + p.profit, 0);
-        const totalQuantity = transformedData.reduce((sum, p) => sum + p.quantity, 0);
+        const totalInvestment = transformedData.reduce(
+          (sum, p) => sum + p.totalCost,
+          0,
+        );
+        const totalProfit = transformedData.reduce(
+          (sum, p) => sum + p.profit,
+          0,
+        );
+        const totalQuantity = transformedData.reduce(
+          (sum, p) => sum + p.quantity,
+          0,
+        );
         const totalSold = transformedData.reduce((sum, p) => sum + p.sold, 0);
 
         // Calculate revenue from sold tickets only
         const totalRevenue = transformedData.reduce((sum, p) => {
           // Revenue = selling_price * sold_count (need to get selling prices)
           // For now, estimate based on profit + cost of sold tickets
-          const soldCost = (p.buyingPrice * p.sold);
+          const soldCost = p.buyingPrice * p.sold;
           return sum + (p.profit + soldCost);
         }, 0);
 
         // Calculate advanced metrics
-        const profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue * 100) : 0;
-        const inventoryUtilization = totalQuantity > 0 ? (totalSold / totalQuantity * 100) : 0;
-        const avgPurchaseValue = transformedData.length > 0 ? (totalInvestment / transformedData.length) : 0;
+        const profitMargin =
+          totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+        const inventoryUtilization =
+          totalQuantity > 0 ? (totalSold / totalQuantity) * 100 : 0;
+        const avgPurchaseValue =
+          transformedData.length > 0
+            ? totalInvestment / transformedData.length
+            : 0;
 
         // Group by country for top performer (only sold tickets count for profit)
-        const countryStats = transformedData.reduce((acc, p) => {
-          if (!acc[p.country]) acc[p.country] = { sold: 0, profit: 0, investment: 0 };
-          acc[p.country].sold += p.sold;
-          acc[p.country].profit += p.profit; // This already uses only sold tickets
-          acc[p.country].investment += p.totalCost;
-          return acc;
-        }, {} as Record<string, { sold: number; profit: number; investment: number }>);
+        const countryStats = transformedData.reduce(
+          (acc, p) => {
+            if (!acc[p.country])
+              acc[p.country] = { sold: 0, profit: 0, investment: 0 };
+            acc[p.country].sold += p.sold;
+            acc[p.country].profit += p.profit; // This already uses only sold tickets
+            acc[p.country].investment += p.totalCost;
+            return acc;
+          },
+          {} as Record<
+            string,
+            { sold: number; profit: number; investment: number }
+          >,
+        );
 
-        const topCountry = Object.entries(countryStats)
-          .sort(([,a], [,b]) => b.profit - a.profit)[0]?.[0] || 'N/A';
+        const topCountry =
+          Object.entries(countryStats).sort(
+            ([, a], [, b]) => b.profit - a.profit,
+          )[0]?.[0] || "N/A";
 
         // Count low stock items (less than 20% available)
-        const lowStockCount = transformedData.filter(p =>
-          p.quantity > 0 && (p.available / p.quantity) < 0.2
+        const lowStockCount = transformedData.filter(
+          (p) => p.quantity > 0 && p.available / p.quantity < 0.2,
         ).length;
 
         // Verify calculations
-        console.log('📊 Real-time metrics calculation:', {
+        console.log("📊 Real-time metrics calculation:", {
           totalInvestment,
           totalProfit,
-          profitMargin: totalInvestment > 0 ? (totalProfit / totalInvestment * 100) : 0,
-          inventoryUtilization: totalQuantity > 0 ? (totalSold / totalQuantity * 100) : 0,
+          profitMargin:
+            totalInvestment > 0 ? (totalProfit / totalInvestment) * 100 : 0,
+          inventoryUtilization:
+            totalQuantity > 0 ? (totalSold / totalQuantity) * 100 : 0,
           countryStats,
-          topCountry
+          topCountry,
         });
 
         setRealtimeMetrics({
@@ -700,7 +730,7 @@ export default function AdminBuying() {
                 onClick={() => setAutoRefresh(!autoRefresh)}
               >
                 <Zap className="h-3 w-3 mr-1" />
-                {autoRefresh ? 'Live' : 'Manual'}
+                {autoRefresh ? "Live" : "Manual"}
               </Badge>
             </div>
           </div>
@@ -719,14 +749,19 @@ export default function AdminBuying() {
           <CardContent className="responsive-padding pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-body text-foreground/70">Profit Margin</p>
+                <p className="text-sm font-body text-foreground/70">
+                  Profit Margin
+                </p>
                 <p className="text-2xl font-heading font-bold text-green-600">
                   {realtimeMetrics.profitMargin.toFixed(1)}%
                 </p>
               </div>
               <Percent className="h-8 w-8 text-green-500" />
             </div>
-            <Progress value={Math.min(realtimeMetrics.profitMargin, 100)} className="mt-3 h-2" />
+            <Progress
+              value={Math.min(realtimeMetrics.profitMargin, 100)}
+              className="mt-3 h-2"
+            />
           </CardContent>
         </Card>
 
@@ -735,14 +770,19 @@ export default function AdminBuying() {
           <CardContent className="responsive-padding pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-body text-foreground/70">Inventory Utilization</p>
+                <p className="text-sm font-body text-foreground/70">
+                  Inventory Utilization
+                </p>
                 <p className="text-2xl font-heading font-bold text-blue-600">
                   {realtimeMetrics.inventoryUtilization.toFixed(1)}%
                 </p>
               </div>
               <BarChart3 className="h-8 w-8 text-blue-500" />
             </div>
-            <Progress value={realtimeMetrics.inventoryUtilization} className="mt-3 h-2" />
+            <Progress
+              value={realtimeMetrics.inventoryUtilization}
+              className="mt-3 h-2"
+            />
           </CardContent>
         </Card>
 
@@ -751,7 +791,9 @@ export default function AdminBuying() {
           <CardContent className="responsive-padding pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-body text-foreground/70">Avg Purchase Value</p>
+                <p className="text-sm font-body text-foreground/70">
+                  Avg Purchase Value
+                </p>
                 <p className="text-2xl font-heading font-bold text-purple-600">
                   {formatCurrency(realtimeMetrics.avgPurchaseValue)}
                 </p>
@@ -766,14 +808,24 @@ export default function AdminBuying() {
           <CardContent className="responsive-padding pt-6">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-body text-foreground/70">Top Country</span>
+                <span className="text-sm font-body text-foreground/70">
+                  Top Country
+                </span>
                 <span className="font-heading font-bold text-yellow-600">
                   {realtimeMetrics.topPerformingCountry}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-body text-foreground/70">Low Stock Alerts</span>
-                <Badge variant={realtimeMetrics.lowStockAlerts > 0 ? "destructive" : "secondary"}>
+                <span className="text-sm font-body text-foreground/70">
+                  Low Stock Alerts
+                </span>
+                <Badge
+                  variant={
+                    realtimeMetrics.lowStockAlerts > 0
+                      ? "destructive"
+                      : "secondary"
+                  }
+                >
                   {realtimeMetrics.lowStockAlerts}
                 </Badge>
               </div>

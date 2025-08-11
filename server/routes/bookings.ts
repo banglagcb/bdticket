@@ -6,7 +6,10 @@ import {
 } from "../database/models";
 import { authenticate, hasPermission } from "../middleware/auth";
 import { z } from "zod";
-import { validateBooking, calculatePotentialProfit } from "../lib/financial-calculator";
+import {
+  validateBooking,
+  calculatePotentialProfit,
+} from "../lib/financial-calculator";
 
 const router = Router();
 
@@ -48,7 +51,9 @@ router.get("/", async (req: Request, res: Response) => {
       bookings = BookingRepository.findAllForFrontend();
     } else {
       const userBookings = BookingRepository.findByUser(req.user!.id);
-      bookings = userBookings.map(booking => BookingRepository.transformForFrontend(booking));
+      bookings = userBookings.map((booking) =>
+        BookingRepository.transformForFrontend(booking),
+      );
     }
 
     // Apply status filter
@@ -131,7 +136,10 @@ router.post("/", async (req: Request, res: Response) => {
     const bookingData = createBookingSchema.parse(req.body);
 
     // Validate booking with financial checks
-    const validation = validateBooking(bookingData.ticketId, bookingData.sellingPrice);
+    const validation = validateBooking(
+      bookingData.ticketId,
+      bookingData.sellingPrice,
+    );
     if (!validation.valid) {
       return res.status(400).json({
         success: false,
@@ -142,9 +150,14 @@ router.post("/", async (req: Request, res: Response) => {
     const ticket = validation.ticketData;
 
     // Calculate potential profit for this booking
-    const potentialProfit = calculatePotentialProfit(bookingData.ticketId, bookingData.sellingPrice);
+    const potentialProfit = calculatePotentialProfit(
+      bookingData.ticketId,
+      bookingData.sellingPrice,
+    );
 
-    console.log(`💰 Booking validation - Buying Price: ৳${ticket.buying_price}, Selling Price: ৳${bookingData.sellingPrice}, Potential Profit: ৳${potentialProfit}`);
+    console.log(
+      `💰 Booking validation - Buying Price: ৳${ticket.buying_price}, Selling Price: ৳${bookingData.sellingPrice}, Potential Profit: ৳${potentialProfit}`,
+    );
 
     // Enforce 1 Passenger = 1 Ticket rule
     if (bookingData.passengerInfo.paxCount !== 1) {
@@ -252,7 +265,10 @@ router.post("/", async (req: Request, res: Response) => {
 // Update booking status
 router.patch("/:id/status", async (req: Request, res: Response) => {
   try {
-    console.log("Updating booking status:", { id: req.params.id, status: req.body.status });
+    console.log("Updating booking status:", {
+      id: req.params.id,
+      status: req.body.status,
+    });
     const { id } = req.params;
     const { status } = req.body;
 
@@ -273,7 +289,10 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
         message: "Booking not found",
       });
     }
-    console.log("Found booking:", { id: booking.id, current_status: booking.status });
+    console.log("Found booking:", {
+      id: booking.id,
+      current_status: booking.status,
+    });
 
     // Check permissions
     const canViewAllBookings = hasPermission(
@@ -299,7 +318,11 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
     }
 
     // Update booking status
-    console.log("Attempting to update booking status:", { id, from: booking.status, to: status });
+    console.log("Attempting to update booking status:", {
+      id,
+      from: booking.status,
+      to: status,
+    });
     let success;
     try {
       success = BookingRepository.updateStatus(id, status);

@@ -193,7 +193,10 @@ router.post(
                     : "XX";
 
         const flightNumber = `${airlineCode} ${Math.floor(Math.random() * 900) + 100}`;
-        const sellingPrice = calculateOptimalSellingPrice(batchData.buyingPrice, batchData.country.toUpperCase());
+        const sellingPrice = calculateOptimalSellingPrice(
+          batchData.buyingPrice,
+          batchData.country.toUpperCase(),
+        );
 
         const ticket = TicketRepository.create({
           batch_id: batch.id,

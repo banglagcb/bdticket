@@ -286,7 +286,8 @@ export function BookingDialog({
                   }
                   required
                   className={
-                    ticket?.batch?.buying_price && formData.sellingPrice < ticket.batch.buying_price
+                    ticket?.batch?.buying_price &&
+                    formData.sellingPrice < ticket.batch.buying_price
                       ? "border-red-500 focus:border-red-500"
                       : ""
                   }
@@ -295,40 +296,61 @@ export function BookingDialog({
                   <div className="mt-2 space-y-1">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Buying Price:</span>
-                      <span className="font-medium">৳{ticket.batch.buying_price.toLocaleString()}</span>
+                      <span className="font-medium">
+                        ৳{ticket.batch.buying_price.toLocaleString()}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Profit:</span>
-                      <span className={`font-medium ${
-                        (formData.sellingPrice - ticket.batch.buying_price) >= 0
-                          ? 'text-green-600'
-                          : 'text-red-600'
-                      }`}>
-                        ৳{(formData.sellingPrice - ticket.batch.buying_price).toLocaleString()}
+                      <span
+                        className={`font-medium ${
+                          formData.sellingPrice - ticket.batch.buying_price >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        ৳
+                        {(
+                          formData.sellingPrice - ticket.batch.buying_price
+                        ).toLocaleString()}
                       </span>
                     </div>
-                    {formData.sellingPrice > 0 && ticket.batch.buying_price > 0 && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Profit Margin:</span>
-                        <span className={`font-medium ${
-                          ((formData.sellingPrice - ticket.batch.buying_price) / formData.sellingPrice * 100) >= 0
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }`}>
-                          {((formData.sellingPrice - ticket.batch.buying_price) / formData.sellingPrice * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                    )}
+                    {formData.sellingPrice > 0 &&
+                      ticket.batch.buying_price > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Profit Margin:</span>
+                          <span
+                            className={`font-medium ${
+                              ((formData.sellingPrice -
+                                ticket.batch.buying_price) /
+                                formData.sellingPrice) *
+                                100 >=
+                              0
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {(
+                              ((formData.sellingPrice -
+                                ticket.batch.buying_price) /
+                                formData.sellingPrice) *
+                              100
+                            ).toFixed(1)}
+                            %
+                          </span>
+                        </div>
+                      )}
                     {formData.sellingPrice < ticket.batch.buying_price && (
                       <p className="text-red-600 text-xs mt-1">
                         ⚠️ Warning: Selling price is below buying price (Loss!)
                       </p>
                     )}
-                    {formData.sellingPrice < ticket.batch.buying_price * 1.05 && formData.sellingPrice >= ticket.batch.buying_price && (
-                      <p className="text-yellow-600 text-xs mt-1">
-                        ⚠️ Low profit margin (less than 5%)
-                      </p>
-                    )}
+                    {formData.sellingPrice < ticket.batch.buying_price * 1.05 &&
+                      formData.sellingPrice >= ticket.batch.buying_price && (
+                        <p className="text-yellow-600 text-xs mt-1">
+                          ⚠️ Low profit margin (less than 5%)
+                        </p>
+                      )}
                   </div>
                 )}
               </div>

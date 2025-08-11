@@ -15,7 +15,7 @@ import {
   calculateFinancialSummary,
   calculateTodaysSales,
   getLowStockCountries,
-  getTopPerformingCountries
+  getTopPerformingCountries,
 } from "../lib/financial-calculator";
 
 const router = Router();
@@ -389,10 +389,18 @@ router.get("/countries/stats", async (req: Request, res: Response) => {
     });
 
     // Calculate grand totals for validation
-    const grandTotal = countriesWithStats.reduce((sum, c) => sum + c.totalTickets, 0);
-    const grandAvailable = countriesWithStats.reduce((sum, c) => sum + c.availableTickets, 0);
+    const grandTotal = countriesWithStats.reduce(
+      (sum, c) => sum + c.totalTickets,
+      0,
+    );
+    const grandAvailable = countriesWithStats.reduce(
+      (sum, c) => sum + c.availableTickets,
+      0,
+    );
 
-    console.log(`✅ Grand totals: ${grandTotal} total, ${grandAvailable} available`);
+    console.log(
+      `✅ Grand totals: ${grandTotal} total, ${grandAvailable} available`,
+    );
     console.log("✅ Sending countries response");
 
     res.json({
@@ -402,8 +410,8 @@ router.get("/countries/stats", async (req: Request, res: Response) => {
         countries: countriesWithStats,
         totals: {
           total: grandTotal,
-          available: grandAvailable
-        }
+          available: grandAvailable,
+        },
       },
     });
   } catch (error) {
@@ -457,7 +465,7 @@ router.get("/dashboard/stats", async (req: Request, res: Response) => {
       // Today's performance
       todaysSales: {
         amount: todaysSales.amount,
-        count: todaysSales.count
+        count: todaysSales.count,
       },
 
       // Alerts and insights
@@ -465,37 +473,42 @@ router.get("/dashboard/stats", async (req: Request, res: Response) => {
       lowStockCountries: lowStockCountries,
 
       // Top performers
-      topPerformingCountry: topCountries[0]?.country_code || 'N/A',
+      topPerformingCountry: topCountries[0]?.country_code || "N/A",
       topCountries: topCountries,
 
       // Real-time data
       lastUpdated: currentTime.toISOString(),
       peakHour: `${currentHour}:00`,
-      systemStatus: 'operational',
+      systemStatus: "operational",
 
       // Business insights
       insights: {
-        mostProfitableCountry: topCountries[0]?.country_code || 'N/A',
+        mostProfitableCountry: topCountries[0]?.country_code || "N/A",
         averageProfitPerTicket: topCountries[0]?.profit_per_ticket || 0,
         inventoryHealthy: lowStockCountries.length === 0,
-        profitabilityStatus: financialSummary.profitMargin > 20 ? 'excellent' :
-                            financialSummary.profitMargin > 10 ? 'good' :
-                            financialSummary.profitMargin > 0 ? 'fair' : 'poor'
-      }
+        profitabilityStatus:
+          financialSummary.profitMargin > 20
+            ? "excellent"
+            : financialSummary.profitMargin > 10
+              ? "good"
+              : financialSummary.profitMargin > 0
+                ? "fair"
+                : "poor",
+      },
     };
 
     res.json({
       success: true,
       message: "Dashboard statistics retrieved successfully",
       data: dashboardData,
-      timestamp: currentTime.toISOString()
+      timestamp: currentTime.toISOString(),
     });
   } catch (error) {
     console.error("❌ Dashboard stats error:", error);
     res.status(500).json({
       success: false,
       message: "Failed to load dashboard statistics",
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
@@ -512,33 +525,41 @@ router.get("/debug/counts", async (req: Request, res: Response) => {
     console.log(`🔍 Debug: Countries stats:`, stats);
 
     // Calculate totals from countries stats
-    const totalFromStats = stats.reduce((sum, stat) => sum + stat.total_tickets, 0);
-    const availableFromStats = stats.reduce((sum, stat) => sum + stat.available_tickets, 0);
+    const totalFromStats = stats.reduce(
+      (sum, stat) => sum + stat.total_tickets,
+      0,
+    );
+    const availableFromStats = stats.reduce(
+      (sum, stat) => sum + stat.available_tickets,
+      0,
+    );
 
     // Calculate totals from direct ticket query
     const totalFromTickets = allTickets.length;
-    const availableFromTickets = allTickets.filter(t => t.status === 'available').length;
+    const availableFromTickets = allTickets.filter(
+      (t) => t.status === "available",
+    ).length;
 
     const debugInfo = {
       fromStats: {
         total: totalFromStats,
         available: availableFromStats,
-        breakdown: stats
+        breakdown: stats,
       },
       fromTickets: {
         total: totalFromTickets,
         available: availableFromTickets,
         statusBreakdown: {
-          available: allTickets.filter(t => t.status === 'available').length,
-          booked: allTickets.filter(t => t.status === 'booked').length,
-          locked: allTickets.filter(t => t.status === 'locked').length,
-          sold: allTickets.filter(t => t.status === 'sold').length
-        }
+          available: allTickets.filter((t) => t.status === "available").length,
+          booked: allTickets.filter((t) => t.status === "booked").length,
+          locked: allTickets.filter((t) => t.status === "locked").length,
+          sold: allTickets.filter((t) => t.status === "sold").length,
+        },
       },
       discrepancy: {
         total: totalFromTickets - totalFromStats,
-        available: availableFromTickets - availableFromStats
-      }
+        available: availableFromTickets - availableFromStats,
+      },
     };
 
     console.log("🔍 Debug info:", debugInfo);
@@ -546,13 +567,13 @@ router.get("/debug/counts", async (req: Request, res: Response) => {
     res.json({
       success: true,
       message: "Debug information retrieved",
-      data: debugInfo
+      data: debugInfo,
     });
   } catch (error) {
     console.error("Debug counts error:", error);
     res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 });
