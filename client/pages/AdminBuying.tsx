@@ -209,7 +209,18 @@ export default function AdminBuying() {
   // Load data on mount
   useEffect(() => {
     loadPastPurchases();
-  }, []);
+  }, [loadPastPurchases]);
+
+  // Auto-refresh every 45 seconds when enabled
+  useEffect(() => {
+    if (!autoRefresh) return;
+
+    const interval = setInterval(() => {
+      loadPastPurchases(true); // Silent refresh
+    }, 45000);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, loadPastPurchases]);
 
   // Comprehensive validation functions
   const validateForm = (): Record<string, string> => {
