@@ -7,6 +7,7 @@ import {
 import { authenticate, requirePermission } from "../middleware/auth";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
+import { calculateOptimalSellingPrice } from "../lib/financial-calculator";
 
 const router = Router();
 
