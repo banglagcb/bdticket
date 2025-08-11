@@ -505,11 +505,6 @@ export default function Countries() {
                 Browse tickets by destination country
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                <div className="px-3 py-1 bg-blue-100 border border-blue-300 rounded-md inline-block">
-                  <span className="text-sm font-medium text-blue-800">
-                    ১ জন যাত্রী = ১ টি টিকেট | 1 Passenger = 1 Ticket
-                  </span>
-                </div>
                 <Link to="/tickets">
                   <div className="px-3 py-1 bg-green-100 border border-green-300 rounded-md inline-block hover:bg-green-200 transition-colors cursor-pointer">
                     <span className="text-sm font-medium text-green-800">
