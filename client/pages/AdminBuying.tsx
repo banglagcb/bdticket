@@ -165,7 +165,7 @@ export default function AdminBuying() {
     // Quantity validation
     if (!formData.quantity || formData.quantity <= 0) {
       errors.quantity =
-        "টিকেটের সংখ্যা ০ ���র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
+        "টিকেটের সংখ্যা ০ ����র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
     } else if (formData.quantity > 1000) {
       errors.quantity =
         "একবারে সর্বোচ্চ ১��০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
@@ -373,7 +373,7 @@ export default function AdminBuying() {
         `৳${financials.totalCost.toLocaleString()}`,
       );
       console.log(
-        "��্রত্যাশিত বিক্রয় মূল্য / Expected Selling Price:",
+        "��্রত্���াশিত বিক্রয় মূল্য / Expected Selling Price:",
         `৳${financials.estimatedSellingPrice.toLocaleString()}`,
       );
       console.log(
@@ -489,12 +489,6 @@ export default function AdminBuying() {
               <p className="text-foreground/70 font-body">
                 Purchase and manage flight ticket inventory
               </p>
-              <div className="mt-2 px-3 py-1 bg-blue-100 rounded-full inline-flex items-center space-x-2">
-                <User className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-800">
-                  ১ জন যাত্রী = ১ টি টিকেট | 1 Passenger = 1 Ticket
-                </span>
-              </div>
             </div>
           </div>
 
@@ -922,7 +916,7 @@ export default function AdminBuying() {
                                 {formData.quantity > 500 && (
                                   <div className="bg-yellow-100 border border-yellow-300 p-2 rounded flex items-center">
                                     <span className="text-yellow-600 font-semibold">
-                                      ⚠️ বড় পরিমাণ: ৫০০+ টিকেট / Large
+                                      ⚠️ বড় পরিমাণ: ৫���০+ টিকেট / Large
                                       Quantity: 500+ tickets
                                     </span>
                                   </div>
