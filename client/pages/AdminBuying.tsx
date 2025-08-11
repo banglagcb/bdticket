@@ -119,10 +119,12 @@ export default function AdminBuying() {
   const [isFormValid, setIsFormValid] = useState(false);
   const { toast } = useToast();
 
-  // Load past purchases data
-  const loadPastPurchases = async () => {
+  // Load past purchases data with real-time metrics calculation
+  const loadPastPurchases = useCallback(async (silent = false) => {
     try {
-      setLoadingPurchases(true);
+      if (!silent) {
+        setLoadingPurchases(true);
+      }
       setPurchasesError(null);
 
       // Get ticket batches
@@ -152,14 +154,57 @@ export default function AdminBuying() {
       );
 
       setPastPurchases(transformedData);
+      setLastUpdated(new Date());
+
+      // Calculate real-time metrics
+      if (transformedData.length > 0) {
+        const totalInvestment = transformedData.reduce((sum, p) => sum + p.totalCost, 0);
+        const totalProfit = transformedData.reduce((sum, p) => sum + p.profit, 0);
+        const totalQuantity = transformedData.reduce((sum, p) => sum + p.quantity, 0);
+        const totalSold = transformedData.reduce((sum, p) => sum + p.sold, 0);
+
+        // Calculate advanced metrics
+        const profitMargin = totalInvestment > 0 ? (totalProfit / totalInvestment * 100) : 0;
+        const inventoryUtilization = totalQuantity > 0 ? (totalSold / totalQuantity * 100) : 0;
+        const avgPurchaseValue = transformedData.length > 0 ? (totalInvestment / transformedData.length) : 0;
+
+        // Group by country for top performer
+        const countryStats = transformedData.reduce((acc, p) => {
+          if (!acc[p.country]) acc[p.country] = { sold: 0, profit: 0 };
+          acc[p.country].sold += p.sold;
+          acc[p.country].profit += p.profit;
+          return acc;
+        }, {} as Record<string, { sold: number; profit: number }>);
+
+        const topCountry = Object.entries(countryStats)
+          .sort(([,a], [,b]) => b.profit - a.profit)[0]?.[0] || 'N/A';
+
+        // Count low stock items (less than 20% available)
+        const lowStockCount = transformedData.filter(p =>
+          p.quantity > 0 && (p.available / p.quantity) < 0.2
+        ).length;
+
+        setRealtimeMetrics({
+          profitMargin: Math.max(0, profitMargin),
+          inventoryUtilization: Math.max(0, inventoryUtilization),
+          avgPurchaseValue,
+          salesVelocity: totalSold,
+          topPerformingCountry: topCountry,
+          lowStockAlerts: lowStockCount,
+        });
+      }
     } catch (error) {
       console.error("❌ Failed to load past purchases:", error);
-      setPurchasesError("Failed to load purchase history");
-      setPastPurchases([]);
+      if (!silent) {
+        setPurchasesError("Failed to load purchase history");
+        setPastPurchases([]);
+      }
     } finally {
-      setLoadingPurchases(false);
+      if (!silent) {
+        setLoadingPurchases(false);
+      }
     }
-  };
+  }, []);
 
   // Load data on mount
   useEffect(() => {
