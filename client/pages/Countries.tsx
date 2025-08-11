@@ -511,13 +511,13 @@ export default function Countries() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center space-x-4 min-w-0 flex-1">
             <div className="p-3 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-full animate-glow animate-float">
               <MapPin className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-bold velvet-text">
+              <h1 className="responsive-heading font-heading font-bold velvet-text">
                 Countries
               </h1>
               <p className="text-foreground/70 font-body">
@@ -536,8 +536,8 @@ export default function Countries() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2 sm:space-x-4">
+            <div className="flex items-center space-x-2 order-2 sm:order-1">
               {/* Connection Status */}
               <div className="flex items-center space-x-1 text-xs">
                 {isOnline ? (
@@ -557,7 +557,7 @@ export default function Countries() {
                 onClick={toggleAutoRefresh}
                 variant={autoRefresh ? "default" : "outline"}
                 size="sm"
-                className="font-body text-xs px-2 py-1"
+                className="font-body text-xs px-2 py-1 touch-target"
                 title={
                   autoRefresh ? "Disable auto-refresh" : "Enable auto-refresh"
                 }
@@ -572,7 +572,7 @@ export default function Countries() {
                 variant="outline"
                 size="sm"
                 disabled={loading}
-                className="font-body hover:scale-105 transform transition-all duration-200"
+                className="font-body hover:scale-105 transform transition-all duration-200 touch-target"
               >
                 <RefreshCw
                   className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
@@ -614,14 +614,14 @@ Available Discrepancy: ${debugData.data.discrepancy.available}`);
                 }}
                 variant="outline"
                 size="sm"
-                className="font-body text-xs"
+                className="font-body text-xs touch-target"
               >
                 Debug
               </Button>
             </div>
 
             {/* Summary Stats */}
-            <div className="hidden md:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0 backdrop-blur-md">
+            <div className="hidden lg:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0 backdrop-blur-md order-1 sm:order-2">
               <div className="text-center">
                 <p className="text-2xl font-heading font-bold text-primary velvet-text">
                   {totalAvailable.toLocaleString()}
