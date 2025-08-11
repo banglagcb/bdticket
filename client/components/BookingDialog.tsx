@@ -156,14 +156,6 @@ export function BookingDialog({
           </div>
         )}
 
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 mb-4">
-          <div className="flex items-center space-x-2">
-            <User className="h-5 w-5 text-blue-600" />
-            <p className="font-body text-sm text-blue-800">
-              <strong>নিয়ম:</strong> ১ জন যাত্রী = ১ টি টিকেট | <strong>Rule:</strong> 1 Passenger = 1 Ticket
-            </p>
-          </div>
-        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Agent Information */}
