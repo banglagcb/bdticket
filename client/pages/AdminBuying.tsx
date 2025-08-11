@@ -166,8 +166,16 @@ export default function AdminBuying() {
         const totalQuantity = transformedData.reduce((sum, p) => sum + p.quantity, 0);
         const totalSold = transformedData.reduce((sum, p) => sum + p.sold, 0);
 
+        // Calculate revenue from sold tickets only
+        const totalRevenue = transformedData.reduce((sum, p) => {
+          // Revenue = selling_price * sold_count (need to get selling prices)
+          // For now, estimate based on profit + cost of sold tickets
+          const soldCost = (p.buyingPrice * p.sold);
+          return sum + (p.profit + soldCost);
+        }, 0);
+
         // Calculate advanced metrics
-        const profitMargin = totalInvestment > 0 ? (totalProfit / totalInvestment * 100) : 0;
+        const profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue * 100) : 0;
         const inventoryUtilization = totalQuantity > 0 ? (totalSold / totalQuantity * 100) : 0;
         const avgPurchaseValue = transformedData.length > 0 ? (totalInvestment / transformedData.length) : 0;
 
@@ -254,7 +262,7 @@ export default function AdminBuying() {
 
     // Flight date validation
     if (!formData.flightDate) {
-      errors.flightDate = "ফ্লাইটের তারিখ আবশ্যক / Flight date is required";
+      errors.flightDate = "ফ্লাইট���র তারিখ আবশ্যক / Flight date is required";
     } else {
       const flightDate = new Date(formData.flightDate);
       const today = new Date();
@@ -543,7 +551,7 @@ export default function AdminBuying() {
       toast({
         title: "সফল / Success!",
         description:
-          "ট���কেট ব্যাচ সফলভাবে তৈরি হয়েছে / Ticket batch created successfully",
+          "ট���কেট ব্যাচ সফলভাবে তৈরি হ���়েছে / Ticket batch created successfully",
       });
 
       // Reset form after successful submission
