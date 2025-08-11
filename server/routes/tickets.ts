@@ -11,6 +11,12 @@ import {
   hasPermission,
 } from "../middleware/auth";
 import { z } from "zod";
+import {
+  calculateFinancialSummary,
+  calculateTodaysSales,
+  getLowStockCountries,
+  getTopPerformingCountries
+} from "../lib/financial-calculator";
 
 const router = Router();
 
