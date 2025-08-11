@@ -250,11 +250,11 @@ export default function AdminBuying() {
 
       if (flightDate < today) {
         errors.flightDate =
-          "ভবিষ্যতের তারিখ নির্বা���ন করুন / Please select a future date";
+          "ভবিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
       }
       if (flightDate > maxDate) {
         errors.flightDate =
-          "১ বছরের মধ্যে তারিখ নির্বাচন করুন / Please select date within 1 year";
+          "১ বছরের ম��্যে তারিখ নির্বাচন করুন / Please select date within 1 year";
       }
     }
 
@@ -463,7 +463,7 @@ export default function AdminBuying() {
     if (financials.totalCost > 1000000) {
       // 10 lakh
       const confirmed = window.confirm(
-        `বড় পরিমাণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চ���ত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`,
+        `বড় পরি��াণ ক্রয়: ৳${financials.totalCost.toLocaleString()}\n\nআপনি কি নিশ্চ���ত?\n\nLarge purchase: ৳${financials.totalCost.toLocaleString()}\n\nAre you sure?`,
       );
       if (!confirmed) return;
     }
@@ -517,7 +517,7 @@ export default function AdminBuying() {
 
       // 5th Check: Post-submission verification
       const successMessage =
-        `✅ সফলভাব��� সম্পন্ন / Successfully Completed!\n\n` +
+        `✅ সফলভাবে সম্পন্ন / Successfully Completed!\n\n` +
         `📊 বিস্তারিত / Details:\n` +
         `• দেশ / Country: ${formData.country}\n` +
         `• এয়ারলাইন / Airline: ${formData.airline}\n` +
@@ -641,7 +641,7 @@ export default function AdminBuying() {
                 {loadingPurchases ? (
                   <div className="w-16 h-6 bg-gray-200 rounded animate-pulse mx-auto"></div>
                 ) : (
-                  `৳${totalStats.totalProfit.toLocaleString()}`
+                  formatCurrency(totalStats.totalProfit)
                 )}
               </div>
               <p className="text-xs font-body text-foreground/60">
