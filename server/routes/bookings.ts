@@ -6,6 +6,7 @@ import {
 } from "../database/models";
 import { authenticate, hasPermission } from "../middleware/auth";
 import { z } from "zod";
+import { validateBooking, calculatePotentialProfit } from "../lib/financial-calculator";
 
 const router = Router();
 
