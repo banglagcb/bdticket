@@ -156,7 +156,6 @@ export function BookingDialog({
           </div>
         )}
 
-
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Agent Information */}
           <div>

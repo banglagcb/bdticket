@@ -113,22 +113,26 @@ export default function AdminBuying() {
       console.log("📊 Past purchases data:", response);
 
       // Transform data to match interface
-      const transformedData: PastPurchase[] = (response.batches || []).map((batch: any) => ({
-        id: batch.id,
-        country: batch.country_code,
-        airline: batch.airline_name,
-        flightDate: batch.flight_date,
-        quantity: batch.quantity,
-        buyingPrice: batch.buying_price || 0,
-        totalCost: (batch.buying_price || 0) * batch.quantity,
-        agentName: batch.agent_name,
-        agentContact: batch.agent_contact,
-        sold: batch.sold_count || 0,
-        locked: batch.locked_count || 0,
-        available: batch.available_count || 0,
-        profit: ((batch.selling_price || 0) - (batch.buying_price || 0)) * (batch.sold_count || 0),
-        createdAt: batch.created_at
-      }));
+      const transformedData: PastPurchase[] = (response.batches || []).map(
+        (batch: any) => ({
+          id: batch.id,
+          country: batch.country_code,
+          airline: batch.airline_name,
+          flightDate: batch.flight_date,
+          quantity: batch.quantity,
+          buyingPrice: batch.buying_price || 0,
+          totalCost: (batch.buying_price || 0) * batch.quantity,
+          agentName: batch.agent_name,
+          agentContact: batch.agent_contact,
+          sold: batch.sold_count || 0,
+          locked: batch.locked_count || 0,
+          available: batch.available_count || 0,
+          profit:
+            ((batch.selling_price || 0) - (batch.buying_price || 0)) *
+            (batch.sold_count || 0),
+          createdAt: batch.created_at,
+        }),
+      );
 
       setPastPurchases(transformedData);
     } catch (error) {
@@ -507,10 +511,18 @@ export default function AdminBuying() {
   });
 
   const totalStats = {
-    totalInvestment: loadingPurchases ? 0 : pastPurchases.reduce((sum, p) => sum + p.totalCost, 0),
-    totalProfit: loadingPurchases ? 0 : pastPurchases.reduce((sum, p) => sum + p.profit, 0),
-    totalTickets: loadingPurchases ? 0 : pastPurchases.reduce((sum, p) => sum + p.quantity, 0),
-    totalSold: loadingPurchases ? 0 : pastPurchases.reduce((sum, p) => sum + p.sold, 0),
+    totalInvestment: loadingPurchases
+      ? 0
+      : pastPurchases.reduce((sum, p) => sum + p.totalCost, 0),
+    totalProfit: loadingPurchases
+      ? 0
+      : pastPurchases.reduce((sum, p) => sum + p.profit, 0),
+    totalTickets: loadingPurchases
+      ? 0
+      : pastPurchases.reduce((sum, p) => sum + p.quantity, 0),
+    totalSold: loadingPurchases
+      ? 0
+      : pastPurchases.reduce((sum, p) => sum + p.sold, 0),
   };
 
   return (
@@ -1154,7 +1166,9 @@ export default function AdminBuying() {
                           <td colSpan={9} className="px-4 py-12 text-center">
                             <div className="flex flex-col items-center space-y-3">
                               <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                              <span className="font-body text-foreground/70">Loading purchases...</span>
+                              <span className="font-body text-foreground/70">
+                                Loading purchases...
+                              </span>
                             </div>
                           </td>
                         </tr>
@@ -1163,8 +1177,12 @@ export default function AdminBuying() {
                           <td colSpan={9} className="px-4 py-12 text-center">
                             <div className="flex flex-col items-center space-y-3">
                               <div className="text-6xl">⚠️</div>
-                              <h3 className="font-heading font-bold text-foreground">Error Loading Purchases</h3>
-                              <p className="font-body text-foreground/70">{purchasesError}</p>
+                              <h3 className="font-heading font-bold text-foreground">
+                                Error Loading Purchases
+                              </h3>
+                              <p className="font-body text-foreground/70">
+                                {purchasesError}
+                              </p>
                               <Button
                                 onClick={loadPastPurchases}
                                 variant="outline"
@@ -1181,14 +1199,21 @@ export default function AdminBuying() {
                           <td colSpan={9} className="px-4 py-12 text-center">
                             <div className="flex flex-col items-center space-y-3">
                               <div className="text-6xl">🎯</div>
-                              <h3 className="font-heading font-bold text-green-600">Ready for New Purchases!</h3>
+                              <h3 className="font-heading font-bold text-green-600">
+                                Ready for New Purchases!
+                              </h3>
                               <p className="font-body text-foreground/70">
-                                {searchTerm || countryFilter !== "all" || dateFrom || dateTo
+                                {searchTerm ||
+                                countryFilter !== "all" ||
+                                dateFrom ||
+                                dateTo
                                   ? "No purchases match your filters. Try adjusting your search criteria."
-                                  : "No ticket purchases yet. Start by adding new tickets through the 'Add New Tickets' tab."
-                                }
+                                  : "No ticket purchases yet. Start by adding new tickets through the 'Add New Tickets' tab."}
                               </p>
-                              {(searchTerm || countryFilter !== "all" || dateFrom || dateTo) && (
+                              {(searchTerm ||
+                                countryFilter !== "all" ||
+                                dateFrom ||
+                                dateTo) && (
                                 <Button
                                   onClick={() => {
                                     setSearchTerm("");

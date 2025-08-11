@@ -91,7 +91,8 @@ export default function Bookings() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const { networkError, clearNetworkError, retryWithErrorHandler } = useNetworkErrorHandler();
+  const { networkError, clearNetworkError, retryWithErrorHandler } =
+    useNetworkErrorHandler();
 
   // Set initial filter from URL params
   useEffect(() => {
@@ -112,14 +113,15 @@ export default function Bookings() {
 
       const data = await retryWithErrorHandler(
         () => apiClient.getBookings(),
-        2 // Max 2 retries
+        2, // Max 2 retries
       );
 
       // Ensure data is always an array
       setBookings(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to load bookings:", err);
-      const errorMessage = err instanceof Error ? err.message : "Failed to load bookings";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load bookings";
       setError(errorMessage);
       setBookings([]); // Set empty array on error
     } finally {
@@ -262,9 +264,10 @@ export default function Bookings() {
 
   if (error || networkError) {
     const displayError = networkError || error;
-    const isNetworkError = displayError?.includes('Failed to fetch') ||
-                          displayError?.includes('Network error') ||
-                          displayError?.includes('Unable to connect');
+    const isNetworkError =
+      displayError?.includes("Failed to fetch") ||
+      displayError?.includes("Network error") ||
+      displayError?.includes("Unable to connect");
 
     return (
       <div className="text-center py-12">

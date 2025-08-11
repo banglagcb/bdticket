@@ -165,17 +165,19 @@ function TicketRow({
           <div>
             <div className="font-body font-medium text-sm text-foreground">
               {(() => {
-                const airline = ticket.batch?.airline ||
-                              ticket.airline_name ||
-                              ticket.airline;
+                const airline =
+                  ticket.batch?.airline ||
+                  ticket.airline_name ||
+                  ticket.airline;
                 return airline || "Airline not set";
               })()}
             </div>
             <div className="font-body text-xs text-foreground/50">
               {(() => {
-                const flightNumber = ticket.batch?.flight_number ||
-                                   ticket.flight_number ||
-                                   ticket.flight_code;
+                const flightNumber =
+                  ticket.batch?.flight_number ||
+                  ticket.flight_number ||
+                  ticket.flight_code;
                 return flightNumber || "Flight number not set";
               })()}
             </div>
@@ -189,10 +191,11 @@ function TicketRow({
             <div className="font-body font-medium text-sm text-foreground">
               {(() => {
                 const origin = ticket.batch?.origin || ticket.origin || "Dhaka";
-                const destination = ticket.batch?.destination ||
-                                  ticket.destination ||
-                                  ticket.country?.name ||
-                                  "Destination";
+                const destination =
+                  ticket.batch?.destination ||
+                  ticket.destination ||
+                  ticket.country?.name ||
+                  "Destination";
                 return `${origin} → ${destination}`;
               })()}
             </div>
@@ -212,9 +215,10 @@ function TicketRow({
             <div className="font-body font-medium text-sm text-foreground">
               {(() => {
                 // Try multiple sources for flight date
-                const dateSource = ticket.batch?.flight_date ||
-                                 ticket.flight_date ||
-                                 ticket.departure_date;
+                const dateSource =
+                  ticket.batch?.flight_date ||
+                  ticket.flight_date ||
+                  ticket.departure_date;
 
                 if (dateSource) {
                   try {
@@ -229,13 +233,16 @@ function TicketRow({
             </div>
             <div className="font-body text-xs text-foreground/50">
               {(() => {
-                const dateSource = ticket.batch?.flight_date ||
-                                 ticket.flight_date ||
-                                 ticket.departure_date;
+                const dateSource =
+                  ticket.batch?.flight_date ||
+                  ticket.flight_date ||
+                  ticket.departure_date;
 
                 if (dateSource) {
                   try {
-                    return new Date(dateSource).toLocaleDateString("en-US", { weekday: "long" });
+                    return new Date(dateSource).toLocaleDateString("en-US", {
+                      weekday: "long",
+                    });
                   } catch (e) {
                     return "Invalid date";
                   }
@@ -253,15 +260,17 @@ function TicketRow({
             <div className="font-body text-sm text-foreground">
               {(() => {
                 // Try multiple sources for departure time
-                const timeSource = ticket.batch?.departure_time ||
-                                 ticket.flight_time ||
-                                 ticket.departure_time;
+                const timeSource =
+                  ticket.batch?.departure_time ||
+                  ticket.flight_time ||
+                  ticket.departure_time;
 
                 return timeSource || "Time not set";
               })()}
             </div>
             {(() => {
-              const arrivalTime = ticket.batch?.arrival_time || ticket.arrival_time;
+              const arrivalTime =
+                ticket.batch?.arrival_time || ticket.arrival_time;
               if (arrivalTime) {
                 return (
                   <div className="font-body text-xs text-foreground/50">
@@ -387,19 +396,19 @@ export default function Tickets() {
         }
 
         // Validate and clean ticket data
-        const cleanedTickets = data.map(ticket => ({
+        const cleanedTickets = data.map((ticket) => ({
           ...ticket,
           // Ensure all required fields have fallback values
           selling_price: ticket.selling_price || 0,
           available_seats: ticket.available_seats || 0,
           total_seats: ticket.total_seats || 1,
-          status: ticket.status || 'available',
+          status: ticket.status || "available",
           // Ensure country object exists
           country: ticket.country || {
-            code: 'N/A',
-            name: 'Unknown',
-            flag: '🏳️'
-          }
+            code: "N/A",
+            name: "Unknown",
+            flag: "🏳️",
+          },
         }));
 
         setTickets(cleanedTickets);
@@ -443,9 +452,11 @@ export default function Tickets() {
   // Filter tickets
   const filteredTickets = tickets.filter((ticket) => {
     // Get airline name from various possible sources
-    const airlineName = ticket.batch?.airline || ticket.airline_name || ticket.airline || "";
+    const airlineName =
+      ticket.batch?.airline || ticket.airline_name || ticket.airline || "";
     const countryName = ticket.country?.name || "";
-    const flightNumber = ticket.batch?.flight_number || ticket.flight_number || "";
+    const flightNumber =
+      ticket.batch?.flight_number || ticket.flight_number || "";
 
     const matchesSearch =
       !searchTerm ||
@@ -460,8 +471,7 @@ export default function Tickets() {
       countryFilter === "all" || ticket.country?.code === countryFilter;
 
     const matchesAirline =
-      airlineFilter === "all" ||
-      airlineName === airlineFilter;
+      airlineFilter === "all" || airlineName === airlineFilter;
 
     return matchesSearch && matchesStatus && matchesCountry && matchesAirline;
   });
@@ -481,13 +491,18 @@ export default function Tickets() {
 
   const handleView = (ticket: Ticket) => {
     setSelectedTicket(ticket);
-    const airlineName = ticket.batch?.airline || ticket.airline_name || ticket.airline || "Unknown Airline";
-    const flightNumber = ticket.batch?.flight_number || ticket.flight_number || "";
+    const airlineName =
+      ticket.batch?.airline ||
+      ticket.airline_name ||
+      ticket.airline ||
+      "Unknown Airline";
+    const flightNumber =
+      ticket.batch?.flight_number || ticket.flight_number || "";
 
     // Could open a detailed view dialog here
     toast({
       title: "Ticket Details",
-      description: `Viewing ${airlineName} ${flightNumber ? `(${flightNumber})` : ''} details`,
+      description: `Viewing ${airlineName} ${flightNumber ? `(${flightNumber})` : ""} details`,
     });
   };
 
@@ -644,7 +659,10 @@ export default function Tickets() {
                 <div className="px-3 py-1 bg-gray-100 rounded-full inline-flex items-center space-x-2">
                   <TicketIcon className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-800">
-                    Showing {tickets.length} tickets {tickets.length >= 1000 ? "(reached limit)" : "(all tickets)"}
+                    Showing {tickets.length} tickets{" "}
+                    {tickets.length >= 1000
+                      ? "(reached limit)"
+                      : "(all tickets)"}
                   </span>
                 </div>
                 {tickets.length >= 1000 && (
@@ -891,16 +909,25 @@ export default function Tickets() {
                           <TicketIcon className="h-12 w-12 text-foreground/30" />
                           <div>
                             <h3 className="font-heading font-medium text-green-600 mb-1">
-                              {searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all"
+                              {searchTerm ||
+                              statusFilter !== "all" ||
+                              countryFilter !== "all" ||
+                              airlineFilter !== "all"
                                 ? "No tickets match your criteria"
                                 : "Database is Clean & Ready for Real Data!"}
                             </h3>
                             <p className="font-body text-sm text-foreground/60">
-                              {searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all"
+                              {searchTerm ||
+                              statusFilter !== "all" ||
+                              countryFilter !== "all" ||
+                              airlineFilter !== "all"
                                 ? "Try adjusting your filters or search terms"
                                 : "All demo tickets have been removed. Add real tickets through Admin → Buy Tickets"}
                             </p>
-                            {(searchTerm || statusFilter !== "all" || countryFilter !== "all" || airlineFilter !== "all") && (
+                            {(searchTerm ||
+                              statusFilter !== "all" ||
+                              countryFilter !== "all" ||
+                              airlineFilter !== "all") && (
                               <button
                                 onClick={() => {
                                   setSearchTerm("");

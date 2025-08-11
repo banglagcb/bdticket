@@ -196,7 +196,7 @@ export default function Countries() {
 
       if (mountedRef.current) {
         // Ensure we have valid data with proper ticket counts
-        const validCountries = (data.countries || []).map(country => ({
+        const validCountries = (data.countries || []).map((country) => ({
           ...country,
           totalTickets: Number(country.totalTickets) || 0,
           availableTickets: Number(country.availableTickets) || 0,
@@ -208,9 +208,15 @@ export default function Countries() {
         console.log("✅ Countries data loaded successfully:", validCountries);
 
         // Log summary for debugging (use API totals if available)
-        const totalTickets = data.totals?.total || validCountries.reduce((sum, c) => sum + c.totalTickets, 0);
-        const totalAvailable = data.totals?.available || validCountries.reduce((sum, c) => sum + c.availableTickets, 0);
-        console.log(`📈 Summary: ${totalTickets} total tickets, ${totalAvailable} available across ${validCountries.length} countries`);
+        const totalTickets =
+          data.totals?.total ||
+          validCountries.reduce((sum, c) => sum + c.totalTickets, 0);
+        const totalAvailable =
+          data.totals?.available ||
+          validCountries.reduce((sum, c) => sum + c.availableTickets, 0);
+        console.log(
+          `📈 Summary: ${totalTickets} total tickets, ${totalAvailable} available across ${validCountries.length} countries`,
+        );
         console.log(`📊 API provided totals:`, data.totals);
       }
     } catch (err) {
@@ -218,16 +224,25 @@ export default function Countries() {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       console.log("🔍 Error details:", {
         message: errorMessage,
-        isAuthError: errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('authentication'),
-        hasToken: !!localStorage.getItem("bd_ticket_pro_token")
+        isAuthError:
+          errorMessage.includes("401") ||
+          errorMessage.includes("Unauthorized") ||
+          errorMessage.includes("authentication"),
+        hasToken: !!localStorage.getItem("bd_ticket_pro_token"),
       });
 
       // Try to auto-login with default admin credentials if no token
       const token = localStorage.getItem("bd_ticket_pro_token");
-      if (!token && (errorMessage.includes('401') || errorMessage.includes('Unauthorized'))) {
+      if (
+        !token &&
+        (errorMessage.includes("401") || errorMessage.includes("Unauthorized"))
+      ) {
         console.log("🔐 Attempting auto-login...");
         try {
-          const loginResponse = await apiClient.login({ username: "admin", password: "admin123" });
+          const loginResponse = await apiClient.login({
+            username: "admin",
+            password: "admin123",
+          });
           console.log("✅ Auto-login successful:", loginResponse);
           // Retry loading countries
           return await loadCountries(showLoader);
@@ -237,7 +252,11 @@ export default function Countries() {
       }
 
       // Only use demo data for authentication errors, show real errors for other issues
-      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('authentication')) {
+      if (
+        errorMessage.includes("401") ||
+        errorMessage.includes("Unauthorized") ||
+        errorMessage.includes("authentication")
+      ) {
         console.log("🔑 Using demo data due to authentication...");
 
         // Show countries with sample ticket data for testing
@@ -508,7 +527,8 @@ export default function Countries() {
                 <Link to="/tickets">
                   <div className="px-3 py-1 bg-green-100 border border-green-300 rounded-md inline-block hover:bg-green-200 transition-colors cursor-pointer">
                     <span className="text-sm font-medium text-green-800">
-                      Total: {totalTickets} | Available: {totalAvailable} → View All Tickets
+                      Total: {totalTickets} | Available: {totalAvailable} → View
+                      All Tickets
                     </span>
                   </div>
                 </Link>
@@ -570,10 +590,10 @@ export default function Countries() {
 
                   try {
                     // Call debug endpoint
-                    const response = await fetch('/api/tickets/debug/counts', {
+                    const response = await fetch("/api/tickets/debug/counts", {
                       headers: {
-                        'Authorization': `Bearer ${localStorage.getItem("bd_ticket_pro_token")}`
-                      }
+                        Authorization: `Bearer ${localStorage.getItem("bd_ticket_pro_token")}`,
+                      },
                     });
                     const debugData = await response.json();
                     console.log("🔍 Debug API Response:", debugData);
@@ -700,10 +720,15 @@ Available Discrepancy: ${debugData.data.discrepancy.available}`);
                 Ticket Count Information
               </h4>
               <p className="text-sm text-blue-800 mb-2">
-                This page shows summary statistics by country. The <Link to="/tickets" className="underline hover:text-blue-900">All Tickets page</Link> shows individual ticket records with pagination limits.
+                This page shows summary statistics by country. The{" "}
+                <Link to="/tickets" className="underline hover:text-blue-900">
+                  All Tickets page
+                </Link>{" "}
+                shows individual ticket records with pagination limits.
               </p>
               <p className="text-xs text-blue-700">
-                Countries Total: {totalTickets} tickets | Click any country card to see detailed tickets for that destination.
+                Countries Total: {totalTickets} tickets | Click any country card
+                to see detailed tickets for that destination.
               </p>
             </div>
           </div>
@@ -729,7 +754,8 @@ Available Discrepancy: ${debugData.data.discrepancy.available}`);
             Database is Clean & Ready!
           </h3>
           <p className="text-foreground/70 font-body mb-4">
-            All demo ticket data has been removed. You can now start adding real tickets.
+            All demo ticket data has been removed. You can now start adding real
+            tickets.
           </p>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-md mx-auto">
             <h4 className="font-semibold text-green-800 mb-2">Next Steps:</h4>
