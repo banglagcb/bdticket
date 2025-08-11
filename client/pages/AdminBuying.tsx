@@ -158,7 +158,7 @@ export default function AdminBuying() {
     // Airline validation
     if (!formData.airline.trim()) {
       errors.airline =
-        "এয়ারলাইন নির্বাচন করা আবশ্যক / Airline selection is required";
+        "এয়ারলাইন নির্ব���চন করা আবশ্যক / Airline selection is required";
     }
 
     // Flight date validation
@@ -206,7 +206,7 @@ export default function AdminBuying() {
     // Quantity validation
     if (!formData.quantity || formData.quantity <= 0) {
       errors.quantity =
-        "টিকেটের ���ংখ্যা ০ ����র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
+        "টিকেটের সংখ্যা ০ ����র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
     } else if (formData.quantity > 1000) {
       errors.quantity =
         "একবারে সর্বোচ্চ ১��০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
@@ -268,7 +268,7 @@ export default function AdminBuying() {
 
     if (existingFlight) {
       errors.duplicate =
-        "একই দিনে, ���কই এয়ারলাইন��র জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
+        "একই দিনে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
     }
 
     // Check minimum profit margin (20%)
@@ -470,6 +470,9 @@ export default function AdminBuying() {
       });
       setUploadedFile(null);
       setValidationErrors({});
+
+      // Reload past purchases to show the new entry
+      loadPastPurchases();
 
       // Show detailed success message
       alert(successMessage);
