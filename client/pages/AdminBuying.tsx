@@ -250,7 +250,7 @@ export default function AdminBuying() {
 
       if (flightDate < today) {
         errors.flightDate =
-          "ভবিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
+          "ভবিষ্যতের তারিখ নির্বা���ন করুন / Please select a future date";
       }
       if (flightDate > maxDate) {
         errors.flightDate =
@@ -517,7 +517,7 @@ export default function AdminBuying() {
 
       // 5th Check: Post-submission verification
       const successMessage =
-        `✅ সফলভাবে সম্পন্ন / Successfully Completed!\n\n` +
+        `✅ সফলভাব��� সম্পন্ন / Successfully Completed!\n\n` +
         `📊 বিস্তারিত / Details:\n` +
         `• দেশ / Country: ${formData.country}\n` +
         `• এয়ারলাইন / Airline: ${formData.airline}\n` +
@@ -629,7 +629,7 @@ export default function AdminBuying() {
                 {loadingPurchases ? (
                   <div className="w-16 h-6 bg-gray-200 rounded animate-pulse mx-auto"></div>
                 ) : (
-                  `৳${totalStats.totalInvestment.toLocaleString()}`
+                  formatCurrency(totalStats.totalInvestment)
                 )}
               </div>
               <p className="text-xs font-body text-foreground/60">
@@ -1140,7 +1140,7 @@ export default function AdminBuying() {
                             <div className="p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200">
                               <h3 className="font-heading font-semibold text-yellow-800 mb-3 flex items-center">
                                 <Package className="h-5 w-5 mr-2" />
-                                ঝুঁকি মূল্যায়�� / Risk Assessment
+                                ঝুঁকি মূল্যায়ন / Risk Assessment
                               </h3>
                               <div className="space-y-2 text-sm font-body">
                                 {financials.totalCost > 5000000 && (
