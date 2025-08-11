@@ -71,11 +71,11 @@ function CountryCard({ country, index }: CountryCardProps) {
             }`}
             title={`${availabilityPercentage.toFixed(0)}% available`}
           ></div>
-          <CardHeader className="text-center pb-2 relative z-10">
+          <CardHeader className="text-center responsive-padding pb-2 relative z-10">
             <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
               {country.flag}
             </div>
-            <CardTitle className="font-heading text-lg velvet-text group-hover:text-primary transition-colors">
+            <CardTitle className="font-heading responsive-text velvet-text group-hover:text-primary transition-colors">
               {country.name}
             </CardTitle>
             <CardDescription className="font-body text-sm text-foreground/60">
@@ -83,7 +83,7 @@ function CountryCard({ country, index }: CountryCardProps) {
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-4 relative z-10">
+          <CardContent className="space-y-4 relative z-10 responsive-padding">
             {/* Ticket Availability */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
@@ -118,12 +118,12 @@ function CountryCard({ country, index }: CountryCardProps) {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border/30">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pt-2 border-t border-border/30">
               <div className="flex items-center space-x-2">
                 <div className="p-1 bg-gradient-to-br from-blue-100 to-blue-200 rounded animate-float">
                   <Plane className="h-3 w-3 text-blue-600" />
                 </div>
-                <span className="font-body text-xs text-foreground/70">
+                <span className="font-body text-xs mobile-text-sm text-foreground/70">
                   Multiple Airlines
                 </span>
               </div>
@@ -149,7 +149,7 @@ function CountryCard({ country, index }: CountryCardProps) {
                     }`}
                   />
                 </div>
-                <span className="font-body text-xs text-foreground/70">
+                <span className="font-body text-xs mobile-text-sm text-foreground/70">
                   {availabilityStatus === "high"
                     ? "High Availability"
                     : availabilityStatus === "medium"
@@ -220,7 +220,7 @@ export default function Countries() {
         console.log(`📊 API provided totals:`, data.totals);
       }
     } catch (err) {
-      console.error("❌ Failed to load countries:", err);
+      console.error("�� Failed to load countries:", err);
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       console.log("🔍 Error details:", {
         message: errorMessage,
@@ -299,7 +299,7 @@ export default function Countries() {
           {
             code: "BHR",
             name: "Bahrain",
-            flag: "🇧🇭",
+            flag: "🇧����",
             totalTickets: 16,
             availableTickets: 14,
           },
