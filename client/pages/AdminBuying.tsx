@@ -217,7 +217,7 @@ export default function AdminBuying() {
       errors.agentName = "এজেন্টের নাম আবশ্যক / Agent name is required";
     } else if (formData.agentName.trim().length < 3) {
       errors.agentName =
-        "এজেন্টের নাম কমপক্ষে ৩ অক্ষর হতে হবে / Agent name must be at least 3 characters";
+        "এজেন্টের নাম কমপক্ষে ৩ অক্ষর হতে হ���ে / Agent name must be at least 3 characters";
     }
 
     // Agent contact validation
@@ -229,7 +229,7 @@ export default function AdminBuying() {
       const cleanContact = formData.agentContact.replace(/[\s-]/g, "");
       if (!phoneRegex.test(cleanContact)) {
         errors.agentContact =
-          "সঠিক ব��ংলাদেশি মোবাইল নম্বর দিন / Please provide valid Bangladeshi mobile number";
+          "সঠিক বাংলাদেশি মোবাইল নম্বর দিন / Please provide valid Bangladeshi mobile number";
       }
     }
 
@@ -268,7 +268,7 @@ export default function AdminBuying() {
 
     if (existingFlight) {
       errors.duplicate =
-        "একই দি��ে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
+        "একই দিনে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
     }
 
     // Check minimum profit margin (20%)
@@ -319,7 +319,7 @@ export default function AdminBuying() {
     { code: "OMN", name: "Oman", flag: "🇴🇲" },
     { code: "BHR", name: "Bahrain", flag: "🇧🇭" },
     { code: "JOR", name: "Jordan", flag: "🇯🇴" },
-    { code: "LBN", name: "Lebanon", flag: "🇱🇧" },
+    { code: "LBN", name: "Lebanon", flag: "���🇧" },
   ];
 
   const airlines = [
@@ -481,7 +481,7 @@ export default function AdminBuying() {
       toast({
         title: "ত্রুটি / Error",
         description:
-          "টিকেট ব্য���চ তৈরিতে সমস্যা হয়েছে / Failed to create ticket batch",
+          "টিকেট ব্যাচ তৈরিতে সমস্যা হয়েছে / Failed to create ticket batch",
         variant: "destructive",
       });
     } finally {
@@ -507,10 +507,10 @@ export default function AdminBuying() {
   });
 
   const totalStats = {
-    totalInvestment: pastPurchases.reduce((sum, p) => sum + p.totalCost, 0),
-    totalProfit: pastPurchases.reduce((sum, p) => sum + p.profit, 0),
-    totalTickets: pastPurchases.reduce((sum, p) => sum + p.quantity, 0),
-    totalSold: pastPurchases.reduce((sum, p) => sum + p.sold, 0),
+    totalInvestment: loadingPurchases ? 0 : pastPurchases.reduce((sum, p) => sum + p.totalCost, 0),
+    totalProfit: loadingPurchases ? 0 : pastPurchases.reduce((sum, p) => sum + p.profit, 0),
+    totalTickets: loadingPurchases ? 0 : pastPurchases.reduce((sum, p) => sum + p.quantity, 0),
+    totalSold: loadingPurchases ? 0 : pastPurchases.reduce((sum, p) => sum + p.sold, 0),
   };
 
   return (
