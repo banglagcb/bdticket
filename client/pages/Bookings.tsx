@@ -170,7 +170,7 @@ export default function Bookings() {
         const today = new Date();
         if (flightDate <= today) {
           throw new Error(
-            "অতীতের ফ্লাইটের জন্য বুকিং নিশ্চিত করা যাবে না / Cannot confirm booking for past flights",
+            "অতীতের ���্লাইটের জন্য বুকিং নিশ্চিত করা যাবে না / Cannot confirm booking for past flights",
           );
         }
 
@@ -221,7 +221,7 @@ export default function Bookings() {
         title: "ত্রুটি / Error",
         description:
           err.message ||
-          "বুকিং স্ট্যাটাস আপডেট করতে ব্যর্থ / Failed to update booking status",
+          "বুকিং স্ট্���াটাস আপডেট করতে ব্যর্থ / Failed to update booking status",
         variant: "destructive",
       });
     }
@@ -337,12 +337,6 @@ export default function Bookings() {
               <p className="text-foreground/70 font-body">
                 Process customer bookings and requests
               </p>
-              <div className="mt-2 px-3 py-1 bg-blue-100 rounded-full inline-flex items-center space-x-2">
-                <User className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-800">
-                  ১ জন যাত্রী = ১ টি টিকেট | 1 Passenger = 1 Ticket
-                </span>
-              </div>
             </div>
           </div>
 
