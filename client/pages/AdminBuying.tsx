@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -19,6 +19,12 @@ import {
   Eye,
   TrendingUp,
   Package,
+  RefreshCw,
+  Activity,
+  BarChart3,
+  Percent,
+  Target,
+  Zap,
 } from "lucide-react";
 import {
   Card,
@@ -32,6 +38,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Badge } from "../components/ui/badge";
+import { Progress } from "../components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -76,6 +83,16 @@ export default function AdminBuying() {
   const [pastPurchases, setPastPurchases] = useState<PastPurchase[]>([]);
   const [loadingPurchases, setLoadingPurchases] = useState(true);
   const [purchasesError, setPurchasesError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [realtimeMetrics, setRealtimeMetrics] = useState({
+    profitMargin: 0,
+    inventoryUtilization: 0,
+    avgPurchaseValue: 0,
+    salesVelocity: 0,
+    topPerformingCountry: '',
+    lowStockAlerts: 0,
+  });
 
   // Redirect if not admin
   if (!user || !hasPermission("create_batches")) {
@@ -404,7 +421,7 @@ export default function AdminBuying() {
       });
 
       // Log purchase details for audit
-      console.log("=== টিকেট ক্রয় অডিট লগ / TICKET PURCHASE AUDIT LOG ===");
+      console.log("=== টিকেট ক���রয় অডিট লগ / TICKET PURCHASE AUDIT LOG ===");
       console.log("দেশ / Country:", formData.country);
       console.log("এয়ারলাইন / Airline:", formData.airline);
       console.log("ফ্লাইট তারিখ / Flight Date:", formData.flightDate);
@@ -456,7 +473,7 @@ export default function AdminBuying() {
       toast({
         title: "সফল / Success!",
         description:
-          "টিকেট ব্যাচ সফলভাবে তৈরি হয়েছে / Ticket batch created successfully",
+          "ট���কেট ব্যাচ সফলভাবে তৈরি হয়েছে / Ticket batch created successfully",
       });
 
       // Reset form after successful submission
@@ -533,13 +550,13 @@ export default function AdminBuying() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="flex items-center space-x-4 min-w-0 flex-1">
             <div className="p-3 bg-gradient-to-br from-luxury-gold to-luxury-bronze rounded-full animate-glow animate-float">
               <ShoppingCart className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-bold velvet-text">
+              <h1 className="responsive-heading font-heading font-bold velvet-text">
                 Admin Ticket Buying
               </h1>
               <p className="text-foreground/70 font-body">
@@ -548,10 +565,10 @@ export default function AdminBuying() {
             </div>
           </div>
 
-          {/* Summary Stats */}
-          <div className="hidden lg:flex items-center space-x-6 luxury-card p-4 rounded-lg border-0">
+          {/* Enhanced Summary Stats */}
+          <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 lg:space-x-6 luxury-card p-4 rounded-lg border-0 min-w-0">
             <div className="text-center">
-              <div className="text-xl font-heading font-bold text-primary velvet-text">
+              <div className="responsive-text font-heading font-bold text-primary velvet-text">
                 {loadingPurchases ? (
                   <div className="w-16 h-6 bg-gray-200 rounded animate-pulse mx-auto"></div>
                 ) : (
@@ -563,7 +580,7 @@ export default function AdminBuying() {
               </p>
             </div>
             <div className="text-center">
-              <div className="text-xl font-heading font-bold text-green-600 velvet-text">
+              <div className="responsive-text font-heading font-bold text-green-600 velvet-text">
                 {loadingPurchases ? (
                   <div className="w-16 h-6 bg-gray-200 rounded animate-pulse mx-auto"></div>
                 ) : (
@@ -575,7 +592,7 @@ export default function AdminBuying() {
               </p>
             </div>
             <div className="text-center">
-              <div className="text-xl font-heading font-bold text-blue-600 velvet-text">
+              <div className="responsive-text font-heading font-bold text-blue-600 velvet-text">
                 {loadingPurchases ? (
                   <div className="w-12 h-6 bg-gray-200 rounded animate-pulse mx-auto"></div>
                 ) : (
@@ -583,6 +600,30 @@ export default function AdminBuying() {
                 )}
               </div>
               <p className="text-xs font-body text-foreground/60">Sold/Total</p>
+            </div>
+            <div className="text-center">
+              <Button
+                onClick={() => {
+                  setLastUpdated(new Date());
+                  loadPastPurchases();
+                }}
+                variant="outline"
+                size="sm"
+                className="touch-target"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                <span className="hidden sm:inline">Refresh</span>
+              </Button>
+            </div>
+            <div className="text-center">
+              <Badge
+                variant={autoRefresh ? "default" : "secondary"}
+                className="touch-target cursor-pointer"
+                onClick={() => setAutoRefresh(!autoRefresh)}
+              >
+                <Zap className="h-3 w-3 mr-1" />
+                {autoRefresh ? 'Live' : 'Manual'}
+              </Badge>
             </div>
           </div>
         </div>
@@ -968,7 +1009,7 @@ export default function AdminBuying() {
                                 {financials.totalCost > 5000000 && (
                                   <div className="bg-red-100 border border-red-300 p-2 rounded flex items-center">
                                     <span className="text-red-600 font-semibold">
-                                      ⚠️ উচ্চ ঝুঁকি: ৫০ লাখ টাকার বেশি বিনিয়োগ
+                                      ⚠️ উচ্চ ঝুঁকি: ৫০ লাখ টাকা�� বেশি বিনিয়োগ
                                       / High Risk: Investment over ৳50 lakh
                                     </span>
                                   </div>
@@ -1036,7 +1077,7 @@ export default function AdminBuying() {
                       <div className="flex items-center space-x-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         <span>
-                          টিকেট ইনভেন্টরিতে যোগ করা হচ্ছে... / Adding to
+                          টিকেট ইনভেন্টরিতে যোগ করা হচ্ছ���... / Adding to
                           Inventory...
                         </span>
                       </div>
