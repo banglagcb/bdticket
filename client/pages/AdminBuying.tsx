@@ -73,6 +73,9 @@ export default function AdminBuying() {
   const [countryFilter, setCountryFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [pastPurchases, setPastPurchases] = useState<PastPurchase[]>([]);
+  const [loadingPurchases, setLoadingPurchases] = useState(true);
+  const [purchasesError, setPurchasesError] = useState<string | null>(null);
 
   // Redirect if not admin
   if (!user || !hasPermission("create_batches")) {
@@ -168,7 +171,7 @@ export default function AdminBuying() {
         "টিকেটের সংখ্যা ০ ����র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
     } else if (formData.quantity > 1000) {
       errors.quantity =
-        "একবারে সর্বোচ্চ ১��০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
+        "একবারে সর্বোচ্চ ১��০০ টিকেট ���্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
     }
 
     // Agent name validation
@@ -405,7 +408,7 @@ export default function AdminBuying() {
         `• টিকেট সংখ্যা / Tickets: ${formData.quantity}\n` +
         `• মোট খরচ / Total Cost: ৳${financials.totalCost.toLocaleString()}\n` +
         `• প্রত্যাশিত মুনাফা / Expected Profit: ৳${financials.estimatedProfit.toLocaleString()}\n` +
-        `• মুনাফার হার / Profit Margin: ${financials.profitMargin}%`;
+        `• মুনাফার হা�� / Profit Margin: ${financials.profitMargin}%`;
 
       // Success notification
       toast({
