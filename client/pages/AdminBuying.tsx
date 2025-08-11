@@ -147,9 +147,11 @@ export default function AdminBuying() {
           sold: batch.sold_count || 0,
           locked: batch.locked_count || 0,
           available: batch.available_count || 0,
-          profit:
-            ((batch.selling_price || 0) - (batch.buying_price || 0)) *
-            (batch.sold_count || 0),
+          profit: calculateProfit(
+            batch.selling_price || 0,
+            batch.buying_price || 0,
+            batch.sold_count || 0
+          ),
           createdAt: batch.created_at,
         }),
       );
@@ -250,7 +252,7 @@ export default function AdminBuying() {
 
       if (flightDate < today) {
         errors.flightDate =
-          "ভবিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
+          "���বিষ্যতের তারিখ নির্বাচন করুন / Please select a future date";
       }
       if (flightDate > maxDate) {
         errors.flightDate =
@@ -301,7 +303,7 @@ export default function AdminBuying() {
     // Agent contact validation
     if (!formData.agentContact.trim()) {
       errors.agentContact =
-        "এজেন্টের যোগাযোগ নম্বর আবশ্���ক / Agent contact is required";
+        "���জেন্টের যোগাযোগ নম্বর আবশ্���ক / Agent contact is required";
     } else {
       const phoneRegex = /^(\+880|880|0)?(1[3-9]\d{8})$/;
       const cleanContact = formData.agentContact.replace(/[\s-]/g, "");
@@ -484,7 +486,7 @@ export default function AdminBuying() {
       console.log("ফ্লাইট তারিখ / Flight Date:", formData.flightDate);
       console.log("পরিমাণ / Quantity:", formData.quantity);
       console.log(
-        "ক্রয় মূল্য / Buying Price:",
+        "ক্রয় ম��ল্য / Buying Price:",
         `৳${formData.buyingPrice.toLocaleString()}`,
       );
       console.log(
