@@ -102,10 +102,48 @@ export default function AdminBuying() {
   const [isFormValid, setIsFormValid] = useState(false);
   const { toast } = useToast();
 
-  // Mock data for past purchases
-  const pastPurchases: PastPurchase[] = [
-    // Will be populated with real purchase data
-  ];
+  // Load past purchases data
+  const loadPastPurchases = async () => {
+    try {
+      setLoadingPurchases(true);
+      setPurchasesError(null);
+
+      // Get ticket batches
+      const response = await apiClient.getTicketBatches();
+      console.log("📊 Past purchases data:", response);
+
+      // Transform data to match interface
+      const transformedData: PastPurchase[] = (response.batches || []).map((batch: any) => ({
+        id: batch.id,
+        country: batch.country_code,
+        airline: batch.airline_name,
+        flightDate: batch.flight_date,
+        quantity: batch.quantity,
+        buyingPrice: batch.buying_price || 0,
+        totalCost: (batch.buying_price || 0) * batch.quantity,
+        agentName: batch.agent_name,
+        agentContact: batch.agent_contact,
+        sold: batch.sold_count || 0,
+        locked: batch.locked_count || 0,
+        available: batch.available_count || 0,
+        profit: ((batch.selling_price || 0) - (batch.buying_price || 0)) * (batch.sold_count || 0),
+        createdAt: batch.created_at
+      }));
+
+      setPastPurchases(transformedData);
+    } catch (error) {
+      console.error("❌ Failed to load past purchases:", error);
+      setPurchasesError("Failed to load purchase history");
+      setPastPurchases([]);
+    } finally {
+      setLoadingPurchases(false);
+    }
+  };
+
+  // Load data on mount
+  useEffect(() => {
+    loadPastPurchases();
+  }, []);
 
   // Comprehensive validation functions
   const validateForm = (): Record<string, string> => {
@@ -168,10 +206,10 @@ export default function AdminBuying() {
     // Quantity validation
     if (!formData.quantity || formData.quantity <= 0) {
       errors.quantity =
-        "টিকেটের সংখ্যা ০ ����র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
+        "টিকেটের ���ংখ্যা ০ ����র চেয়ে বেশি হতে হবে / Quantity must be greater than 0";
     } else if (formData.quantity > 1000) {
       errors.quantity =
-        "একবারে সর্বোচ্চ ১��০০ টিকেট ���্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
+        "একবারে সর্বোচ্চ ১��০০ টিকেট ক্রয় করা যাবে / Maximum 1000 tickets can be purchased at once";
     }
 
     // Agent name validation
@@ -230,7 +268,7 @@ export default function AdminBuying() {
 
     if (existingFlight) {
       errors.duplicate =
-        "একই দিনে, ���কই এয়ারলাইনের জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
+        "একই দিনে, ���কই এয়ারলাইন��র জন্য ইতিমধ্যে টিকেট ক্রয় করা হয়েছে / Tickets already purchased for same airline on this date";
     }
 
     // Check minimum profit margin (20%)
@@ -408,7 +446,7 @@ export default function AdminBuying() {
         `• টিকেট সংখ্যা / Tickets: ${formData.quantity}\n` +
         `• মোট খরচ / Total Cost: ৳${financials.totalCost.toLocaleString()}\n` +
         `• প্রত্যাশিত মুনাফা / Expected Profit: ৳${financials.estimatedProfit.toLocaleString()}\n` +
-        `• মুনাফার হা�� / Profit Margin: ${financials.profitMargin}%`;
+        `• মুনাফার হার / Profit Margin: ${financials.profitMargin}%`;
 
       // Success notification
       toast({
