@@ -191,6 +191,41 @@ export function initializeDatabase() {
     )
   `);
 
+  // Umrah group ticket purchases table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS umrah_group_tickets (
+      id TEXT PRIMARY KEY,
+      group_name TEXT NOT NULL,
+      package_type TEXT NOT NULL CHECK (package_type IN ('with-transport', 'without-transport')),
+      departure_date TEXT NOT NULL,
+      return_date TEXT NOT NULL,
+      ticket_count INTEGER NOT NULL DEFAULT 0,
+      total_cost INTEGER NOT NULL DEFAULT 0,
+      average_cost_per_ticket INTEGER NOT NULL DEFAULT 0,
+      agent_name TEXT NOT NULL,
+      agent_contact TEXT,
+      purchase_notes TEXT,
+      created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    )
+  `);
+
+  // Umrah group booking assignments table (links individual bookings to group tickets)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS umrah_group_bookings (
+      id TEXT PRIMARY KEY,
+      group_ticket_id TEXT NOT NULL,
+      passenger_id TEXT NOT NULL, -- References umrah_with_transport or umrah_without_transport
+      passenger_type TEXT NOT NULL CHECK (passenger_type IN ('with-transport', 'without-transport')),
+      assigned_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      assigned_by TEXT NOT NULL,
+      FOREIGN KEY (group_ticket_id) REFERENCES umrah_group_tickets(id),
+      FOREIGN KEY (assigned_by) REFERENCES users(id)
+    )
+  `);
+
   // Create indexes for better performance
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_tickets_batch_id ON tickets(batch_id);
