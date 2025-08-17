@@ -11,8 +11,10 @@ if (import.meta.hot) {
 const originalError = console.error;
 console.error = (...args) => {
   if (
-    typeof args[0] === 'string' &&
-    args[0].includes('ResizeObserver loop completed with undelivered notifications')
+    typeof args[0] === "string" &&
+    args[0].includes(
+      "ResizeObserver loop completed with undelivered notifications",
+    )
   ) {
     // Suppress this specific harmless error
     return;
@@ -167,7 +169,10 @@ const App = () => (
                 />
 
                 {/* Root redirect */}
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route
+                  path="/"
+                  element={<Navigate to="/dashboard" replace />}
+                />
 
                 {/* 404 */}
                 <Route path="*" element={<NotFound />} />

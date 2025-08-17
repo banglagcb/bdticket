@@ -825,7 +825,9 @@ export class UmrahWithTransportRepository {
 
   static findByPassenger(passengerName: string): UmrahWithTransport[] {
     return db
-      .prepare("SELECT * FROM umrah_with_transport WHERE passenger_name LIKE ? ORDER BY created_at DESC")
+      .prepare(
+        "SELECT * FROM umrah_with_transport WHERE passenger_name LIKE ? ORDER BY created_at DESC",
+      )
       .all(`%${passengerName}%`) as UmrahWithTransport[];
   }
 
@@ -865,10 +867,14 @@ export class UmrahWithTransportRepository {
 
   static update(
     id: string,
-    updateData: Partial<Omit<UmrahWithTransport, "id" | "created_at" | "updated_at">>,
+    updateData: Partial<
+      Omit<UmrahWithTransport, "id" | "created_at" | "updated_at">
+    >,
   ): UmrahWithTransport | undefined {
     const now = new Date().toISOString();
-    const fields = Object.keys(updateData).map(key => `${key} = ?`).join(", ");
+    const fields = Object.keys(updateData)
+      .map((key) => `${key} = ?`)
+      .join(", ");
     const values = Object.values(updateData);
 
     const stmt = db.prepare(`
@@ -889,12 +895,18 @@ export class UmrahWithTransportRepository {
 
   static search(searchTerm: string): UmrahWithTransport[] {
     return db
-      .prepare(`
+      .prepare(
+        `
         SELECT * FROM umrah_with_transport
         WHERE passenger_name LIKE ? OR pnr LIKE ? OR passport_number LIKE ?
         ORDER BY created_at DESC
-      `)
-      .all(`%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`) as UmrahWithTransport[];
+      `,
+      )
+      .all(
+        `%${searchTerm}%`,
+        `%${searchTerm}%`,
+        `%${searchTerm}%`,
+      ) as UmrahWithTransport[];
   }
 }
 
@@ -931,18 +943,25 @@ export class UmrahWithoutTransportRepository {
 
   static findByPassenger(passengerName: string): UmrahWithoutTransport[] {
     return db
-      .prepare("SELECT * FROM umrah_without_transport WHERE passenger_name LIKE ? ORDER BY created_at DESC")
+      .prepare(
+        "SELECT * FROM umrah_without_transport WHERE passenger_name LIKE ? ORDER BY created_at DESC",
+      )
       .all(`%${passengerName}%`) as UmrahWithoutTransport[];
   }
 
   static findPendingPayments(): UmrahWithoutTransport[] {
     return db
-      .prepare("SELECT * FROM umrah_without_transport WHERE remaining_amount > 0 ORDER BY created_at DESC")
+      .prepare(
+        "SELECT * FROM umrah_without_transport WHERE remaining_amount > 0 ORDER BY created_at DESC",
+      )
       .all() as UmrahWithoutTransport[];
   }
 
   static create(
-    packageData: Omit<UmrahWithoutTransport, "id" | "created_at" | "updated_at">,
+    packageData: Omit<
+      UmrahWithoutTransport,
+      "id" | "created_at" | "updated_at"
+    >,
   ): UmrahWithoutTransport {
     const id = uuidv4();
     const now = new Date().toISOString();
@@ -980,12 +999,17 @@ export class UmrahWithoutTransportRepository {
 
   static update(
     id: string,
-    updateData: Partial<Omit<UmrahWithoutTransport, "id" | "created_at" | "updated_at">>,
+    updateData: Partial<
+      Omit<UmrahWithoutTransport, "id" | "created_at" | "updated_at">
+    >,
   ): UmrahWithoutTransport | undefined {
     const now = new Date().toISOString();
 
     // If total_amount or amount_paid is being updated, recalculate remaining_amount
-    if (updateData.total_amount !== undefined || updateData.amount_paid !== undefined) {
+    if (
+      updateData.total_amount !== undefined ||
+      updateData.amount_paid !== undefined
+    ) {
       const current = this.findById(id);
       if (current) {
         const totalAmount = updateData.total_amount ?? current.total_amount;
@@ -994,7 +1018,9 @@ export class UmrahWithoutTransportRepository {
       }
     }
 
-    const fields = Object.keys(updateData).map(key => `${key} = ?`).join(", ");
+    const fields = Object.keys(updateData)
+      .map((key) => `${key} = ?`)
+      .join(", ");
     const values = Object.values(updateData);
 
     const stmt = db.prepare(`
@@ -1028,7 +1054,7 @@ export class UmrahWithoutTransportRepository {
     stmt.run(
       newAmountPaid,
       remainingAmount,
-      lastPaymentDate || now.split('T')[0], // Use current date if not provided
+      lastPaymentDate || now.split("T")[0], // Use current date if not provided
       now,
       id,
     );
@@ -1044,11 +1070,13 @@ export class UmrahWithoutTransportRepository {
 
   static search(searchTerm: string): UmrahWithoutTransport[] {
     return db
-      .prepare(`
+      .prepare(
+        `
         SELECT * FROM umrah_without_transport
         WHERE passenger_name LIKE ? OR passport_number LIKE ?
         ORDER BY created_at DESC
-      `)
+      `,
+      )
       .all(`%${searchTerm}%`, `%${searchTerm}%`) as UmrahWithoutTransport[];
   }
 
@@ -1060,7 +1088,8 @@ export class UmrahWithoutTransportRepository {
     pendingPackages: number;
   } {
     const result = db
-      .prepare(`
+      .prepare(
+        `
         SELECT
           COUNT(*) as total_packages,
           SUM(total_amount) as total_amount,
@@ -1068,7 +1097,8 @@ export class UmrahWithoutTransportRepository {
           SUM(remaining_amount) as total_remaining,
           SUM(CASE WHEN remaining_amount > 0 THEN 1 ELSE 0 END) as pending_packages
         FROM umrah_without_transport
-      `)
+      `,
+      )
       .get() as any;
 
     return {
@@ -1085,7 +1115,7 @@ export class UmrahWithoutTransportRepository {
 export interface UmrahGroupTicket {
   id: string;
   group_name: string;
-  package_type: 'with-transport' | 'without-transport';
+  package_type: "with-transport" | "without-transport";
   departure_date: string;
   return_date: string;
   ticket_count: number;
@@ -1103,7 +1133,7 @@ export interface UmrahGroupBooking {
   id: string;
   group_ticket_id: string;
   passenger_id: string;
-  passenger_type: 'with-transport' | 'without-transport';
+  passenger_type: "with-transport" | "without-transport";
   assigned_at: string;
   assigned_by: string;
 }
@@ -1111,7 +1141,9 @@ export interface UmrahGroupBooking {
 export class UmrahGroupTicketRepository {
   static findAll(): UmrahGroupTicket[] {
     return db
-      .prepare("SELECT * FROM umrah_group_tickets ORDER BY departure_date DESC, created_at DESC")
+      .prepare(
+        "SELECT * FROM umrah_group_tickets ORDER BY departure_date DESC, created_at DESC",
+      )
       .all() as UmrahGroupTicket[];
   }
 
@@ -1121,24 +1153,33 @@ export class UmrahGroupTicketRepository {
       .get(id) as UmrahGroupTicket;
   }
 
-  static findByPackageType(packageType: 'with-transport' | 'without-transport'): UmrahGroupTicket[] {
+  static findByPackageType(
+    packageType: "with-transport" | "without-transport",
+  ): UmrahGroupTicket[] {
     return db
-      .prepare("SELECT * FROM umrah_group_tickets WHERE package_type = ? ORDER BY departure_date DESC")
+      .prepare(
+        "SELECT * FROM umrah_group_tickets WHERE package_type = ? ORDER BY departure_date DESC",
+      )
       .all(packageType) as UmrahGroupTicket[];
   }
 
-  static findByDateRange(startDate: string, endDate: string): UmrahGroupTicket[] {
+  static findByDateRange(
+    startDate: string,
+    endDate: string,
+  ): UmrahGroupTicket[] {
     return db
-      .prepare(`
+      .prepare(
+        `
         SELECT * FROM umrah_group_tickets
         WHERE departure_date BETWEEN ? AND ?
         ORDER BY departure_date DESC
-      `)
+      `,
+      )
       .all(startDate, endDate) as UmrahGroupTicket[];
   }
 
   static create(
-    ticketData: Omit<UmrahGroupTicket, "id" | "created_at" | "updated_at">
+    ticketData: Omit<UmrahGroupTicket, "id" | "created_at" | "updated_at">,
   ): UmrahGroupTicket {
     const id = uuidv4();
     const now = new Date().toISOString();
@@ -1165,7 +1206,7 @@ export class UmrahGroupTicketRepository {
       ticketData.purchase_notes || null,
       ticketData.created_by,
       now,
-      now
+      now,
     );
 
     return this.findById(id)!;
@@ -1173,10 +1214,14 @@ export class UmrahGroupTicketRepository {
 
   static update(
     id: string,
-    updateData: Partial<Omit<UmrahGroupTicket, "id" | "created_at" | "updated_at">>
+    updateData: Partial<
+      Omit<UmrahGroupTicket, "id" | "created_at" | "updated_at">
+    >,
   ): UmrahGroupTicket | undefined {
     const now = new Date().toISOString();
-    const fields = Object.keys(updateData).map(key => `${key} = ?`).join(", ");
+    const fields = Object.keys(updateData)
+      .map((key) => `${key} = ?`)
+      .join(", ");
     const values = Object.values(updateData);
 
     const stmt = db.prepare(`
@@ -1195,7 +1240,9 @@ export class UmrahGroupTicketRepository {
     return result.changes > 0;
   }
 
-  static getGroupsByDateRange(packageType: 'with-transport' | 'without-transport'): Array<{
+  static getGroupsByDateRange(
+    packageType: "with-transport" | "without-transport",
+  ): Array<{
     departure_date: string;
     return_date: string;
     group_count: number;
@@ -1205,37 +1252,42 @@ export class UmrahGroupTicketRepository {
   }> {
     const groups = this.findByPackageType(packageType);
 
-    const groupedByDates = groups.reduce((acc, group) => {
-      const key = `${group.departure_date}_${group.return_date}`;
-      if (!acc[key]) {
-        acc[key] = {
-          departure_date: group.departure_date,
-          return_date: group.return_date,
-          group_count: 0,
-          total_tickets: 0,
-          total_cost: 0,
-          groups: []
-        };
-      }
+    const groupedByDates = groups.reduce(
+      (acc, group) => {
+        const key = `${group.departure_date}_${group.return_date}`;
+        if (!acc[key]) {
+          acc[key] = {
+            departure_date: group.departure_date,
+            return_date: group.return_date,
+            group_count: 0,
+            total_tickets: 0,
+            total_cost: 0,
+            groups: [],
+          };
+        }
 
-      acc[key].group_count++;
-      acc[key].total_tickets += group.ticket_count;
-      acc[key].total_cost += group.total_cost;
-      acc[key].groups.push(group);
+        acc[key].group_count++;
+        acc[key].total_tickets += group.ticket_count;
+        acc[key].total_cost += group.total_cost;
+        acc[key].groups.push(group);
 
-      return acc;
-    }, {} as Record<string, any>);
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
     return Object.values(groupedByDates);
   }
 
   static search(searchTerm: string): UmrahGroupTicket[] {
     return db
-      .prepare(`
+      .prepare(
+        `
         SELECT * FROM umrah_group_tickets
         WHERE group_name LIKE ? OR agent_name LIKE ?
         ORDER BY departure_date DESC
-      `)
+      `,
+      )
       .all(`%${searchTerm}%`, `%${searchTerm}%`) as UmrahGroupTicket[];
   }
 }
@@ -1253,14 +1305,19 @@ export class UmrahGroupBookingRepository {
       .all(groupTicketId) as UmrahGroupBooking[];
   }
 
-  static findByPassengerId(passengerId: string, passengerType: 'with-transport' | 'without-transport'): UmrahGroupBooking | undefined {
+  static findByPassengerId(
+    passengerId: string,
+    passengerType: "with-transport" | "without-transport",
+  ): UmrahGroupBooking | undefined {
     return db
-      .prepare("SELECT * FROM umrah_group_bookings WHERE passenger_id = ? AND passenger_type = ?")
+      .prepare(
+        "SELECT * FROM umrah_group_bookings WHERE passenger_id = ? AND passenger_type = ?",
+      )
       .get(passengerId, passengerType) as UmrahGroupBooking;
   }
 
   static create(
-    bookingData: Omit<UmrahGroupBooking, "id" | "assigned_at">
+    bookingData: Omit<UmrahGroupBooking, "id" | "assigned_at">,
   ): UmrahGroupBooking {
     const id = uuidv4();
     const now = new Date().toISOString();
@@ -1277,7 +1334,7 @@ export class UmrahGroupBookingRepository {
       bookingData.passenger_id,
       bookingData.passenger_type,
       now,
-      bookingData.assigned_by
+      bookingData.assigned_by,
     );
 
     return { ...bookingData, id, assigned_at: now };
@@ -1289,8 +1346,13 @@ export class UmrahGroupBookingRepository {
     return result.changes > 0;
   }
 
-  static deleteByPassenger(passengerId: string, passengerType: 'with-transport' | 'without-transport'): boolean {
-    const stmt = db.prepare("DELETE FROM umrah_group_bookings WHERE passenger_id = ? AND passenger_type = ?");
+  static deleteByPassenger(
+    passengerId: string,
+    passengerType: "with-transport" | "without-transport",
+  ): boolean {
+    const stmt = db.prepare(
+      "DELETE FROM umrah_group_bookings WHERE passenger_id = ? AND passenger_type = ?",
+    );
     const result = stmt.run(passengerId, passengerType);
     return result.changes > 0;
   }

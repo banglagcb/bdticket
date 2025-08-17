@@ -74,7 +74,10 @@ import {
 import { Badge } from "../components/ui/badge";
 import { useToast } from "../hooks/use-toast";
 import { apiClient } from "../services/api";
-import { validateBangladeshiPhone, validateEmailAddress } from "../lib/validation";
+import {
+  validateBangladeshiPhone,
+  validateEmailAddress,
+} from "../lib/validation";
 import UmrahGroupTickets from "./UmrahGroupTickets";
 
 // Types for Umrah packages
@@ -120,36 +123,42 @@ export default function UmrahManagement() {
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [editingRecord, setEditingRecord] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Form states
-  const [withTransportForm, setWithTransportForm] = useState<UmrahWithTransport>({
-    passengerName: "",
-    pnr: "",
-    passportNumber: "",
-    flightAirlineName: "",
-    departureDate: "",
-    returnDate: "",
-    approvedBy: "",
-    referenceAgency: "",
-    emergencyFlightContact: "",
-    passengerMobile: "",
-  });
+  const [withTransportForm, setWithTransportForm] =
+    useState<UmrahWithTransport>({
+      passengerName: "",
+      pnr: "",
+      passportNumber: "",
+      flightAirlineName: "",
+      departureDate: "",
+      returnDate: "",
+      approvedBy: "",
+      referenceAgency: "",
+      emergencyFlightContact: "",
+      passengerMobile: "",
+    });
 
-  const [withoutTransportForm, setWithoutTransportForm] = useState<UmrahWithoutTransport>({
-    flightDepartureDate: "",
-    returnDate: "",
-    passengerName: "",
-    passportNumber: "",
-    entryRecordedBy: "",
-    totalAmount: 0,
-    amountPaid: 0,
-    remainingAmount: 0,
-    lastPaymentDate: "",
-    remarks: "",
-  });
+  const [withoutTransportForm, setWithoutTransportForm] =
+    useState<UmrahWithoutTransport>({
+      flightDepartureDate: "",
+      returnDate: "",
+      passengerName: "",
+      passportNumber: "",
+      entryRecordedBy: "",
+      totalAmount: 0,
+      amountPaid: 0,
+      remainingAmount: 0,
+      lastPaymentDate: "",
+      remarks: "",
+    });
 
-  const [withTransportRecords, setWithTransportRecords] = useState<UmrahWithTransport[]>([]);
-  const [withoutTransportRecords, setWithoutTransportRecords] = useState<UmrahWithoutTransport[]>([]);
+  const [withTransportRecords, setWithTransportRecords] = useState<
+    UmrahWithTransport[]
+  >([]);
+  const [withoutTransportRecords, setWithoutTransportRecords] = useState<
+    UmrahWithoutTransport[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -160,10 +169,11 @@ export default function UmrahManagement() {
 
   // Auto-calculate remaining amount for without transport
   useEffect(() => {
-    const remaining = withoutTransportForm.totalAmount - withoutTransportForm.amountPaid;
-    setWithoutTransportForm(prev => ({
+    const remaining =
+      withoutTransportForm.totalAmount - withoutTransportForm.amountPaid;
+    setWithoutTransportForm((prev) => ({
       ...prev,
-      remainingAmount: remaining >= 0 ? remaining : 0
+      remainingAmount: remaining >= 0 ? remaining : 0,
     }));
   }, [withoutTransportForm.totalAmount, withoutTransportForm.amountPaid]);
 
@@ -172,7 +182,7 @@ export default function UmrahManagement() {
       setLoading(true);
       const [withTransport, withoutTransport] = await Promise.all([
         apiClient.getUmrahWithTransport(),
-        apiClient.getUmrahWithoutTransport()
+        apiClient.getUmrahWithoutTransport(),
       ]);
       setWithTransportRecords(withTransport || []);
       setWithoutTransportRecords(withoutTransport || []);
@@ -188,24 +198,31 @@ export default function UmrahManagement() {
     }
   };
 
-  const validateWithTransportForm = (form: UmrahWithTransport): Record<string, string> => {
+  const validateWithTransportForm = (
+    form: UmrahWithTransport,
+  ): Record<string, string> => {
     const errors: Record<string, string> = {};
 
-    if (!form.passengerName.trim()) errors.passengerName = "Passenger name is required";
+    if (!form.passengerName.trim())
+      errors.passengerName = "Passenger name is required";
     if (!form.pnr.trim()) errors.pnr = "PNR is required";
-    if (!form.passportNumber.trim()) errors.passportNumber = "Passport number is required";
-    if (!form.flightAirlineName.trim()) errors.flightAirlineName = "Flight/Airline name is required";
-    if (!form.departureDate) errors.departureDate = "Departure date is required";
+    if (!form.passportNumber.trim())
+      errors.passportNumber = "Passport number is required";
+    if (!form.flightAirlineName.trim())
+      errors.flightAirlineName = "Flight/Airline name is required";
+    if (!form.departureDate)
+      errors.departureDate = "Departure date is required";
     if (!form.returnDate) errors.returnDate = "Return date is required";
     if (!form.approvedBy.trim()) errors.approvedBy = "Approved by is required";
-    if (!form.referenceAgency.trim()) errors.referenceAgency = "Reference agency is required";
-    
+    if (!form.referenceAgency.trim())
+      errors.referenceAgency = "Reference agency is required";
+
     if (!form.emergencyFlightContact.trim()) {
       errors.emergencyFlightContact = "Emergency contact is required";
     } else if (!validateBangladeshiPhone(form.emergencyFlightContact)) {
       errors.emergencyFlightContact = "Invalid phone number format";
     }
-    
+
     if (!form.passengerMobile.trim()) {
       errors.passengerMobile = "Passenger mobile is required";
     } else if (!validateBangladeshiPhone(form.passengerMobile)) {
@@ -224,17 +241,26 @@ export default function UmrahManagement() {
     return errors;
   };
 
-  const validateWithoutTransportForm = (form: UmrahWithoutTransport): Record<string, string> => {
+  const validateWithoutTransportForm = (
+    form: UmrahWithoutTransport,
+  ): Record<string, string> => {
     const errors: Record<string, string> = {};
 
-    if (!form.flightDepartureDate) errors.flightDepartureDate = "Departure date is required";
+    if (!form.flightDepartureDate)
+      errors.flightDepartureDate = "Departure date is required";
     if (!form.returnDate) errors.returnDate = "Return date is required";
-    if (!form.passengerName.trim()) errors.passengerName = "Passenger name is required";
-    if (!form.passportNumber.trim()) errors.passportNumber = "Passport number is required";
-    if (!form.entryRecordedBy.trim()) errors.entryRecordedBy = "Entry recorded by is required";
-    if (form.totalAmount <= 0) errors.totalAmount = "Total amount must be greater than 0";
-    if (form.amountPaid < 0) errors.amountPaid = "Amount paid cannot be negative";
-    if (form.amountPaid > form.totalAmount) errors.amountPaid = "Amount paid cannot exceed total amount";
+    if (!form.passengerName.trim())
+      errors.passengerName = "Passenger name is required";
+    if (!form.passportNumber.trim())
+      errors.passportNumber = "Passport number is required";
+    if (!form.entryRecordedBy.trim())
+      errors.entryRecordedBy = "Entry recorded by is required";
+    if (form.totalAmount <= 0)
+      errors.totalAmount = "Total amount must be greater than 0";
+    if (form.amountPaid < 0)
+      errors.amountPaid = "Amount paid cannot be negative";
+    if (form.amountPaid > form.totalAmount)
+      errors.amountPaid = "Amount paid cannot exceed total amount";
 
     // Date validation
     if (form.flightDepartureDate && form.returnDate) {
@@ -278,7 +304,7 @@ export default function UmrahManagement() {
         passenger_mobile: withTransportForm.passengerMobile,
       };
       const newRecord = await apiClient.createUmrahWithTransport(apiData);
-      setWithTransportRecords(prev => [newRecord, ...prev]);
+      setWithTransportRecords((prev) => [newRecord, ...prev]);
 
       toast({
         title: "Success",
@@ -292,7 +318,8 @@ export default function UmrahManagement() {
       console.log("Form data sent:", apiData);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create record",
+        description:
+          error instanceof Error ? error.message : "Failed to create record",
         variant: "destructive",
       });
     } finally {
@@ -329,7 +356,7 @@ export default function UmrahManagement() {
         remarks: withoutTransportForm.remarks || undefined,
       };
       const newRecord = await apiClient.createUmrahWithoutTransport(apiData);
-      setWithoutTransportRecords(prev => [newRecord, ...prev]);
+      setWithoutTransportRecords((prev) => [newRecord, ...prev]);
 
       toast({
         title: "Success",
@@ -343,7 +370,8 @@ export default function UmrahManagement() {
       console.log("Form data sent:", apiData);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create record",
+        description:
+          error instanceof Error ? error.message : "Failed to create record",
         variant: "destructive",
       });
     } finally {
@@ -386,7 +414,7 @@ export default function UmrahManagement() {
   const getDayOfWeek = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { weekday: 'long' });
+    return date.toLocaleDateString("en-US", { weekday: "long" });
   };
 
   const formatCurrency = (amount: number) => {
@@ -404,12 +432,37 @@ export default function UmrahManagement() {
     }
 
     // Create headers with proper formatting
-    const headers = activeTab === "with-transport"
-      ? ["Passenger Name", "PNR", "Passport Number", "Flight/Airline", "Departure Date", "Return Date", "Approved By", "Reference Agency", "Emergency Contact", "Passenger Mobile", "Created Date"]
-      : ["Passenger Name", "Passport Number", "Departure Date", "Return Date", "Entry Recorded By", "Total Amount (BDT)", "Amount Paid (BDT)", "Remaining Amount (BDT)", "Last Payment Date", "Remarks", "Created Date"];
+    const headers =
+      activeTab === "with-transport"
+        ? [
+            "Passenger Name",
+            "PNR",
+            "Passport Number",
+            "Flight/Airline",
+            "Departure Date",
+            "Return Date",
+            "Approved By",
+            "Reference Agency",
+            "Emergency Contact",
+            "Passenger Mobile",
+            "Created Date",
+          ]
+        : [
+            "Passenger Name",
+            "Passport Number",
+            "Departure Date",
+            "Return Date",
+            "Entry Recorded By",
+            "Total Amount (BDT)",
+            "Amount Paid (BDT)",
+            "Remaining Amount (BDT)",
+            "Last Payment Date",
+            "Remarks",
+            "Created Date",
+          ];
 
     // Format data based on package type
-    const csvData = records.map(record => {
+    const csvData = records.map((record) => {
       if (activeTab === "with-transport") {
         return [
           record.passenger_name || record.passengerName,
@@ -422,7 +475,9 @@ export default function UmrahManagement() {
           record.reference_agency || record.referenceAgency,
           record.emergency_flight_contact || record.emergencyFlightContact,
           record.passenger_mobile || record.passengerMobile,
-          record.created_at || record.createdAt || new Date().toISOString().split('T')[0]
+          record.created_at ||
+            record.createdAt ||
+            new Date().toISOString().split("T")[0],
         ];
       } else {
         return [
@@ -436,7 +491,9 @@ export default function UmrahManagement() {
           record.remaining_amount || record.remainingAmount || 0,
           record.last_payment_date || record.lastPaymentDate || "",
           record.remarks || "",
-          record.created_at || record.createdAt || new Date().toISOString().split('T')[0]
+          record.created_at ||
+            record.createdAt ||
+            new Date().toISOString().split("T")[0],
         ];
       }
     });
@@ -444,27 +501,29 @@ export default function UmrahManagement() {
     // Create CSV content
     const csvContent = [
       headers.join(","),
-      ...csvData.map(row =>
-        row.map(value => {
-          const stringValue = String(value || "");
-          // Escape quotes and wrap in quotes if contains comma or quotes
-          return stringValue.includes(',') || stringValue.includes('"')
-            ? `"${stringValue.replace(/"/g, '""')}"`
-            : stringValue;
-        }).join(",")
-      )
+      ...csvData.map((row) =>
+        row
+          .map((value) => {
+            const stringValue = String(value || "");
+            // Escape quotes and wrap in quotes if contains comma or quotes
+            return stringValue.includes(",") || stringValue.includes('"')
+              ? `"${stringValue.replace(/"/g, '""')}"`
+              : stringValue;
+          })
+          .join(","),
+      ),
     ].join("\n");
 
     // Add BOM for better Excel compatibility
     const BOM = "\uFEFF";
     const blob = new Blob([BOM + csvContent], {
-      type: "text/csv;charset=utf-8;"
+      type: "text/csv;charset=utf-8;",
     });
 
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${filename}-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `${filename}-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -475,7 +534,10 @@ export default function UmrahManagement() {
   };
 
   const printRecords = () => {
-    const records = activeTab === "with-transport" ? filteredWithTransportRecords : filteredWithoutTransportRecords;
+    const records =
+      activeTab === "with-transport"
+        ? filteredWithTransportRecords
+        : filteredWithoutTransportRecords;
 
     if (records.length === 0) {
       toast({
@@ -486,10 +548,13 @@ export default function UmrahManagement() {
       return;
     }
 
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
-    const title = activeTab === "with-transport" ? "Umrah With Transport Packages" : "Umrah Without Transport Packages";
+    const title =
+      activeTab === "with-transport"
+        ? "Umrah With Transport Packages"
+        : "Umrah Without Transport Packages";
 
     let tableHeaders = "";
     let tableRows = "";
@@ -507,7 +572,9 @@ export default function UmrahManagement() {
         </tr>
       `;
 
-      tableRows = records.map(record => `
+      tableRows = records
+        .map(
+          (record) => `
         <tr>
           <td>${record.passenger_name || record.passengerName}</td>
           <td>${record.pnr}</td>
@@ -517,7 +584,9 @@ export default function UmrahManagement() {
           <td>${new Date(record.return_date || record.returnDate).toLocaleDateString()}</td>
           <td>${record.passenger_mobile || record.passengerMobile}</td>
         </tr>
-      `).join("");
+      `,
+        )
+        .join("");
     } else {
       tableHeaders = `
         <tr>
@@ -531,7 +600,9 @@ export default function UmrahManagement() {
         </tr>
       `;
 
-      tableRows = records.map(record => `
+      tableRows = records
+        .map(
+          (record) => `
         <tr>
           <td>${record.passenger_name || record.passengerName}</td>
           <td>${record.passport_number || record.passportNumber}</td>
@@ -541,7 +612,9 @@ export default function UmrahManagement() {
           <td>${formatCurrency(record.remaining_amount || record.remainingAmount || 0)}</td>
           <td>${(record.remaining_amount || record.remainingAmount || 0) > 0 ? "Pending" : "Paid"}</td>
         </tr>
-      `).join("");
+      `,
+        )
+        .join("");
     }
 
     const printContent = `
@@ -586,15 +659,25 @@ export default function UmrahManagement() {
     }, 500);
   };
 
-  const filteredWithTransportRecords = withTransportRecords.filter(record =>
-    (record.passengerName || record.passenger_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (record.pnr || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (record.passportNumber || record.passport_number || "").toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredWithTransportRecords = withTransportRecords.filter(
+    (record) =>
+      (record.passengerName || record.passenger_name || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (record.pnr || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (record.passportNumber || record.passport_number || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
   );
 
-  const filteredWithoutTransportRecords = withoutTransportRecords.filter(record =>
-    (record.passengerName || record.passenger_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (record.passportNumber || record.passport_number || "").toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredWithoutTransportRecords = withoutTransportRecords.filter(
+    (record) =>
+      (record.passengerName || record.passenger_name || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (record.passportNumber || record.passport_number || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -631,10 +714,14 @@ export default function UmrahManagement() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => exportToCSV(
-                    activeTab === "with-transport" ? filteredWithTransportRecords : filteredWithoutTransportRecords,
-                    `umrah-${activeTab}`
-                  )}
+                  onClick={() =>
+                    exportToCSV(
+                      activeTab === "with-transport"
+                        ? filteredWithTransportRecords
+                        : filteredWithoutTransportRecords,
+                      `umrah-${activeTab}`,
+                    )
+                  }
                 >
                   <FileSpreadsheet className="h-4 w-4 mr-2" />
                   Export as CSV/Excel
@@ -645,7 +732,7 @@ export default function UmrahManagement() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="velvet-button text-primary-foreground font-body">
@@ -663,13 +750,19 @@ export default function UmrahManagement() {
                   </DialogDescription>
                 </DialogHeader>
 
-                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as PackageType)}>
+                <Tabs
+                  value={activeTab}
+                  onValueChange={(value) => setActiveTab(value as PackageType)}
+                >
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="with-transport" className="font-body">
                       <Plane className="h-4 w-4 mr-2" />
                       With Transport
                     </TabsTrigger>
-                    <TabsTrigger value="without-transport" className="font-body">
+                    <TabsTrigger
+                      value="without-transport"
+                      className="font-body"
+                    >
                       <MapPin className="h-4 w-4 mr-2" />
                       Without Transport
                     </TabsTrigger>
@@ -680,21 +773,32 @@ export default function UmrahManagement() {
                   </TabsList>
 
                   <TabsContent value="with-transport">
-                    <form onSubmit={handleSubmitWithTransport} className="space-y-4">
+                    <form
+                      onSubmit={handleSubmitWithTransport}
+                      className="space-y-4"
+                    >
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="passengerName">Passenger Name *</Label>
+                          <Label htmlFor="passengerName">
+                            Passenger Name *
+                          </Label>
                           <Input
                             id="passengerName"
                             value={withTransportForm.passengerName}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              passengerName: e.target.value
-                            }))}
-                            className={errors.passengerName ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                passengerName: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.passengerName ? "border-red-500" : ""
+                            }
                           />
                           {errors.passengerName && (
-                            <p className="text-red-500 text-sm">{errors.passengerName}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.passengerName}
+                            </p>
                           )}
                         </div>
 
@@ -703,10 +807,12 @@ export default function UmrahManagement() {
                           <Input
                             id="pnr"
                             value={withTransportForm.pnr}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              pnr: e.target.value
-                            }))}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                pnr: e.target.value,
+                              }))
+                            }
                             className={errors.pnr ? "border-red-500" : ""}
                           />
                           {errors.pnr && (
@@ -715,51 +821,75 @@ export default function UmrahManagement() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="passportNumber">Passport Number *</Label>
+                          <Label htmlFor="passportNumber">
+                            Passport Number *
+                          </Label>
                           <Input
                             id="passportNumber"
                             value={withTransportForm.passportNumber}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              passportNumber: e.target.value
-                            }))}
-                            className={errors.passportNumber ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                passportNumber: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.passportNumber ? "border-red-500" : ""
+                            }
                           />
                           {errors.passportNumber && (
-                            <p className="text-red-500 text-sm">{errors.passportNumber}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.passportNumber}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="flightAirlineName">Flight / Airline Name *</Label>
+                          <Label htmlFor="flightAirlineName">
+                            Flight / Airline Name *
+                          </Label>
                           <Input
                             id="flightAirlineName"
                             value={withTransportForm.flightAirlineName}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              flightAirlineName: e.target.value
-                            }))}
-                            className={errors.flightAirlineName ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                flightAirlineName: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.flightAirlineName ? "border-red-500" : ""
+                            }
                           />
                           {errors.flightAirlineName && (
-                            <p className="text-red-500 text-sm">{errors.flightAirlineName}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.flightAirlineName}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="departureDate">Departure Date *</Label>
+                          <Label htmlFor="departureDate">
+                            Departure Date *
+                          </Label>
                           <Input
                             id="departureDate"
                             type="date"
                             value={withTransportForm.departureDate}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              departureDate: e.target.value
-                            }))}
-                            className={errors.departureDate ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                departureDate: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.departureDate ? "border-red-500" : ""
+                            }
                           />
                           {errors.departureDate && (
-                            <p className="text-red-500 text-sm">{errors.departureDate}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.departureDate}
+                            </p>
                           )}
                         </div>
 
@@ -769,14 +899,20 @@ export default function UmrahManagement() {
                             id="returnDate"
                             type="date"
                             value={withTransportForm.returnDate}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              returnDate: e.target.value
-                            }))}
-                            className={errors.returnDate ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                returnDate: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.returnDate ? "border-red-500" : ""
+                            }
                           />
                           {errors.returnDate && (
-                            <p className="text-red-500 text-sm">{errors.returnDate}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.returnDate}
+                            </p>
                           )}
                         </div>
 
@@ -785,64 +921,96 @@ export default function UmrahManagement() {
                           <Input
                             id="approvedBy"
                             value={withTransportForm.approvedBy}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              approvedBy: e.target.value
-                            }))}
-                            className={errors.approvedBy ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                approvedBy: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.approvedBy ? "border-red-500" : ""
+                            }
                           />
                           {errors.approvedBy && (
-                            <p className="text-red-500 text-sm">{errors.approvedBy}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.approvedBy}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="referenceAgency">Reference Agency *</Label>
+                          <Label htmlFor="referenceAgency">
+                            Reference Agency *
+                          </Label>
                           <Input
                             id="referenceAgency"
                             value={withTransportForm.referenceAgency}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              referenceAgency: e.target.value
-                            }))}
-                            className={errors.referenceAgency ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                referenceAgency: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.referenceAgency ? "border-red-500" : ""
+                            }
                           />
                           {errors.referenceAgency && (
-                            <p className="text-red-500 text-sm">{errors.referenceAgency}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.referenceAgency}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="emergencyFlightContact">Emergency Flight Contact *</Label>
+                          <Label htmlFor="emergencyFlightContact">
+                            Emergency Flight Contact *
+                          </Label>
                           <Input
                             id="emergencyFlightContact"
                             value={withTransportForm.emergencyFlightContact}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              emergencyFlightContact: e.target.value
-                            }))}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                emergencyFlightContact: e.target.value,
+                              }))
+                            }
                             placeholder="+880XXXXXXXXX"
-                            className={errors.emergencyFlightContact ? "border-red-500" : ""}
+                            className={
+                              errors.emergencyFlightContact
+                                ? "border-red-500"
+                                : ""
+                            }
                           />
                           {errors.emergencyFlightContact && (
-                            <p className="text-red-500 text-sm">{errors.emergencyFlightContact}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.emergencyFlightContact}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="passengerMobile">Passenger Mobile *</Label>
+                          <Label htmlFor="passengerMobile">
+                            Passenger Mobile *
+                          </Label>
                           <Input
                             id="passengerMobile"
                             value={withTransportForm.passengerMobile}
-                            onChange={(e) => setWithTransportForm(prev => ({
-                              ...prev,
-                              passengerMobile: e.target.value
-                            }))}
+                            onChange={(e) =>
+                              setWithTransportForm((prev) => ({
+                                ...prev,
+                                passengerMobile: e.target.value,
+                              }))
+                            }
                             placeholder="+880XXXXXXXXX"
-                            className={errors.passengerMobile ? "border-red-500" : ""}
+                            className={
+                              errors.passengerMobile ? "border-red-500" : ""
+                            }
                           />
                           {errors.passengerMobile && (
-                            <p className="text-red-500 text-sm">{errors.passengerMobile}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.passengerMobile}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -855,7 +1023,11 @@ export default function UmrahManagement() {
                         >
                           Cancel
                         </Button>
-                        <Button type="submit" disabled={loading} className="velvet-button">
+                        <Button
+                          type="submit"
+                          disabled={loading}
+                          className="velvet-button"
+                        >
                           <Save className="h-4 w-4 mr-2" />
                           Save Package
                         </Button>
@@ -864,27 +1036,41 @@ export default function UmrahManagement() {
                   </TabsContent>
 
                   <TabsContent value="without-transport">
-                    <form onSubmit={handleSubmitWithoutTransport} className="space-y-4">
+                    <form
+                      onSubmit={handleSubmitWithoutTransport}
+                      className="space-y-4"
+                    >
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="flightDepartureDate">Flight Departure Date *</Label>
+                          <Label htmlFor="flightDepartureDate">
+                            Flight Departure Date *
+                          </Label>
                           <Input
                             id="flightDepartureDate"
                             type="date"
                             value={withoutTransportForm.flightDepartureDate}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              flightDepartureDate: e.target.value
-                            }))}
-                            className={errors.flightDepartureDate ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                flightDepartureDate: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.flightDepartureDate ? "border-red-500" : ""
+                            }
                           />
                           {withoutTransportForm.flightDepartureDate && (
                             <p className="text-sm text-muted-foreground">
-                              Day: {getDayOfWeek(withoutTransportForm.flightDepartureDate)}
+                              Day:{" "}
+                              {getDayOfWeek(
+                                withoutTransportForm.flightDepartureDate,
+                              )}
                             </p>
                           )}
                           {errors.flightDepartureDate && (
-                            <p className="text-red-500 text-sm">{errors.flightDepartureDate}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.flightDepartureDate}
+                            </p>
                           )}
                         </div>
 
@@ -894,80 +1080,118 @@ export default function UmrahManagement() {
                             id="returnDateWT"
                             type="date"
                             value={withoutTransportForm.returnDate}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              returnDate: e.target.value
-                            }))}
-                            className={errors.returnDate ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                returnDate: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.returnDate ? "border-red-500" : ""
+                            }
                           />
                           {errors.returnDate && (
-                            <p className="text-red-500 text-sm">{errors.returnDate}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.returnDate}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="passengerNameWT">Passenger Name *</Label>
+                          <Label htmlFor="passengerNameWT">
+                            Passenger Name *
+                          </Label>
                           <Input
                             id="passengerNameWT"
                             value={withoutTransportForm.passengerName}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              passengerName: e.target.value
-                            }))}
-                            className={errors.passengerName ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                passengerName: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.passengerName ? "border-red-500" : ""
+                            }
                           />
                           {errors.passengerName && (
-                            <p className="text-red-500 text-sm">{errors.passengerName}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.passengerName}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="passportNumberWT">Passport Number *</Label>
+                          <Label htmlFor="passportNumberWT">
+                            Passport Number *
+                          </Label>
                           <Input
                             id="passportNumberWT"
                             value={withoutTransportForm.passportNumber}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              passportNumber: e.target.value
-                            }))}
-                            className={errors.passportNumber ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                passportNumber: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.passportNumber ? "border-red-500" : ""
+                            }
                           />
                           {errors.passportNumber && (
-                            <p className="text-red-500 text-sm">{errors.passportNumber}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.passportNumber}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="entryRecordedBy">Entry Recorded By *</Label>
+                          <Label htmlFor="entryRecordedBy">
+                            Entry Recorded By *
+                          </Label>
                           <Input
                             id="entryRecordedBy"
                             value={withoutTransportForm.entryRecordedBy}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              entryRecordedBy: e.target.value
-                            }))}
-                            className={errors.entryRecordedBy ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                entryRecordedBy: e.target.value,
+                              }))
+                            }
+                            className={
+                              errors.entryRecordedBy ? "border-red-500" : ""
+                            }
                           />
                           {errors.entryRecordedBy && (
-                            <p className="text-red-500 text-sm">{errors.entryRecordedBy}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.entryRecordedBy}
+                            </p>
                           )}
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="totalAmount">Total Amount (৳) *</Label>
+                          <Label htmlFor="totalAmount">
+                            Total Amount (৳) *
+                          </Label>
                           <Input
                             id="totalAmount"
                             type="number"
                             min="0"
                             value={withoutTransportForm.totalAmount}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              totalAmount: parseFloat(e.target.value) || 0
-                            }))}
-                            className={errors.totalAmount ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                totalAmount: parseFloat(e.target.value) || 0,
+                              }))
+                            }
+                            className={
+                              errors.totalAmount ? "border-red-500" : ""
+                            }
                           />
                           {errors.totalAmount && (
-                            <p className="text-red-500 text-sm">{errors.totalAmount}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.totalAmount}
+                            </p>
                           )}
                         </div>
 
@@ -978,14 +1202,20 @@ export default function UmrahManagement() {
                             type="number"
                             min="0"
                             value={withoutTransportForm.amountPaid}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              amountPaid: parseFloat(e.target.value) || 0
-                            }))}
-                            className={errors.amountPaid ? "border-red-500" : ""}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                amountPaid: parseFloat(e.target.value) || 0,
+                              }))
+                            }
+                            className={
+                              errors.amountPaid ? "border-red-500" : ""
+                            }
                           />
                           {errors.amountPaid && (
-                            <p className="text-red-500 text-sm">{errors.amountPaid}</p>
+                            <p className="text-red-500 text-sm">
+                              {errors.amountPaid}
+                            </p>
                           )}
                         </div>
 
@@ -994,21 +1224,27 @@ export default function UmrahManagement() {
                           <div className="flex items-center space-x-2">
                             <Calculator className="h-4 w-4 text-muted-foreground" />
                             <span className="text-lg font-bold text-primary">
-                              {formatCurrency(withoutTransportForm.remainingAmount)}
+                              {formatCurrency(
+                                withoutTransportForm.remainingAmount,
+                              )}
                             </span>
                           </div>
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="lastPaymentDate">Last Payment Date</Label>
+                          <Label htmlFor="lastPaymentDate">
+                            Last Payment Date
+                          </Label>
                           <Input
                             id="lastPaymentDate"
                             type="date"
                             value={withoutTransportForm.lastPaymentDate}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              lastPaymentDate: e.target.value
-                            }))}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                lastPaymentDate: e.target.value,
+                              }))
+                            }
                           />
                         </div>
 
@@ -1017,10 +1253,12 @@ export default function UmrahManagement() {
                           <Textarea
                             id="remarks"
                             value={withoutTransportForm.remarks}
-                            onChange={(e) => setWithoutTransportForm(prev => ({
-                              ...prev,
-                              remarks: e.target.value
-                            }))}
+                            onChange={(e) =>
+                              setWithoutTransportForm((prev) => ({
+                                ...prev,
+                                remarks: e.target.value,
+                              }))
+                            }
                             rows={3}
                             placeholder="Any additional notes or remarks..."
                           />
@@ -1035,7 +1273,11 @@ export default function UmrahManagement() {
                         >
                           Cancel
                         </Button>
-                        <Button type="submit" disabled={loading} className="velvet-button">
+                        <Button
+                          type="submit"
+                          disabled={loading}
+                          className="velvet-button"
+                        >
                           <Save className="h-4 w-4 mr-2" />
                           Save Package
                         </Button>
@@ -1046,7 +1288,9 @@ export default function UmrahManagement() {
                   <TabsContent value="group-tickets">
                     <div className="text-center py-8">
                       <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-heading font-bold mb-2">Group Ticket Management</h3>
+                      <h3 className="text-lg font-heading font-bold mb-2">
+                        Group Ticket Management
+                      </h3>
                       <p className="text-muted-foreground font-body mb-4">
                         গ্রুপ টিকেট ম্যানেজমেন্ট নিচের মেইন সেকশনে পাবেন।
                       </p>
@@ -1090,7 +1334,10 @@ export default function UmrahManagement() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
       >
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as PackageType)}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as PackageType)}
+        >
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="with-transport" className="font-body">
               <Plane className="h-4 w-4 mr-2" />
@@ -1109,7 +1356,9 @@ export default function UmrahManagement() {
           <TabsContent value="with-transport">
             <Card className="luxury-card border-0">
               <CardHeader>
-                <CardTitle className="font-heading">Umrah With Transport</CardTitle>
+                <CardTitle className="font-heading">
+                  Umrah With Transport
+                </CardTitle>
                 <CardDescription className="font-body">
                   Complete travel packages including flight arrangements
                 </CardDescription>
@@ -1133,17 +1382,31 @@ export default function UmrahManagement() {
                       <TableBody>
                         {filteredWithTransportRecords.map((record) => (
                           <TableRow key={record.id}>
-                            <TableCell className="font-medium">{record.passengerName || record.passenger_name}</TableCell>
+                            <TableCell className="font-medium">
+                              {record.passengerName || record.passenger_name}
+                            </TableCell>
                             <TableCell>{record.pnr}</TableCell>
-                            <TableCell>{record.passportNumber || record.passport_number}</TableCell>
-                            <TableCell>{record.flightAirlineName || record.flight_airline_name}</TableCell>
                             <TableCell>
-                              {new Date(record.departureDate || record.departure_date).toLocaleDateString()}
+                              {record.passportNumber || record.passport_number}
                             </TableCell>
                             <TableCell>
-                              {new Date(record.returnDate || record.return_date).toLocaleDateString()}
+                              {record.flightAirlineName ||
+                                record.flight_airline_name}
                             </TableCell>
-                            <TableCell>{record.passengerMobile || record.passenger_mobile}</TableCell>
+                            <TableCell>
+                              {new Date(
+                                record.departureDate || record.departure_date,
+                              ).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              {new Date(
+                                record.returnDate || record.return_date,
+                              ).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              {record.passengerMobile ||
+                                record.passenger_mobile}
+                            </TableCell>
                             <TableCell>
                               <div className="flex space-x-1">
                                 <Button
@@ -1173,7 +1436,9 @@ export default function UmrahManagement() {
                       No records found
                     </h3>
                     <p className="text-foreground/70 font-body mb-4">
-                      {searchTerm ? "No packages match your search criteria" : "No Umrah with transport packages have been added yet"}
+                      {searchTerm
+                        ? "No packages match your search criteria"
+                        : "No Umrah with transport packages have been added yet"}
                     </p>
                     <Button
                       onClick={() => setIsFormDialogOpen(true)}
@@ -1191,9 +1456,12 @@ export default function UmrahManagement() {
           <TabsContent value="without-transport">
             <Card className="luxury-card border-0">
               <CardHeader>
-                <CardTitle className="font-heading">Umrah Without Transport</CardTitle>
+                <CardTitle className="font-heading">
+                  Umrah Without Transport
+                </CardTitle>
                 <CardDescription className="font-body">
-                  Packages without flight arrangements - payment tracking enabled
+                  Packages without flight arrangements - payment tracking
+                  enabled
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -1215,25 +1483,67 @@ export default function UmrahManagement() {
                       <TableBody>
                         {filteredWithoutTransportRecords.map((record) => (
                           <TableRow key={record.id}>
-                            <TableCell className="font-medium">{record.passengerName || record.passenger_name}</TableCell>
-                            <TableCell>{record.passportNumber || record.passport_number}</TableCell>
+                            <TableCell className="font-medium">
+                              {record.passengerName || record.passenger_name}
+                            </TableCell>
                             <TableCell>
-                              {new Date(record.flightDepartureDate || record.flight_departure_date).toLocaleDateString()}
+                              {record.passportNumber || record.passport_number}
+                            </TableCell>
+                            <TableCell>
+                              {new Date(
+                                record.flightDepartureDate ||
+                                  record.flight_departure_date,
+                              ).toLocaleDateString()}
                               <br />
                               <span className="text-xs text-muted-foreground">
-                                {getDayOfWeek(record.flightDepartureDate || record.flight_departure_date)}
-                              </span>
-                            </TableCell>
-                            <TableCell>{formatCurrency(record.totalAmount || record.total_amount || 0)}</TableCell>
-                            <TableCell>{formatCurrency(record.amountPaid || record.amount_paid || 0)}</TableCell>
-                            <TableCell>
-                              <span className={(record.remainingAmount || record.remaining_amount || 0) > 0 ? "text-orange-600 font-bold" : "text-green-600 font-bold"}>
-                                {formatCurrency(record.remainingAmount || record.remaining_amount || 0)}
+                                {getDayOfWeek(
+                                  record.flightDepartureDate ||
+                                    record.flight_departure_date,
+                                )}
                               </span>
                             </TableCell>
                             <TableCell>
-                              <Badge variant={(record.remainingAmount || record.remaining_amount || 0) > 0 ? "destructive" : "default"}>
-                                {(record.remainingAmount || record.remaining_amount || 0) > 0 ? "Pending" : "Paid"}
+                              {formatCurrency(
+                                record.totalAmount || record.total_amount || 0,
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {formatCurrency(
+                                record.amountPaid || record.amount_paid || 0,
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                className={
+                                  (record.remainingAmount ||
+                                    record.remaining_amount ||
+                                    0) > 0
+                                    ? "text-orange-600 font-bold"
+                                    : "text-green-600 font-bold"
+                                }
+                              >
+                                {formatCurrency(
+                                  record.remainingAmount ||
+                                    record.remaining_amount ||
+                                    0,
+                                )}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  (record.remainingAmount ||
+                                    record.remaining_amount ||
+                                    0) > 0
+                                    ? "destructive"
+                                    : "default"
+                                }
+                              >
+                                {(record.remainingAmount ||
+                                  record.remaining_amount ||
+                                  0) > 0
+                                  ? "Pending"
+                                  : "Paid"}
                               </Badge>
                             </TableCell>
                             <TableCell>
@@ -1265,7 +1575,9 @@ export default function UmrahManagement() {
                       No records found
                     </h3>
                     <p className="text-foreground/70 font-body mb-4">
-                      {searchTerm ? "No packages match your search criteria" : "No Umrah without transport packages have been added yet"}
+                      {searchTerm
+                        ? "No packages match your search criteria"
+                        : "No Umrah without transport packages have been added yet"}
                     </p>
                     <Button
                       onClick={() => setIsFormDialogOpen(true)}
@@ -1298,13 +1610,12 @@ export default function UmrahManagement() {
                 {Object.entries(selectedRecord).map(([key, value]) => (
                   <div key={key} className="space-y-1">
                     <Label className="text-sm font-medium capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                      {key.replace(/([A-Z])/g, " $1").trim()}
                     </Label>
                     <p className="text-sm text-foreground/70">
-                      {typeof value === 'number' && key.includes('Amount') ? 
-                        formatCurrency(value as number) : 
-                        String(value)
-                      }
+                      {typeof value === "number" && key.includes("Amount")
+                        ? formatCurrency(value as number)
+                        : String(value)}
                     </p>
                   </div>
                 ))}

@@ -3,7 +3,7 @@
 
 export interface GroupTicketPDFData {
   groupName: string;
-  packageType: 'with-transport' | 'without-transport';
+  packageType: "with-transport" | "without-transport";
   departureDate: string;
   returnDate: string;
   ticketCount: number;
@@ -23,7 +23,7 @@ export interface GroupTicketPDFData {
 export interface DateGroupedPDFData {
   departureDate: string;
   returnDate: string;
-  packageType: 'with-transport' | 'without-transport';
+  packageType: "with-transport" | "without-transport";
   groups: GroupTicketPDFData[];
   totalGroups: number;
   totalTickets: number;
@@ -35,8 +35,9 @@ export interface DateGroupedPDFData {
  * Generate PDF content for a single group
  */
 export function generateGroupPDFContent(group: GroupTicketPDFData): string {
-  const packageTypeLabel = group.packageType === 'with-transport' ? 'Transport সহ' : 'Transport ছাড়া';
-  
+  const packageTypeLabel =
+    group.packageType === "with-transport" ? "Transport সহ" : "Transport ছাড়া";
+
   return `
     <!DOCTYPE html>
     <html>
@@ -224,7 +225,7 @@ export function generateGroupPDFContent(group: GroupTicketPDFData): string {
       <div class="header">
         <h1>🕋 BD TicketPro - Umrah Group Ticket</h1>
         <h2>${packageTypeLabel} ওমরা প্যাকেজ</h2>
-        <div class="date">Generated on: ${new Date().toLocaleDateString('en-GB')} at ${new Date().toLocaleTimeString('en-GB')}</div>
+        <div class="date">Generated on: ${new Date().toLocaleDateString("en-GB")} at ${new Date().toLocaleTimeString("en-GB")}</div>
       </div>
 
       <div class="group-details">
@@ -241,18 +242,22 @@ export function generateGroupPDFContent(group: GroupTicketPDFData): string {
           </div>
           <div class="info-item">
             <span class="info-label">Departure Date:</span>
-            <span class="info-value">${new Date(group.departureDate).toLocaleDateString('en-GB')}</span>
+            <span class="info-value">${new Date(group.departureDate).toLocaleDateString("en-GB")}</span>
           </div>
           <div class="info-item">
             <span class="info-label">Return Date:</span>
-            <span class="info-value">${new Date(group.returnDate).toLocaleDateString('en-GB')}</span>
+            <span class="info-value">${new Date(group.returnDate).toLocaleDateString("en-GB")}</span>
           </div>
-          ${group.agentContact ? `
+          ${
+            group.agentContact
+              ? `
           <div class="info-item">
             <span class="info-label">Agent Contact:</span>
             <span class="info-value">${group.agentContact}</span>
           </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       </div>
 
@@ -274,7 +279,9 @@ export function generateGroupPDFContent(group: GroupTicketPDFData): string {
         </div>
       </div>
 
-      ${group.passengers && group.passengers.length > 0 ? `
+      ${
+        group.passengers && group.passengers.length > 0
+          ? `
       <div class="passengers-section">
         <div class="passengers-title">👥 Assigned Passengers (${group.passengers.length}/${group.ticketCount})</div>
         <table class="passengers-table">
@@ -287,38 +294,52 @@ export function generateGroupPDFContent(group: GroupTicketPDFData): string {
             </tr>
           </thead>
           <tbody>
-            ${group.passengers.map(passenger => `
+            ${group.passengers
+              .map(
+                (passenger) => `
             <tr>
               <td>${passenger.name}</td>
               <td>${passenger.passport}</td>
-              <td>${passenger.phone || 'N/A'}</td>
-              <td>${new Date(passenger.assignedAt).toLocaleDateString('en-GB')}</td>
+              <td>${passenger.phone || "N/A"}</td>
+              <td>${new Date(passenger.assignedAt).toLocaleDateString("en-GB")}</td>
             </tr>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </tbody>
         </table>
         
-        ${group.passengers.length < group.ticketCount ? `
+        ${
+          group.passengers.length < group.ticketCount
+            ? `
         <div style="margin-top: 15px; padding: 10px; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px; color: #991b1b;">
           <strong>Note:</strong> ${group.ticketCount - group.passengers.length} tickets are still unassigned.
         </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
-      ` : `
+      `
+          : `
       <div class="passengers-section">
         <div class="passengers-title">👥 Passenger Assignment</div>
         <div style="padding: 20px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; text-align: center; color: #6b7280;">
           No passengers assigned yet. ${group.ticketCount} tickets available for assignment.
         </div>
       </div>
-      `}
+      `
+      }
 
-      ${group.purchaseNotes ? `
+      ${
+        group.purchaseNotes
+          ? `
       <div class="notes-section">
         <div class="notes-title">📝 Purchase Notes</div>
         <div class="notes-content">${group.purchaseNotes}</div>
       </div>
-      ` : ''}
+      `
+          : ""
+      }
 
       <div class="footer">
         <div>BD TicketPro - Umrah Group Ticket Management System</div>
@@ -338,9 +359,14 @@ export function generateGroupPDFContent(group: GroupTicketPDFData): string {
 /**
  * Generate PDF content for date-grouped tickets
  */
-export function generateDateGroupPDFContent(dateGroup: DateGroupedPDFData): string {
-  const packageTypeLabel = dateGroup.packageType === 'with-transport' ? 'Transport সহ' : 'Transport ছাড়া';
-  
+export function generateDateGroupPDFContent(
+  dateGroup: DateGroupedPDFData,
+): string {
+  const packageTypeLabel =
+    dateGroup.packageType === "with-transport"
+      ? "Transport সহ"
+      : "Transport ছাড়া";
+
   return `
     <!DOCTYPE html>
     <html>
@@ -497,11 +523,11 @@ export function generateDateGroupPDFContent(dateGroup: DateGroupedPDFData): stri
         <h1>🕋 BD TicketPro - Umrah Group Report</h1>
         <h2>${packageTypeLabel} ওমরা প্যাকেজ</h2>
         <div class="date-range">
-          📅 ${new Date(dateGroup.departureDate).toLocaleDateString('en-GB')} 
+          📅 ${new Date(dateGroup.departureDate).toLocaleDateString("en-GB")} 
           ➡️ 
-          ${new Date(dateGroup.returnDate).toLocaleDateString('en-GB')}
+          ${new Date(dateGroup.returnDate).toLocaleDateString("en-GB")}
         </div>
-        <div class="generated">Generated on: ${new Date().toLocaleDateString('en-GB')} at ${new Date().toLocaleTimeString('en-GB')}</div>
+        <div class="generated">Generated on: ${new Date().toLocaleDateString("en-GB")} at ${new Date().toLocaleTimeString("en-GB")}</div>
       </div>
 
       <div class="summary-stats">
@@ -537,14 +563,16 @@ export function generateDateGroupPDFContent(dateGroup: DateGroupedPDFData): stri
             </tr>
           </thead>
           <tbody>
-            ${dateGroup.groups.map(group => `
+            ${dateGroup.groups
+              .map(
+                (group) => `
             <tr>
               <td>
                 <div class="group-name">${group.groupName}</div>
               </td>
               <td>
                 <div class="agent-info">${group.agentName}</div>
-                ${group.agentContact ? `<div class="agent-contact">${group.agentContact}</div>` : ''}
+                ${group.agentContact ? `<div class="agent-contact">${group.agentContact}</div>` : ""}
               </td>
               <td style="text-align: center;">
                 <strong>${group.ticketCount}</strong>
@@ -556,10 +584,12 @@ export function generateDateGroupPDFContent(dateGroup: DateGroupedPDFData): stri
                 <span class="cost-highlight">৳${group.averageCost.toLocaleString()}</span>
               </td>
               <td style="max-width: 200px; word-wrap: break-word;">
-                ${group.purchaseNotes || 'No notes'}
+                ${group.purchaseNotes || "No notes"}
               </td>
             </tr>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </tbody>
         </table>
       </div>
@@ -587,7 +617,10 @@ export function generateDateGroupPDFContent(dateGroup: DateGroupedPDFData): stri
  */
 export function exportGroupToPDF(group: GroupTicketPDFData): void {
   const htmlContent = generateGroupPDFContent(group);
-  openPDFWindow(htmlContent, `Umrah_Group_${group.groupName.replace(/\s+/g, '_')}`);
+  openPDFWindow(
+    htmlContent,
+    `Umrah_Group_${group.groupName.replace(/\s+/g, "_")}`,
+  );
 }
 
 /**
@@ -595,7 +628,11 @@ export function exportGroupToPDF(group: GroupTicketPDFData): void {
  */
 export function exportDateGroupToPDF(dateGroup: DateGroupedPDFData): void {
   const htmlContent = generateDateGroupPDFContent(dateGroup);
-  const filename = `Umrah_Groups_${dateGroup.departureDate}_to_${dateGroup.returnDate}`.replace(/\s+/g, '_');
+  const filename =
+    `Umrah_Groups_${dateGroup.departureDate}_to_${dateGroup.returnDate}`.replace(
+      /\s+/g,
+      "_",
+    );
   openPDFWindow(htmlContent, filename);
 }
 
@@ -603,15 +640,15 @@ export function exportDateGroupToPDF(dateGroup: DateGroupedPDFData): void {
  * Open PDF in new window for printing/saving
  */
 function openPDFWindow(htmlContent: string, filename: string): void {
-  const printWindow = window.open('', '_blank', 'width=1200,height=800');
+  const printWindow = window.open("", "_blank", "width=1200,height=800");
   if (!printWindow) {
-    alert('Please allow popups to export PDF');
+    alert("Please allow popups to export PDF");
     return;
   }
 
   printWindow.document.write(htmlContent);
   printWindow.document.close();
-  
+
   // Set window title
   printWindow.document.title = filename;
 }
@@ -619,44 +656,51 @@ function openPDFWindow(htmlContent: string, filename: string): void {
 /**
  * Generate Excel-style CSV export
  */
-export function exportToCSV(groups: GroupTicketPDFData[], filename: string): void {
+export function exportToCSV(
+  groups: GroupTicketPDFData[],
+  filename: string,
+): void {
   const headers = [
-    'Group Name',
-    'Package Type', 
-    'Departure Date',
-    'Return Date',
-    'Ticket Count',
-    'Total Cost (৳)',
-    'Average Cost (৳)',
-    'Agent Name',
-    'Agent Contact',
-    'Purchase Notes'
+    "Group Name",
+    "Package Type",
+    "Departure Date",
+    "Return Date",
+    "Ticket Count",
+    "Total Cost (৳)",
+    "Average Cost (৳)",
+    "Agent Name",
+    "Agent Contact",
+    "Purchase Notes",
   ];
 
   const csvContent = [
-    headers.join(','),
-    ...groups.map(group => [
-      `"${group.groupName}"`,
-      group.packageType === 'with-transport' ? 'With Transport' : 'Without Transport',
-      group.departureDate,
-      group.returnDate,
-      group.ticketCount,
-      group.totalCost,
-      group.averageCost,
-      `"${group.agentName}"`,
-      `"${group.agentContact || ''}"`,
-      `"${group.purchaseNotes || ''}"`
-    ].join(','))
-  ].join('\n');
+    headers.join(","),
+    ...groups.map((group) =>
+      [
+        `"${group.groupName}"`,
+        group.packageType === "with-transport"
+          ? "With Transport"
+          : "Without Transport",
+        group.departureDate,
+        group.returnDate,
+        group.ticketCount,
+        group.totalCost,
+        group.averageCost,
+        `"${group.agentName}"`,
+        `"${group.agentContact || ""}"`,
+        `"${group.purchaseNotes || ""}"`,
+      ].join(","),
+    ),
+  ].join("\n");
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+
   if (link.download !== undefined) {
     const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${filename}.csv`);
-    link.style.visibility = 'hidden';
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${filename}.csv`);
+    link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

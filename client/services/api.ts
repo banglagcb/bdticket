@@ -45,7 +45,7 @@ class APIClient {
     };
 
     try {
-      console.log(`API Request: ${options.method || 'GET'} ${url}`);
+      console.log(`API Request: ${options.method || "GET"} ${url}`);
 
       // Use stored original fetch to bypass third-party script interference
       const response = await originalFetch(url, config);
@@ -84,13 +84,17 @@ class APIClient {
           localStorage.removeItem("bd_ticket_pro_user");
         }
         // Better error message for validation errors
-        let errorMessage = result.message || `HTTP error! status: ${response.status}`;
+        let errorMessage =
+          result.message || `HTTP error! status: ${response.status}`;
 
         // If it's a validation error with specific field errors
         if (result.errors && Array.isArray(result.errors)) {
-          const fieldErrors = result.errors.map((err: any) =>
-            `${err.path?.join?.('.') || 'Field'}: ${err.message}`
-          ).join(', ');
+          const fieldErrors = result.errors
+            .map(
+              (err: any) =>
+                `${err.path?.join?.(".") || "Field"}: ${err.message}`,
+            )
+            .join(", ");
           errorMessage = `Validation error: ${fieldErrors}`;
         }
 
@@ -102,9 +106,16 @@ class APIClient {
       console.error(`API request failed: ${endpoint}`, error);
 
       // Check if it's a network error
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        console.error('Network error detected. Server may be down or unreachable.');
-        throw new Error('Unable to connect to server. Please check your connection and try again.');
+      if (
+        error instanceof TypeError &&
+        error.message.includes("Failed to fetch")
+      ) {
+        console.error(
+          "Network error detected. Server may be down or unreachable.",
+        );
+        throw new Error(
+          "Unable to connect to server. Please check your connection and try again.",
+        );
       }
 
       throw error;
@@ -305,11 +316,14 @@ class APIClient {
   }
 
   // Bookings methods
-  async getBookings(filters?: {
-    status?: string;
-    limit?: number;
-    offset?: number;
-  }, retryCount = 0): Promise<any[]> {
+  async getBookings(
+    filters?: {
+      status?: string;
+      limit?: number;
+      offset?: number;
+    },
+    retryCount = 0,
+  ): Promise<any[]> {
     try {
       const params = new URLSearchParams();
       if (filters) {
@@ -330,12 +344,17 @@ class APIClient {
       throw new Error(result.message || "Failed to get bookings");
     } catch (error) {
       // Retry up to 2 times for network errors
-      if (retryCount < 2 && error instanceof Error &&
-          (error.message.includes('Failed to fetch') ||
-           error.message.includes('Network error') ||
-           error.message.includes('Unable to connect'))) {
+      if (
+        retryCount < 2 &&
+        error instanceof Error &&
+        (error.message.includes("Failed to fetch") ||
+          error.message.includes("Network error") ||
+          error.message.includes("Unable to connect"))
+      ) {
         console.log(`Retrying getBookings (attempt ${retryCount + 1})`);
-        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1))); // Progressive delay
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * (retryCount + 1)),
+        ); // Progressive delay
         return this.getBookings(filters, retryCount + 1);
       }
       throw error;
@@ -532,7 +551,9 @@ class APIClient {
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error(result.message || "Failed to get umrah with transport packages");
+    throw new Error(
+      result.message || "Failed to get umrah with transport packages",
+    );
   }
 
   async getUmrahWithTransportById(id: string): Promise<any> {
@@ -541,7 +562,9 @@ class APIClient {
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error(result.message || "Failed to get umrah with transport package");
+    throw new Error(
+      result.message || "Failed to get umrah with transport package",
+    );
   }
 
   async createUmrahWithTransport(packageData: {
@@ -564,7 +587,9 @@ class APIClient {
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error(result.message || "Failed to create umrah with transport package");
+    throw new Error(
+      result.message || "Failed to create umrah with transport package",
+    );
   }
 
   async updateUmrahWithTransport(id: string, packageData: any): Promise<any> {
@@ -576,7 +601,9 @@ class APIClient {
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error(result.message || "Failed to update umrah with transport package");
+    throw new Error(
+      result.message || "Failed to update umrah with transport package",
+    );
   }
 
   async deleteUmrahWithTransport(id: string): Promise<void> {
@@ -585,23 +612,32 @@ class APIClient {
     });
 
     if (!result.success) {
-      throw new Error(result.message || "Failed to delete umrah with transport package");
+      throw new Error(
+        result.message || "Failed to delete umrah with transport package",
+      );
     }
   }
 
   // Umrah Without Transport methods
-  async getUmrahWithoutTransport(search?: string, pendingOnly?: boolean): Promise<any> {
+  async getUmrahWithoutTransport(
+    search?: string,
+    pendingOnly?: boolean,
+  ): Promise<any> {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     if (pendingOnly) params.append("pending_only", "true");
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
-    const result = await this.request<any>(`/umrah/without-transport${queryString}`);
+    const result = await this.request<any>(
+      `/umrah/without-transport${queryString}`,
+    );
 
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error(result.message || "Failed to get umrah without transport packages");
+    throw new Error(
+      result.message || "Failed to get umrah without transport packages",
+    );
   }
 
   async getUmrahWithoutTransportById(id: string): Promise<any> {
@@ -610,7 +646,9 @@ class APIClient {
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error(result.message || "Failed to get umrah without transport package");
+    throw new Error(
+      result.message || "Failed to get umrah without transport package",
+    );
   }
 
   async createUmrahWithoutTransport(packageData: {
@@ -632,10 +670,15 @@ class APIClient {
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error(result.message || "Failed to create umrah without transport package");
+    throw new Error(
+      result.message || "Failed to create umrah without transport package",
+    );
   }
 
-  async updateUmrahWithoutTransport(id: string, packageData: any): Promise<any> {
+  async updateUmrahWithoutTransport(
+    id: string,
+    packageData: any,
+  ): Promise<any> {
     const result = await this.request<any>(`/umrah/without-transport/${id}`, {
       method: "PUT",
       body: JSON.stringify(packageData),
@@ -644,17 +687,25 @@ class APIClient {
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error(result.message || "Failed to update umrah without transport package");
+    throw new Error(
+      result.message || "Failed to update umrah without transport package",
+    );
   }
 
-  async recordUmrahPayment(id: string, paymentData: {
-    amount: number;
-    payment_date?: string;
-  }): Promise<any> {
-    const result = await this.request<any>(`/umrah/without-transport/${id}/payment`, {
-      method: "POST",
-      body: JSON.stringify(paymentData),
-    });
+  async recordUmrahPayment(
+    id: string,
+    paymentData: {
+      amount: number;
+      payment_date?: string;
+    },
+  ): Promise<any> {
+    const result = await this.request<any>(
+      `/umrah/without-transport/${id}/payment`,
+      {
+        method: "POST",
+        body: JSON.stringify(paymentData),
+      },
+    );
 
     if (result.success && result.data) {
       return result.data;
@@ -668,7 +719,9 @@ class APIClient {
     });
 
     if (!result.success) {
-      throw new Error(result.message || "Failed to delete umrah without transport package");
+      throw new Error(
+        result.message || "Failed to delete umrah without transport package",
+      );
     }
   }
 
@@ -692,13 +745,18 @@ class APIClient {
   }
 
   // Umrah Group Ticket methods
-  async getUmrahGroupTickets(packageType?: string, search?: string): Promise<any> {
+  async getUmrahGroupTickets(
+    packageType?: string,
+    search?: string,
+  ): Promise<any> {
     const params = new URLSearchParams();
-    if (packageType) params.append('package_type', packageType);
-    if (search) params.append('search', search);
+    if (packageType) params.append("package_type", packageType);
+    if (search) params.append("search", search);
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
-    const result = await this.request<any>(`/umrah/group-tickets${queryString}`);
+    const result = await this.request<any>(
+      `/umrah/group-tickets${queryString}`,
+    );
 
     if (result.success && result.data) {
       return result.data;
@@ -707,7 +765,9 @@ class APIClient {
   }
 
   async getUmrahGroupTicketsByDates(packageType: string): Promise<any> {
-    const result = await this.request<any>(`/umrah/group-tickets/by-dates/${packageType}`);
+    const result = await this.request<any>(
+      `/umrah/group-tickets/by-dates/${packageType}`,
+    );
 
     if (result.success && result.data) {
       return result.data;
@@ -726,7 +786,7 @@ class APIClient {
 
   async createUmrahGroupTicket(ticketData: {
     group_name: string;
-    package_type: 'with-transport' | 'without-transport';
+    package_type: "with-transport" | "without-transport";
     departure_date: string;
     return_date: string;
     ticket_count: number;
@@ -771,7 +831,7 @@ class APIClient {
   async assignPassengerToGroup(assignmentData: {
     group_ticket_id: string;
     passenger_id: string;
-    passenger_type: 'with-transport' | 'without-transport';
+    passenger_type: "with-transport" | "without-transport";
   }): Promise<any> {
     const result = await this.request<any>("/umrah/group-bookings", {
       method: "POST",
@@ -785,12 +845,17 @@ class APIClient {
   }
 
   async removePassengerFromGroup(assignmentId: string): Promise<void> {
-    const result = await this.request<any>(`/umrah/group-bookings/${assignmentId}`, {
-      method: "DELETE",
-    });
+    const result = await this.request<any>(
+      `/umrah/group-bookings/${assignmentId}`,
+      {
+        method: "DELETE",
+      },
+    );
 
     if (!result.success) {
-      throw new Error(result.message || "Failed to remove passenger from group");
+      throw new Error(
+        result.message || "Failed to remove passenger from group",
+      );
     }
   }
 }

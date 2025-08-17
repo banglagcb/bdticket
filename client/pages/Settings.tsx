@@ -389,7 +389,11 @@ export default function Settings() {
       await loadAllData();
     } catch (error) {
       console.error("Error creating user:", error);
-      alert(error instanceof Error ? error.message : "Failed to create user. Please try again.");
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to create user. Please try again.",
+      );
     } finally {
       setSaving(false);
     }

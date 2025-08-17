@@ -77,7 +77,7 @@ import { apiClient } from "../services/api";
 interface UmrahGroupTicket {
   id?: string;
   group_name: string;
-  package_type: 'with-transport' | 'without-transport';
+  package_type: "with-transport" | "without-transport";
   departure_date: string;
   return_date: string;
   ticket_count: number;
@@ -101,11 +101,13 @@ interface DateGroupedTickets {
 
 export default function UmrahGroupTickets() {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'with-transport' | 'without-transport'>('with-transport');
+  const [activeTab, setActiveTab] = useState<
+    "with-transport" | "without-transport"
+  >("with-transport");
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   // Form state
   const [formData, setFormData] = useState<UmrahGroupTicket>({
     group_name: "",
@@ -121,9 +123,15 @@ export default function UmrahGroupTickets() {
   });
 
   // Data states
-  const [dateGroupedTickets, setDateGroupedTickets] = useState<DateGroupedTickets[]>([]);
-  const [allGroupTickets, setAllGroupTickets] = useState<UmrahGroupTicket[]>([]);
-  const [editingTicket, setEditingTicket] = useState<UmrahGroupTicket | null>(null);
+  const [dateGroupedTickets, setDateGroupedTickets] = useState<
+    DateGroupedTickets[]
+  >([]);
+  const [allGroupTickets, setAllGroupTickets] = useState<UmrahGroupTicket[]>(
+    [],
+  );
+  const [editingTicket, setEditingTicket] = useState<UmrahGroupTicket | null>(
+    null,
+  );
 
   // Load data
   useEffect(() => {
@@ -133,8 +141,13 @@ export default function UmrahGroupTickets() {
   // Auto-calculate average cost
   useEffect(() => {
     if (formData.ticket_count > 0 && formData.total_cost > 0) {
-      const averageCost = Math.round(formData.total_cost / formData.ticket_count);
-      setFormData(prev => ({ ...prev, average_cost_per_ticket: averageCost }));
+      const averageCost = Math.round(
+        formData.total_cost / formData.ticket_count,
+      );
+      setFormData((prev) => ({
+        ...prev,
+        average_cost_per_ticket: averageCost,
+      }));
     }
   }, [formData.ticket_count, formData.total_cost]);
 
@@ -143,9 +156,9 @@ export default function UmrahGroupTickets() {
       setLoading(true);
       const [groupedData, allTickets] = await Promise.all([
         apiClient.getUmrahGroupTicketsByDates(activeTab),
-        apiClient.getUmrahGroupTickets(activeTab, searchTerm)
+        apiClient.getUmrahGroupTickets(activeTab, searchTerm),
       ]);
-      
+
       setDateGroupedTickets(groupedData || []);
       setAllGroupTickets(allTickets || []);
     } catch (error) {
@@ -162,12 +175,12 @@ export default function UmrahGroupTickets() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     try {
       setLoading(true);
-      
+
       if (editingTicket) {
         await apiClient.updateUmrahGroupTicket(editingTicket.id!, formData);
         toast({
@@ -180,11 +193,11 @@ export default function UmrahGroupTickets() {
           package_type: activeTab,
         });
         toast({
-          title: "Success", 
+          title: "Success",
           description: "Group ticket created successfully",
         });
       }
-      
+
       resetForm();
       setIsFormDialogOpen(false);
       loadGroupTickets();
@@ -192,7 +205,10 @@ export default function UmrahGroupTickets() {
       console.error("Error saving group ticket:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save group ticket",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to save group ticket",
         variant: "destructive",
       });
     } finally {
@@ -202,27 +218,51 @@ export default function UmrahGroupTickets() {
 
   const validateForm = (): boolean => {
     if (!formData.group_name.trim()) {
-      toast({ title: "Error", description: "Group name is required", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Group name is required",
+        variant: "destructive",
+      });
       return false;
     }
     if (!formData.departure_date || !formData.return_date) {
-      toast({ title: "Error", description: "Both departure and return dates are required", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Both departure and return dates are required",
+        variant: "destructive",
+      });
       return false;
     }
     if (new Date(formData.return_date) <= new Date(formData.departure_date)) {
-      toast({ title: "Error", description: "Return date must be after departure date", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Return date must be after departure date",
+        variant: "destructive",
+      });
       return false;
     }
     if (formData.ticket_count <= 0) {
-      toast({ title: "Error", description: "Ticket count must be greater than 0", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Ticket count must be greater than 0",
+        variant: "destructive",
+      });
       return false;
     }
     if (formData.total_cost <= 0) {
-      toast({ title: "Error", description: "Total cost must be greater than 0", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Total cost must be greater than 0",
+        variant: "destructive",
+      });
       return false;
     }
     if (!formData.agent_name.trim()) {
-      toast({ title: "Error", description: "Agent name is required", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Agent name is required",
+        variant: "destructive",
+      });
       return false;
     }
     return true;
@@ -252,7 +292,7 @@ export default function UmrahGroupTickets() {
 
   const handleDelete = async (ticketId: string) => {
     if (!confirm("Are you sure you want to delete this group ticket?")) return;
-    
+
     try {
       await apiClient.deleteUmrahGroupTicket(ticketId);
       toast({
@@ -264,7 +304,10 @@ export default function UmrahGroupTickets() {
       console.error("Error deleting group ticket:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete group ticket",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete group ticket",
         variant: "destructive",
       });
     }
@@ -272,18 +315,20 @@ export default function UmrahGroupTickets() {
 
   const exportToPDF = async (groupId?: string) => {
     try {
-      const element = document.getElementById(groupId ? `group-${groupId}` : 'umrah-groups-container');
+      const element = document.getElementById(
+        groupId ? `group-${groupId}` : "umrah-groups-container",
+      );
       if (!element) return;
 
       // Create a simple PDF export (basic implementation)
-      const printWindow = window.open('', '_blank');
+      const printWindow = window.open("", "_blank");
       if (!printWindow) return;
 
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Umrah Group Tickets - ${activeTab === 'with-transport' ? 'With Transport' : 'Without Transport'}</title>
+          <title>Umrah Group Tickets - ${activeTab === "with-transport" ? "With Transport" : "Without Transport"}</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
             .header { text-align: center; margin-bottom: 30px; }
@@ -300,7 +345,7 @@ export default function UmrahGroupTickets() {
         <body>
           <div class="header">
             <h1>Umrah Group Tickets</h1>
-            <h2>${activeTab === 'with-transport' ? 'With Transport' : 'Without Transport'}</h2>
+            <h2>${activeTab === "with-transport" ? "With Transport" : "Without Transport"}</h2>
             <p>Generated on: ${new Date().toLocaleDateString()}</p>
           </div>
           ${element.innerHTML}
@@ -353,7 +398,7 @@ export default function UmrahGroupTickets() {
             </Button>
             <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
               <DialogTrigger asChild>
-                <Button 
+                <Button
                   onClick={resetForm}
                   className="velvet-button text-primary-foreground touch-target"
                 >
@@ -367,7 +412,11 @@ export default function UmrahGroupTickets() {
       </motion.div>
 
       {/* Package Type Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab as any} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab as any}
+        className="space-y-6"
+      >
         <TabsList className="responsive-grid w-full luxury-card border-0 p-1">
           <TabsTrigger
             value="with-transport"
@@ -396,7 +445,7 @@ export default function UmrahGroupTickets() {
               className="pl-10 font-body"
             />
           </div>
-          <Button 
+          <Button
             onClick={loadGroupTickets}
             variant="outline"
             disabled={loading}
@@ -432,12 +481,17 @@ export default function UmrahGroupTickets() {
                       <div>
                         <CardTitle className="font-heading velvet-text flex items-center gap-2">
                           <Calendar className="h-5 w-5" />
-                          {new Date(dateGroup.departure_date).toLocaleDateString()} 
+                          {new Date(
+                            dateGroup.departure_date,
+                          ).toLocaleDateString()}
                           <ArrowRight className="h-4 w-4" />
                           {new Date(dateGroup.return_date).toLocaleDateString()}
                         </CardTitle>
                         <CardDescription className="font-body">
-                          {activeTab === 'with-transport' ? 'Transport সহ' : 'Transport ছাড়া'} ওমরা প্যাকেজ
+                          {activeTab === "with-transport"
+                            ? "Transport সহ"
+                            : "Transport ছাড়া"}{" "}
+                          ওমরা প্যাকেজ
                         </CardDescription>
                       </div>
                       <Button
@@ -458,25 +512,36 @@ export default function UmrahGroupTickets() {
                         <div className="text-2xl font-heading font-bold text-blue-700">
                           {dateGroup.group_count}
                         </div>
-                        <p className="text-sm text-blue-600 font-body">Groups</p>
+                        <p className="text-sm text-blue-600 font-body">
+                          Groups
+                        </p>
                       </div>
                       <div className="text-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
                         <div className="text-2xl font-heading font-bold text-green-700">
                           {dateGroup.total_tickets}
                         </div>
-                        <p className="text-sm text-green-600 font-body">Total Tickets</p>
+                        <p className="text-sm text-green-600 font-body">
+                          Total Tickets
+                        </p>
                       </div>
                       <div className="text-center p-4 bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg border border-purple-200">
                         <div className="text-2xl font-heading font-bold text-purple-700">
                           ৳{dateGroup.total_cost.toLocaleString()}
                         </div>
-                        <p className="text-sm text-purple-600 font-body">Total Investment</p>
+                        <p className="text-sm text-purple-600 font-body">
+                          Total Investment
+                        </p>
                       </div>
                       <div className="text-center p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200">
                         <div className="text-2xl font-heading font-bold text-orange-700">
-                          ৳{Math.round(dateGroup.total_cost / dateGroup.total_tickets).toLocaleString()}
+                          ৳
+                          {Math.round(
+                            dateGroup.total_cost / dateGroup.total_tickets,
+                          ).toLocaleString()}
                         </div>
-                        <p className="text-sm text-orange-600 font-body">Avg. per Ticket</p>
+                        <p className="text-sm text-orange-600 font-body">
+                          Avg. per Ticket
+                        </p>
                       </div>
                     </div>
 
@@ -501,7 +566,9 @@ export default function UmrahGroupTickets() {
                               </TableCell>
                               <TableCell>
                                 <div>
-                                  <div className="font-medium">{group.agent_name}</div>
+                                  <div className="font-medium">
+                                    {group.agent_name}
+                                  </div>
                                   {group.agent_contact && (
                                     <div className="text-sm text-muted-foreground">
                                       {group.agent_contact}
@@ -520,7 +587,8 @@ export default function UmrahGroupTickets() {
                                 </span>
                               </TableCell>
                               <TableCell>
-                                ৳{group.average_cost_per_ticket.toLocaleString()}
+                                ৳
+                                {group.average_cost_per_ticket.toLocaleString()}
                               </TableCell>
                               <TableCell>
                                 <div className="flex items-center space-x-2">
@@ -562,9 +630,13 @@ export default function UmrahGroupTickets() {
                 No Group Tickets Found
               </h3>
               <p className="text-foreground/70 font-body mb-4">
-                Start by creating your first group ticket purchase for {activeTab === 'with-transport' ? 'transport সহ' : 'transport ছাড়া'} Umrah packages.
+                Start by creating your first group ticket purchase for{" "}
+                {activeTab === "with-transport"
+                  ? "transport সহ"
+                  : "transport ছাড়া"}{" "}
+                Umrah packages.
               </p>
-              <Button 
+              <Button
                 onClick={() => setIsFormDialogOpen(true)}
                 className="velvet-button text-primary-foreground"
               >
@@ -582,10 +654,15 @@ export default function UmrahGroupTickets() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
-              {editingTicket ? 'Edit Group Ticket' : 'New Group Ticket Purchase'}
+              {editingTicket
+                ? "Edit Group Ticket"
+                : "New Group Ticket Purchase"}
             </DialogTitle>
             <DialogDescription>
-              {activeTab === 'with-transport' ? 'Transport সহ' : 'Transport ছাড়া'} ওমরা গ্রুপের জন্য টিকেট ক্রয়
+              {activeTab === "with-transport"
+                ? "Transport সহ"
+                : "Transport ছাড়া"}{" "}
+              ওমরা গ্রুপের জন্য টিকেট ক্রয়
             </DialogDescription>
           </DialogHeader>
 
@@ -599,7 +676,12 @@ export default function UmrahGroupTickets() {
                   <Input
                     id="groupName"
                     value={formData.group_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, group_name: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        group_name: e.target.value,
+                      }))
+                    }
                     placeholder="e.g., Ramadan Group 2024"
                     required
                   />
@@ -609,7 +691,12 @@ export default function UmrahGroupTickets() {
                   <Input
                     id="agentName"
                     value={formData.agent_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, agent_name: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        agent_name: e.target.value,
+                      }))
+                    }
                     placeholder="Agent or agency name"
                     required
                   />
@@ -620,7 +707,12 @@ export default function UmrahGroupTickets() {
                     id="departureDate"
                     type="date"
                     value={formData.departure_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, departure_date: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        departure_date: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </div>
@@ -630,7 +722,12 @@ export default function UmrahGroupTickets() {
                     id="returnDate"
                     type="date"
                     value={formData.return_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, return_date: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        return_date: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </div>
@@ -648,7 +745,12 @@ export default function UmrahGroupTickets() {
                     type="number"
                     min="1"
                     value={formData.ticket_count}
-                    onChange={(e) => setFormData(prev => ({ ...prev, ticket_count: parseInt(e.target.value) || 0 }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        ticket_count: parseInt(e.target.value) || 0,
+                      }))
+                    }
                     placeholder="e.g., 20"
                     required
                   />
@@ -660,7 +762,12 @@ export default function UmrahGroupTickets() {
                     type="number"
                     min="0"
                     value={formData.total_cost}
-                    onChange={(e) => setFormData(prev => ({ ...prev, total_cost: parseFloat(e.target.value) || 0 }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        total_cost: parseFloat(e.target.value) || 0,
+                      }))
+                    }
                     placeholder="e.g., 500000"
                     required
                   />
@@ -687,7 +794,12 @@ export default function UmrahGroupTickets() {
                   <Input
                     id="agentContact"
                     value={formData.agent_contact}
-                    onChange={(e) => setFormData(prev => ({ ...prev, agent_contact: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        agent_contact: e.target.value,
+                      }))
+                    }
                     placeholder="Phone or email"
                   />
                 </div>
@@ -696,7 +808,12 @@ export default function UmrahGroupTickets() {
                   <Textarea
                     id="purchaseNotes"
                     value={formData.purchase_notes}
-                    onChange={(e) => setFormData(prev => ({ ...prev, purchase_notes: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        purchase_notes: e.target.value,
+                      }))
+                    }
                     placeholder="Additional notes about this purchase..."
                     rows={3}
                   />
@@ -717,7 +834,11 @@ export default function UmrahGroupTickets() {
                 disabled={loading}
                 className="velvet-button text-primary-foreground"
               >
-                {loading ? "Saving..." : editingTicket ? "Update Group" : "Create Group"}
+                {loading
+                  ? "Saving..."
+                  : editingTicket
+                    ? "Update Group"
+                    : "Create Group"}
               </Button>
             </div>
           </form>

@@ -401,7 +401,6 @@ export function seedDatabase() {
     console.log("   - Create real bookings through the booking system");
     console.log("   - Start managing real customer data");
 
-
     console.log("Database seeded successfully - ready for real ticket data");
   } catch (error) {
     console.error("Error seeding database:", error);
