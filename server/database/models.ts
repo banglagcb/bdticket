@@ -1080,3 +1080,218 @@ export class UmrahWithoutTransportRepository {
     };
   }
 }
+
+// Types for Umrah Group Tickets
+export interface UmrahGroupTicket {
+  id: string;
+  group_name: string;
+  package_type: 'with-transport' | 'without-transport';
+  departure_date: string;
+  return_date: string;
+  ticket_count: number;
+  total_cost: number;
+  average_cost_per_ticket: number;
+  agent_name: string;
+  agent_contact?: string;
+  purchase_notes?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UmrahGroupBooking {
+  id: string;
+  group_ticket_id: string;
+  passenger_id: string;
+  passenger_type: 'with-transport' | 'without-transport';
+  assigned_at: string;
+  assigned_by: string;
+}
+
+export class UmrahGroupTicketRepository {
+  static findAll(): UmrahGroupTicket[] {
+    return db
+      .prepare("SELECT * FROM umrah_group_tickets ORDER BY departure_date DESC, created_at DESC")
+      .all() as UmrahGroupTicket[];
+  }
+
+  static findById(id: string): UmrahGroupTicket | undefined {
+    return db
+      .prepare("SELECT * FROM umrah_group_tickets WHERE id = ?")
+      .get(id) as UmrahGroupTicket;
+  }
+
+  static findByPackageType(packageType: 'with-transport' | 'without-transport'): UmrahGroupTicket[] {
+    return db
+      .prepare("SELECT * FROM umrah_group_tickets WHERE package_type = ? ORDER BY departure_date DESC")
+      .all(packageType) as UmrahGroupTicket[];
+  }
+
+  static findByDateRange(startDate: string, endDate: string): UmrahGroupTicket[] {
+    return db
+      .prepare(`
+        SELECT * FROM umrah_group_tickets
+        WHERE departure_date BETWEEN ? AND ?
+        ORDER BY departure_date DESC
+      `)
+      .all(startDate, endDate) as UmrahGroupTicket[];
+  }
+
+  static create(
+    ticketData: Omit<UmrahGroupTicket, "id" | "created_at" | "updated_at">
+  ): UmrahGroupTicket {
+    const id = uuidv4();
+    const now = new Date().toISOString();
+
+    const stmt = db.prepare(`
+      INSERT INTO umrah_group_tickets (
+        id, group_name, package_type, departure_date, return_date,
+        ticket_count, total_cost, average_cost_per_ticket, agent_name,
+        agent_contact, purchase_notes, created_by, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      id,
+      ticketData.group_name,
+      ticketData.package_type,
+      ticketData.departure_date,
+      ticketData.return_date,
+      ticketData.ticket_count,
+      ticketData.total_cost,
+      ticketData.average_cost_per_ticket,
+      ticketData.agent_name,
+      ticketData.agent_contact || null,
+      ticketData.purchase_notes || null,
+      ticketData.created_by,
+      now,
+      now
+    );
+
+    return this.findById(id)!;
+  }
+
+  static update(
+    id: string,
+    updateData: Partial<Omit<UmrahGroupTicket, "id" | "created_at" | "updated_at">>
+  ): UmrahGroupTicket | undefined {
+    const now = new Date().toISOString();
+    const fields = Object.keys(updateData).map(key => `${key} = ?`).join(", ");
+    const values = Object.values(updateData);
+
+    const stmt = db.prepare(`
+      UPDATE umrah_group_tickets
+      SET ${fields}, updated_at = ?
+      WHERE id = ?
+    `);
+
+    stmt.run(...values, now, id);
+    return this.findById(id);
+  }
+
+  static delete(id: string): boolean {
+    const stmt = db.prepare("DELETE FROM umrah_group_tickets WHERE id = ?");
+    const result = stmt.run(id);
+    return result.changes > 0;
+  }
+
+  static getGroupsByDateRange(packageType: 'with-transport' | 'without-transport'): Array<{
+    departure_date: string;
+    return_date: string;
+    group_count: number;
+    total_tickets: number;
+    total_cost: number;
+    groups: UmrahGroupTicket[];
+  }> {
+    const groups = this.findByPackageType(packageType);
+
+    const groupedByDates = groups.reduce((acc, group) => {
+      const key = `${group.departure_date}_${group.return_date}`;
+      if (!acc[key]) {
+        acc[key] = {
+          departure_date: group.departure_date,
+          return_date: group.return_date,
+          group_count: 0,
+          total_tickets: 0,
+          total_cost: 0,
+          groups: []
+        };
+      }
+
+      acc[key].group_count++;
+      acc[key].total_tickets += group.ticket_count;
+      acc[key].total_cost += group.total_cost;
+      acc[key].groups.push(group);
+
+      return acc;
+    }, {} as Record<string, any>);
+
+    return Object.values(groupedByDates);
+  }
+
+  static search(searchTerm: string): UmrahGroupTicket[] {
+    return db
+      .prepare(`
+        SELECT * FROM umrah_group_tickets
+        WHERE group_name LIKE ? OR agent_name LIKE ?
+        ORDER BY departure_date DESC
+      `)
+      .all(`%${searchTerm}%`, `%${searchTerm}%`) as UmrahGroupTicket[];
+  }
+}
+
+export class UmrahGroupBookingRepository {
+  static findAll(): UmrahGroupBooking[] {
+    return db
+      .prepare("SELECT * FROM umrah_group_bookings ORDER BY assigned_at DESC")
+      .all() as UmrahGroupBooking[];
+  }
+
+  static findByGroupTicketId(groupTicketId: string): UmrahGroupBooking[] {
+    return db
+      .prepare("SELECT * FROM umrah_group_bookings WHERE group_ticket_id = ?")
+      .all(groupTicketId) as UmrahGroupBooking[];
+  }
+
+  static findByPassengerId(passengerId: string, passengerType: 'with-transport' | 'without-transport'): UmrahGroupBooking | undefined {
+    return db
+      .prepare("SELECT * FROM umrah_group_bookings WHERE passenger_id = ? AND passenger_type = ?")
+      .get(passengerId, passengerType) as UmrahGroupBooking;
+  }
+
+  static create(
+    bookingData: Omit<UmrahGroupBooking, "id" | "assigned_at">
+  ): UmrahGroupBooking {
+    const id = uuidv4();
+    const now = new Date().toISOString();
+
+    const stmt = db.prepare(`
+      INSERT INTO umrah_group_bookings (
+        id, group_ticket_id, passenger_id, passenger_type, assigned_at, assigned_by
+      ) VALUES (?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      id,
+      bookingData.group_ticket_id,
+      bookingData.passenger_id,
+      bookingData.passenger_type,
+      now,
+      bookingData.assigned_by
+    );
+
+    return { ...bookingData, id, assigned_at: now };
+  }
+
+  static delete(id: string): boolean {
+    const stmt = db.prepare("DELETE FROM umrah_group_bookings WHERE id = ?");
+    const result = stmt.run(id);
+    return result.changes > 0;
+  }
+
+  static deleteByPassenger(passengerId: string, passengerType: 'with-transport' | 'without-transport'): boolean {
+    const stmt = db.prepare("DELETE FROM umrah_group_bookings WHERE passenger_id = ? AND passenger_type = ?");
+    const result = stmt.run(passengerId, passengerType);
+    return result.changes > 0;
+  }
+}
