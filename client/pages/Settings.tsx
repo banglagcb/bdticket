@@ -1003,6 +1003,8 @@ export default function Settings() {
                                 }))
                               }
                               className="font-body"
+                              placeholder="Confirm your password"
+                              required
                             />
                           </div>
                           <div className="flex justify-end space-x-2">
