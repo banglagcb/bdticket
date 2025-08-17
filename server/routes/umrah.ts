@@ -1,10 +1,14 @@
 import { Router } from "express";
-import { 
-  UmrahWithTransportRepository, 
+import {
+  UmrahWithTransportRepository,
   UmrahWithoutTransportRepository,
+  UmrahGroupTicketRepository,
+  UmrahGroupBookingRepository,
   ActivityLogRepository,
   type UmrahWithTransport,
-  type UmrahWithoutTransport 
+  type UmrahWithoutTransport,
+  type UmrahGroupTicket,
+  type UmrahGroupBooking
 } from "../database/models";
 import { authenticate, requirePermission } from "../middleware/auth";
 import { z } from "zod";
