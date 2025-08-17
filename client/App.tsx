@@ -7,6 +7,19 @@ if (import.meta.hot) {
   });
 }
 
+// Suppress ResizeObserver loop warnings (common and harmless)
+const originalError = console.error;
+console.error = (...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    args[0].includes('ResizeObserver loop completed with undelivered notifications')
+  ) {
+    // Suppress this specific harmless error
+    return;
+  }
+  originalError.apply(console, args);
+};
+
 import { Toaster } from "./components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "./components/ui/sonner";
