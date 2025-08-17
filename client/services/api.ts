@@ -83,9 +83,18 @@ class APIClient {
           localStorage.removeItem("bd_ticket_pro_token");
           localStorage.removeItem("bd_ticket_pro_user");
         }
-        throw new Error(
-          result.message || `HTTP error! status: ${response.status}`,
-        );
+        // Better error message for validation errors
+        let errorMessage = result.message || `HTTP error! status: ${response.status}`;
+
+        // If it's a validation error with specific field errors
+        if (result.errors && Array.isArray(result.errors)) {
+          const fieldErrors = result.errors.map((err: any) =>
+            `${err.path?.join?.('.') || 'Field'}: ${err.message}`
+          ).join(', ');
+          errorMessage = `Validation error: ${fieldErrors}`;
+        }
+
+        throw new Error(errorMessage);
       }
 
       return result;
