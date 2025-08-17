@@ -68,6 +68,15 @@ const umrahGroupTicketSchema = z.object({
   agent_name: z.string().min(1, "Agent name is required"),
   agent_contact: z.string().optional(),
   purchase_notes: z.string().optional(),
+  // Flight Details
+  departure_airline: z.string().optional(),
+  departure_flight_number: z.string().optional(),
+  departure_time: z.string().optional(),
+  departure_route: z.string().optional(),
+  return_airline: z.string().optional(),
+  return_flight_number: z.string().optional(),
+  return_time: z.string().optional(),
+  return_route: z.string().optional(),
 });
 
 const groupBookingSchema = z.object({
