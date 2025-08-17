@@ -46,6 +46,24 @@ const paymentUpdateSchema = z.object({
   payment_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format").optional(),
 });
 
+const umrahGroupTicketSchema = z.object({
+  group_name: z.string().min(1, "Group name is required"),
+  package_type: z.enum(["with-transport", "without-transport"]),
+  departure_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
+  return_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
+  ticket_count: z.number().positive("Ticket count must be positive"),
+  total_cost: z.number().min(0, "Total cost cannot be negative"),
+  agent_name: z.string().min(1, "Agent name is required"),
+  agent_contact: z.string().optional(),
+  purchase_notes: z.string().optional(),
+});
+
+const groupBookingSchema = z.object({
+  group_ticket_id: z.string().min(1, "Group ticket ID is required"),
+  passenger_id: z.string().min(1, "Passenger ID is required"),
+  passenger_type: z.enum(["with-transport", "without-transport"]),
+});
+
 // Umrah With Transport routes
 router.get("/with-transport", authenticate, (req, res) => {
   try {
