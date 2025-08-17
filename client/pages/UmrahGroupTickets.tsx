@@ -131,6 +131,15 @@ export default function UmrahGroupTickets() {
     agent_name: "",
     agent_contact: "",
     purchase_notes: "",
+    // Flight Details
+    departure_airline: "",
+    departure_flight_number: "",
+    departure_time: "",
+    departure_route: "",
+    return_airline: "",
+    return_flight_number: "",
+    return_time: "",
+    return_route: "",
   });
 
   // Data states
