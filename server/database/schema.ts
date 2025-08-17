@@ -242,6 +242,11 @@ export function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_umrah_without_transport_passport ON umrah_without_transport(passport_number);
     CREATE INDEX IF NOT EXISTS idx_umrah_without_transport_departure ON umrah_without_transport(flight_departure_date);
     CREATE INDEX IF NOT EXISTS idx_umrah_without_transport_remaining ON umrah_without_transport(remaining_amount);
+    CREATE INDEX IF NOT EXISTS idx_umrah_group_tickets_package_type ON umrah_group_tickets(package_type);
+    CREATE INDEX IF NOT EXISTS idx_umrah_group_tickets_departure ON umrah_group_tickets(departure_date);
+    CREATE INDEX IF NOT EXISTS idx_umrah_group_tickets_group_name ON umrah_group_tickets(group_name);
+    CREATE INDEX IF NOT EXISTS idx_umrah_group_bookings_group_ticket ON umrah_group_bookings(group_ticket_id);
+    CREATE INDEX IF NOT EXISTS idx_umrah_group_bookings_passenger ON umrah_group_bookings(passenger_id, passenger_type);
   `);
 
   console.log("Database schema initialized successfully");
