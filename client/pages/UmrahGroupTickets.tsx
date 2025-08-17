@@ -793,7 +793,7 @@ export default function UmrahGroupTickets() {
                   <Label htmlFor="agentContact">Agent Contact</Label>
                   <Input
                     id="agentContact"
-                    value={formData.agent_contact}
+                    value={formData.agent_contact || ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
