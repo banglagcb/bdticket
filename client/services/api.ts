@@ -690,6 +690,109 @@ class APIClient {
     }
     throw new Error(result.message || "Failed to get umrah statistics");
   }
+
+  // Umrah Group Ticket methods
+  async getUmrahGroupTickets(packageType?: string, search?: string): Promise<any> {
+    const params = new URLSearchParams();
+    if (packageType) params.append('package_type', packageType);
+    if (search) params.append('search', search);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const result = await this.request<any>(`/umrah/group-tickets${queryString}`);
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get group tickets");
+  }
+
+  async getUmrahGroupTicketsByDates(packageType: string): Promise<any> {
+    const result = await this.request<any>(`/umrah/group-tickets/by-dates/${packageType}`);
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get grouped tickets by dates");
+  }
+
+  async getUmrahGroupTicketById(id: string): Promise<any> {
+    const result = await this.request<any>(`/umrah/group-tickets/${id}`);
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get group ticket");
+  }
+
+  async createUmrahGroupTicket(ticketData: {
+    group_name: string;
+    package_type: 'with-transport' | 'without-transport';
+    departure_date: string;
+    return_date: string;
+    ticket_count: number;
+    total_cost: number;
+    agent_name: string;
+    agent_contact?: string;
+    purchase_notes?: string;
+  }): Promise<any> {
+    const result = await this.request<any>("/umrah/group-tickets", {
+      method: "POST",
+      body: JSON.stringify(ticketData),
+    });
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to create group ticket");
+  }
+
+  async updateUmrahGroupTicket(id: string, ticketData: any): Promise<any> {
+    const result = await this.request<any>(`/umrah/group-tickets/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(ticketData),
+    });
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to update group ticket");
+  }
+
+  async deleteUmrahGroupTicket(id: string): Promise<void> {
+    const result = await this.request<any>(`/umrah/group-tickets/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to delete group ticket");
+    }
+  }
+
+  async assignPassengerToGroup(assignmentData: {
+    group_ticket_id: string;
+    passenger_id: string;
+    passenger_type: 'with-transport' | 'without-transport';
+  }): Promise<any> {
+    const result = await this.request<any>("/umrah/group-bookings", {
+      method: "POST",
+      body: JSON.stringify(assignmentData),
+    });
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to assign passenger to group");
+  }
+
+  async removePassengerFromGroup(assignmentId: string): Promise<void> {
+    const result = await this.request<any>(`/umrah/group-bookings/${assignmentId}`, {
+      method: "DELETE",
+    });
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to remove passenger from group");
+    }
+  }
 }
 
 // Create and export API client instance
