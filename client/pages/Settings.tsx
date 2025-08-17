@@ -990,7 +990,7 @@ export default function Settings() {
                               htmlFor="newUserConfirmPassword"
                               className="font-body"
                             >
-                              Confirm Password
+                              Confirm Password *
                             </Label>
                             <Input
                               id="newUserConfirmPassword"
