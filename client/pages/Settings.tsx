@@ -361,26 +361,36 @@ export default function Settings() {
       return;
     }
 
-    await apiClient.createUser({
-      username: newUser.username,
-      name: newUser.name,
-      email: newUser.email,
-      phone: newUser.phone,
-      role: newUser.role,
-      password: newUser.password,
-    });
+    try {
+      await apiClient.createUser({
+        username: newUser.username,
+        name: newUser.name,
+        email: newUser.email || undefined, // Convert empty string to undefined
+        phone: newUser.phone || undefined, // Convert empty string to undefined
+        role: newUser.role,
+        password: newUser.password,
+      });
 
-    setNewUser({
-      username: "",
-      name: "",
-      email: "",
-      phone: "",
-      role: "staff",
-      password: "",
-      confirmPassword: "",
-    });
+      // Success - reset form and close dialog
+      setNewUser({
+        username: "",
+        name: "",
+        email: "",
+        phone: "",
+        role: "staff",
+        password: "",
+        confirmPassword: "",
+      });
 
-    setShowAddUser(false);
+      setShowAddUser(false);
+      alert("User created successfully!");
+
+      // Reload users list
+      await loadAllData();
+    } catch (error) {
+      console.error("Error creating user:", error);
+      alert(error instanceof Error ? error.message : "Failed to create user. Please try again.");
+    }
     await loadUsers();
     alert("User created successfully!");
     setSaving(false);
