@@ -845,8 +845,26 @@ export default function Settings() {
                         </DialogHeader>
                         <div className="space-y-4">
                           <div className="space-y-2">
+                            <Label htmlFor="newUsername" className="font-body">
+                              Username *
+                            </Label>
+                            <Input
+                              id="newUsername"
+                              value={newUser.username}
+                              onChange={(e) =>
+                                setNewUser((prev) => ({
+                                  ...prev,
+                                  username: e.target.value,
+                                }))
+                              }
+                              className="font-body"
+                              placeholder="Enter username (min 3 characters)"
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
                             <Label htmlFor="newUserName" className="font-body">
-                              Full Name
+                              Full Name *
                             </Label>
                             <Input
                               id="newUserName"
