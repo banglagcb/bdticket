@@ -807,7 +807,7 @@ export default function UmrahGroupTickets() {
                   <Label htmlFor="purchaseNotes">Purchase Notes</Label>
                   <Textarea
                     id="purchaseNotes"
-                    value={formData.purchase_notes}
+                    value={formData.purchase_notes || ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
