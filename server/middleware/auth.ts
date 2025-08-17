@@ -113,6 +113,7 @@ export const PERMISSIONS = {
     "confirm_sales",
     "delete_bookings",
     "system_settings",
+    "manage_umrah",
   ],
   manager: [
     "view_tickets",
@@ -120,6 +121,7 @@ export const PERMISSIONS = {
     "confirm_bookings",
     "confirm_sales",
     "view_all_bookings",
+    "manage_umrah",
   ],
   staff: ["view_tickets", "create_bookings", "partial_payments"],
 };
