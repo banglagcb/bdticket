@@ -214,6 +214,7 @@ export default function Settings() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [newUser, setNewUser] = useState({
+    username: "",
     name: "",
     email: "",
     phone: "",
