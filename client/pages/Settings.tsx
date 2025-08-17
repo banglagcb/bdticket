@@ -390,6 +390,8 @@ export default function Settings() {
     } catch (error) {
       console.error("Error creating user:", error);
       alert(error instanceof Error ? error.message : "Failed to create user. Please try again.");
+    } finally {
+      setSaving(false);
     }
     await loadUsers();
     alert("User created successfully!");
