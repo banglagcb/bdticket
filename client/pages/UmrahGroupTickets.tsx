@@ -86,6 +86,17 @@ interface UmrahGroupTicket {
   agent_name: string;
   agent_contact?: string;
   purchase_notes?: string;
+  // Flight Details
+  departure_airline?: string;
+  departure_flight_number?: string;
+  departure_time?: string;
+  departure_route?: string;
+  return_airline?: string;
+  return_flight_number?: string;
+  return_time?: string;
+  return_route?: string;
+  // System fields
+  remaining_tickets?: number;
   created_at?: string;
   updated_at?: string;
 }
