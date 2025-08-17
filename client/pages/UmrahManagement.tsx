@@ -1268,6 +1268,10 @@ export default function UmrahManagement() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="group-tickets">
+            <UmrahGroupTickets />
+          </TabsContent>
         </Tabs>
       </motion.div>
 
