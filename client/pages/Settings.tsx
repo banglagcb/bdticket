@@ -906,6 +906,8 @@ export default function Settings() {
                                 }))
                               }
                               className="font-body"
+                              placeholder="Enter full name"
+                              required
                             />
                           </div>
                           <div className="space-y-2">
