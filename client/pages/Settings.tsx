@@ -335,6 +335,26 @@ export default function Settings() {
 
   const handleAddUser = async () => {
     setSaving(true);
+
+    // Validate required fields
+    if (!newUser.username || newUser.username.length < 3) {
+      alert("Username is required and must be at least 3 characters!");
+      setSaving(false);
+      return;
+    }
+
+    if (!newUser.name || newUser.name.trim().length === 0) {
+      alert("Full name is required!");
+      setSaving(false);
+      return;
+    }
+
+    if (!newUser.password || newUser.password.length < 6) {
+      alert("Password is required and must be at least 6 characters!");
+      setSaving(false);
+      return;
+    }
+
     if (newUser.password !== newUser.confirmPassword) {
       alert("Passwords do not match!");
       setSaving(false);
