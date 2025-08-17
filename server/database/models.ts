@@ -1199,8 +1199,10 @@ export class UmrahGroupTicketRepository {
       INSERT INTO umrah_group_tickets (
         id, group_name, package_type, departure_date, return_date,
         ticket_count, total_cost, average_cost_per_ticket, agent_name,
-        agent_contact, purchase_notes, created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        agent_contact, purchase_notes, departure_airline, departure_flight_number,
+        departure_time, departure_route, return_airline, return_flight_number,
+        return_time, return_route, remaining_tickets, created_by, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -1215,6 +1217,15 @@ export class UmrahGroupTicketRepository {
       ticketData.agent_name,
       ticketData.agent_contact || null,
       ticketData.purchase_notes || null,
+      ticketData.departure_airline || null,
+      ticketData.departure_flight_number || null,
+      ticketData.departure_time || null,
+      ticketData.departure_route || null,
+      ticketData.return_airline || null,
+      ticketData.return_flight_number || null,
+      ticketData.return_time || null,
+      ticketData.return_route || null,
+      ticketData.ticket_count, // Initially, remaining_tickets = ticket_count
       ticketData.created_by,
       now,
       now,
