@@ -351,6 +351,7 @@ export default function Settings() {
     });
 
     setNewUser({
+      username: "",
       name: "",
       email: "",
       phone: "",
