@@ -109,7 +109,7 @@ interface UmrahWithoutTransport {
   updatedAt?: string;
 }
 
-type PackageType = "with-transport" | "without-transport";
+type PackageType = "with-transport" | "without-transport" | "group-tickets";
 
 export default function UmrahManagement() {
   const { toast } = useToast();
