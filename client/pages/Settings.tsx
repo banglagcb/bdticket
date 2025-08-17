@@ -968,7 +968,7 @@ export default function Settings() {
                               htmlFor="newUserPassword"
                               className="font-body"
                             >
-                              Password
+                              Password *
                             </Label>
                             <Input
                               id="newUserPassword"
@@ -981,6 +981,8 @@ export default function Settings() {
                                 }))
                               }
                               className="font-body"
+                              placeholder="Enter password (min 6 characters)"
+                              required
                             />
                           </div>
                           <div className="space-y-2">
