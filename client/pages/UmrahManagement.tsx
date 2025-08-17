@@ -74,6 +74,7 @@ import { Badge } from "../components/ui/badge";
 import { useToast } from "../hooks/use-toast";
 import { apiClient } from "../services/api";
 import { validateBangladeshiPhone, validateEmailAddress } from "../lib/validation";
+import UmrahGroupTickets from "./UmrahGroupTickets";
 
 // Types for Umrah packages
 interface UmrahWithTransport {
