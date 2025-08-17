@@ -1041,6 +1041,16 @@ export default function UmrahManagement() {
                       </div>
                     </form>
                   </TabsContent>
+
+                  <TabsContent value="group-tickets">
+                    <div className="text-center py-8">
+                      <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-heading font-bold mb-2">Group Ticket Management</h3>
+                      <p className="text-muted-foreground font-body mb-4">
+                        গ্রুপ টিকেট ম্যানেজমেন্ট নিচের মেইন সেকশনে পাবেন।
+                      </p>
+                    </div>
+                  </TabsContent>
                 </Tabs>
               </DialogContent>
             </Dialog>
