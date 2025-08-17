@@ -1080,7 +1080,7 @@ export default function UmrahManagement() {
         transition={{ delay: 0.4, duration: 0.5 }}
       >
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as PackageType)}>
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="with-transport" className="font-body">
               <Plane className="h-4 w-4 mr-2" />
               With Transport ({filteredWithTransportRecords.length})
@@ -1088,6 +1088,10 @@ export default function UmrahManagement() {
             <TabsTrigger value="without-transport" className="font-body">
               <Users className="h-4 w-4 mr-2" />
               Without Transport ({filteredWithoutTransportRecords.length})
+            </TabsTrigger>
+            <TabsTrigger value="group-tickets" className="font-body">
+              <Package className="h-4 w-4 mr-2" />
+              Group Tickets
             </TabsTrigger>
           </TabsList>
 
