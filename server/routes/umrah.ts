@@ -628,4 +628,381 @@ router.get("/stats", authenticate, (req, res) => {
   }
 });
 
+// Umrah Group Ticket Management Routes
+
+// Get all group tickets
+router.get("/group-tickets", authenticate, (req, res) => {
+  try {
+    const { package_type, search } = req.query;
+    let groupTickets: UmrahGroupTicket[];
+
+    if (search && typeof search === "string") {
+      groupTickets = UmrahGroupTicketRepository.search(search);
+    } else if (package_type && (package_type === "with-transport" || package_type === "without-transport")) {
+      groupTickets = UmrahGroupTicketRepository.findByPackageType(package_type);
+    } else {
+      groupTickets = UmrahGroupTicketRepository.findAll();
+    }
+
+    res.json({
+      success: true,
+      data: groupTickets,
+    });
+  } catch (error) {
+    console.error("Error fetching group tickets:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch group tickets",
+    });
+  }
+});
+
+// Get group tickets grouped by date ranges
+router.get("/group-tickets/by-dates/:packageType", authenticate, (req, res) => {
+  try {
+    const { packageType } = req.params;
+
+    if (packageType !== "with-transport" && packageType !== "without-transport") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid package type",
+      });
+    }
+
+    const groupedTickets = UmrahGroupTicketRepository.getGroupsByDateRange(packageType);
+
+    res.json({
+      success: true,
+      data: groupedTickets,
+    });
+  } catch (error) {
+    console.error("Error fetching grouped tickets:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch grouped tickets",
+    });
+  }
+});
+
+// Get single group ticket
+router.get("/group-tickets/:id", authenticate, (req, res) => {
+  try {
+    const { id } = req.params;
+    const groupTicket = UmrahGroupTicketRepository.findById(id);
+
+    if (!groupTicket) {
+      return res.status(404).json({
+        success: false,
+        message: "Group ticket not found",
+      });
+    }
+
+    // Get assigned passengers
+    const assignments = UmrahGroupBookingRepository.findByGroupTicketId(id);
+
+    res.json({
+      success: true,
+      data: {
+        groupTicket,
+        assignments,
+        assignedCount: assignments.length,
+        remainingTickets: groupTicket.ticket_count - assignments.length,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching group ticket:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch group ticket",
+    });
+  }
+});
+
+// Create new group ticket purchase
+router.post("/group-tickets", authenticate, requirePermission("manage_umrah"), (req, res) => {
+  try {
+    const validatedData = umrahGroupTicketSchema.parse(req.body);
+
+    // Validate dates
+    const departureDate = new Date(validatedData.departure_date);
+    const returnDate = new Date(validatedData.return_date);
+
+    if (returnDate <= departureDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Return date must be after departure date",
+      });
+    }
+
+    // Calculate average cost per ticket
+    const averageCostPerTicket = validatedData.total_cost / validatedData.ticket_count;
+
+    const groupTicket = UmrahGroupTicketRepository.create({
+      ...validatedData,
+      average_cost_per_ticket: Math.round(averageCostPerTicket),
+      created_by: req.user!.id,
+    });
+
+    // Log activity
+    ActivityLogRepository.create({
+      user_id: req.user!.id,
+      action: "CREATE",
+      entity_type: "umrah_group_ticket",
+      entity_id: groupTicket.id,
+      details: JSON.stringify({
+        group_name: validatedData.group_name,
+        package_type: validatedData.package_type,
+        ticket_count: validatedData.ticket_count,
+        total_cost: validatedData.total_cost,
+      }),
+      ip_address: req.ip,
+      user_agent: req.get("User-Agent"),
+    });
+
+    res.status(201).json({
+      success: true,
+      data: groupTicket,
+      message: "Group ticket purchase created successfully",
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation error",
+        errors: error.errors,
+      });
+    }
+
+    console.error("Error creating group ticket:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create group ticket",
+    });
+  }
+});
+
+// Update group ticket
+router.put("/group-tickets/:id", authenticate, requirePermission("manage_umrah"), (req, res) => {
+  try {
+    const { id } = req.params;
+    const validatedData = umrahGroupTicketSchema.partial().parse(req.body);
+
+    const existingTicket = UmrahGroupTicketRepository.findById(id);
+    if (!existingTicket) {
+      return res.status(404).json({
+        success: false,
+        message: "Group ticket not found",
+      });
+    }
+
+    // Recalculate average if ticket count or total cost changed
+    if (validatedData.ticket_count || validatedData.total_cost) {
+      const ticketCount = validatedData.ticket_count || existingTicket.ticket_count;
+      const totalCost = validatedData.total_cost || existingTicket.total_cost;
+      validatedData.average_cost_per_ticket = Math.round(totalCost / ticketCount);
+    }
+
+    const updatedTicket = UmrahGroupTicketRepository.update(id, validatedData);
+
+    // Log activity
+    ActivityLogRepository.create({
+      user_id: req.user!.id,
+      action: "UPDATE",
+      entity_type: "umrah_group_ticket",
+      entity_id: id,
+      details: JSON.stringify(validatedData),
+      ip_address: req.ip,
+      user_agent: req.get("User-Agent"),
+    });
+
+    res.json({
+      success: true,
+      data: updatedTicket,
+      message: "Group ticket updated successfully",
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation error",
+        errors: error.errors,
+      });
+    }
+
+    console.error("Error updating group ticket:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update group ticket",
+    });
+  }
+});
+
+// Delete group ticket
+router.delete("/group-tickets/:id", authenticate, requirePermission("manage_umrah"), (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if there are any assignments
+    const assignments = UmrahGroupBookingRepository.findByGroupTicketId(id);
+    if (assignments.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete group ticket with assigned passengers",
+      });
+    }
+
+    const deleted = UmrahGroupTicketRepository.delete(id);
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Group ticket not found",
+      });
+    }
+
+    // Log activity
+    ActivityLogRepository.create({
+      user_id: req.user!.id,
+      action: "DELETE",
+      entity_type: "umrah_group_ticket",
+      entity_id: id,
+      details: JSON.stringify({ deleted: true }),
+      ip_address: req.ip,
+      user_agent: req.get("User-Agent"),
+    });
+
+    res.json({
+      success: true,
+      message: "Group ticket deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting group ticket:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete group ticket",
+    });
+  }
+});
+
+// Assign passenger to group ticket
+router.post("/group-bookings", authenticate, requirePermission("manage_umrah"), (req, res) => {
+  try {
+    const validatedData = groupBookingSchema.parse(req.body);
+
+    // Check if group ticket exists and has available slots
+    const groupTicket = UmrahGroupTicketRepository.findById(validatedData.group_ticket_id);
+    if (!groupTicket) {
+      return res.status(404).json({
+        success: false,
+        message: "Group ticket not found",
+      });
+    }
+
+    // Check if passenger is already assigned to a group
+    const existingAssignment = UmrahGroupBookingRepository.findByPassengerId(
+      validatedData.passenger_id,
+      validatedData.passenger_type
+    );
+    if (existingAssignment) {
+      return res.status(400).json({
+        success: false,
+        message: "Passenger is already assigned to a group",
+      });
+    }
+
+    // Check available slots
+    const currentAssignments = UmrahGroupBookingRepository.findByGroupTicketId(validatedData.group_ticket_id);
+    if (currentAssignments.length >= groupTicket.ticket_count) {
+      return res.status(400).json({
+        success: false,
+        message: "No available slots in this group",
+      });
+    }
+
+    // Verify passenger type matches group ticket type
+    if (validatedData.passenger_type !== groupTicket.package_type) {
+      return res.status(400).json({
+        success: false,
+        message: "Passenger type must match group ticket package type",
+      });
+    }
+
+    const assignment = UmrahGroupBookingRepository.create({
+      ...validatedData,
+      assigned_by: req.user!.id,
+    });
+
+    // Log activity
+    ActivityLogRepository.create({
+      user_id: req.user!.id,
+      action: "CREATE",
+      entity_type: "umrah_group_booking",
+      entity_id: assignment.id,
+      details: JSON.stringify({
+        group_ticket_id: validatedData.group_ticket_id,
+        passenger_id: validatedData.passenger_id,
+        passenger_type: validatedData.passenger_type,
+      }),
+      ip_address: req.ip,
+      user_agent: req.get("User-Agent"),
+    });
+
+    res.status(201).json({
+      success: true,
+      data: assignment,
+      message: "Passenger assigned to group successfully",
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation error",
+        errors: error.errors,
+      });
+    }
+
+    console.error("Error creating group booking:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to assign passenger to group",
+    });
+  }
+});
+
+// Remove passenger from group
+router.delete("/group-bookings/:id", authenticate, requirePermission("manage_umrah"), (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = UmrahGroupBookingRepository.delete(id);
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Group booking not found",
+      });
+    }
+
+    // Log activity
+    ActivityLogRepository.create({
+      user_id: req.user!.id,
+      action: "DELETE",
+      entity_type: "umrah_group_booking",
+      entity_id: id,
+      details: JSON.stringify({ deleted: true }),
+      ip_address: req.ip,
+      user_agent: req.get("User-Agent"),
+    });
+
+    res.json({
+      success: true,
+      message: "Passenger removed from group successfully",
+    });
+  } catch (error) {
+    console.error("Error removing group booking:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to remove passenger from group",
+    });
+  }
+});
+
 export default router;
