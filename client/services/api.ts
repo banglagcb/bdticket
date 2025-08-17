@@ -840,4 +840,12 @@ export const {
   deleteUmrahWithoutTransport,
   getUmrahPaymentSummary,
   getUmrahStats,
+  getUmrahGroupTickets,
+  getUmrahGroupTicketsByDates,
+  getUmrahGroupTicketById,
+  createUmrahGroupTicket,
+  updateUmrahGroupTicket,
+  deleteUmrahGroupTicket,
+  assignPassengerToGroup,
+  removePassengerFromGroup,
 } = apiClient;
