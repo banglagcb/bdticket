@@ -342,6 +342,7 @@ export default function Settings() {
     }
 
     await apiClient.createUser({
+      username: newUser.username,
       name: newUser.name,
       email: newUser.email,
       phone: newUser.phone,
