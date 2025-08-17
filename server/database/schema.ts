@@ -205,6 +205,17 @@ export function initializeDatabase() {
       agent_name TEXT NOT NULL,
       agent_contact TEXT,
       purchase_notes TEXT,
+      -- Flight Details
+      departure_airline TEXT,
+      departure_flight_number TEXT,
+      departure_time TEXT,
+      departure_route TEXT,
+      return_airline TEXT,
+      return_flight_number TEXT,
+      return_time TEXT,
+      return_route TEXT,
+      -- System fields
+      remaining_tickets INTEGER NOT NULL DEFAULT 0, -- Calculated field for available tickets
       created_by TEXT NOT NULL,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -272,7 +283,7 @@ export function seedDatabase() {
     const countries = [
       ["KSA", "Saudi Arabia", "🇸🇦"],
       ["UAE", "United Arab Emirates", "🇦🇪"],
-      ["QAT", "Qatar", "🇶🇦"],
+      ["QAT", "Qatar", "🇶���"],
       ["KWT", "Kuwait", "🇰🇼"],
       ["OMN", "Oman", "🇴🇲"],
       ["BHR", "Bahrain", "🇧🇭"],
