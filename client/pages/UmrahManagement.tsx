@@ -1863,7 +1863,7 @@ export default function UmrahManagement() {
                           <SelectValue placeholder="All Status" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Status</SelectItem>
+                          <SelectItem value="all">All Status</SelectItem>
                           <SelectItem value="paid">Fully Paid</SelectItem>
                           <SelectItem value="pending">Pending Payment</SelectItem>
                         </SelectContent>
