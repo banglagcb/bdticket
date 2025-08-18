@@ -325,20 +325,35 @@ export default function UmrahGroupTickets() {
     try {
       await apiClient.deleteUmrahGroupTicket(ticketId);
       toast({
-        title: "Success",
-        description: "Group ticket deleted successfully",
+        title: "সফল হয়েছে",
+        description: "গ্রুপ টিকেট সফলভাবে ডিলিট করা হয়েছে",
       });
       loadGroupTickets();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting group ticket:", error);
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to delete group ticket",
-        variant: "destructive",
-      });
+
+      // Check if error has passenger details
+      if (error.details && error.details.passengers) {
+        const passengerList = error.details.passengers
+          .map((p: any) => `• ${p.name} (${p.type === 'with-transport' ? 'PNR: ' + p.pnr : 'Passport: ' + p.passport})`)
+          .join('\n');
+
+        toast({
+          title: "ডিলিট করা যাবে না",
+          description: `এই গ্রুপ টিকেটে ${error.details.assignedCount}টি যাত্রী নিযুক্ত আছে:\n\n${passengerList}\n\nপ্রথমে যাত্রীদের অন্য গ্রুপে সরান বা unassign করুন।`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "ত্রুটি",
+          description: error instanceof Error
+            ? (error.message === "Cannot delete group ticket with assigned passengers"
+                ? "এই গ্রুপ টিকেটে যাত্রী নিযুক্ত আছে। প্রথমে যাত্রীদের সরান।"
+                : error.message)
+            : "গ্রুপ টিকেট ডিলিট করতে ব্যর্থ",
+          variant: "destructive",
+        });
+      }
     }
   };
 
