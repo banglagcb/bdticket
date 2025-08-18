@@ -363,7 +363,7 @@ export default function UmrahGroupTickets() {
       // This would need an API endpoint to get assigned passengers
       // For now, show a simple info dialog
       const confirmed = confirm(
-        `গ্রুপ টিকেট: ${groupName}\n\nনিযুক্ত যাত্রীদের তালিকা দেখতে চান?\n\n(নোট: এই গ্রুপ টিকেটে যাত্রী নিযুক্ত থাকার কারণে এটি ডিলিট করা যাবে না। প্রথমে যাত্রীদের অন্য গ্রুপে সরান বা unassign করুন।)`
+        `গ্রুপ টিকেট: ${groupName}\n\nনিযুক্ত যাত্রীদের তালিকা দেখতে চান?\n\n(নোট: এই গ্রুপ টিকেটে যাত্রী নিযুক্ত থাকার কারণে এটি ডিলিট করা যাবে না। প্রথমে ��াত্রীদের অন্য গ্রুপে সরান বা unassign করুন।)`
       );
 
       if (confirmed) {
@@ -689,11 +689,27 @@ export default function UmrahGroupTickets() {
                                   >
                                     <Edit className="h-4 w-4" />
                                   </Button>
+
+                                  {/* Show passengers button if there are assigned passengers */}
+                                  {(group.ticket_count - group.remaining_tickets) > 0 && (
+                                    <Button
+                                      onClick={() => viewAssignedPassengers(group.id!, group.group_name)}
+                                      variant="outline"
+                                      size="sm"
+                                      className="touch-target text-blue-600 hover:text-blue-700"
+                                      title={`${group.ticket_count - group.remaining_tickets} জন যাত্রী নিযুক্ত`}
+                                    >
+                                      <UserCheck className="h-4 w-4" />
+                                    </Button>
+                                  )}
+
                                   <Button
                                     onClick={() => handleDelete(group.id!)}
                                     variant="outline"
                                     size="sm"
                                     className="touch-target text-red-600 hover:text-red-700"
+                                    disabled={(group.ticket_count - group.remaining_tickets) > 0}
+                                    title={(group.ticket_count - group.remaining_tickets) > 0 ? "যাত্রী নিযুক্ত থাকায় ডিলিট করা যাবে না" : "গ্রুপ টিকেট ডিলিট করুন"}
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
