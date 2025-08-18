@@ -481,6 +481,8 @@ export default function UmrahManagement() {
       passengerMobile: "",
     });
     setErrors({});
+    setIsEditingWithTransport(false);
+    setEditingWithTransportRecord(null);
   };
 
   const resetWithoutTransportForm = () => {
@@ -497,6 +499,8 @@ export default function UmrahManagement() {
       remarks: "",
     });
     setErrors({});
+    setIsEditingWithoutTransport(false);
+    setEditingWithoutTransportRecord(null);
   };
 
   // Edit handlers for with-transport
