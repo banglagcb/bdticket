@@ -662,6 +662,7 @@ class APIClient {
     amount_paid: number;
     last_payment_date?: string;
     remarks?: string;
+    group_ticket_id?: string; // For auto-deduction from group tickets
   }): Promise<any> {
     const result = await this.request<any>("/umrah/without-transport", {
       method: "POST",
