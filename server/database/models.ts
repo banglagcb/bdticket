@@ -1376,6 +1376,15 @@ export class UmrahGroupTicketRepository {
 
     return assignment;
   }
+
+  // Initialize remaining tickets for all existing group tickets
+  static initializeRemainingTickets(): void {
+    const allGroupTickets = this.findAll();
+
+    for (const groupTicket of allGroupTickets) {
+      this.updateRemainingTickets(groupTicket.id);
+    }
+  }
 }
 
 export class UmrahGroupBookingRepository {
