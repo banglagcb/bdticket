@@ -1036,10 +1036,10 @@ export default function UmrahManagement() {
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="font-heading">
-                    Add New Umrah Package
+                    {isEditingWithTransport || isEditingWithoutTransport ? "Edit Umrah Package" : "Add New Umrah Package"}
                   </DialogTitle>
                   <DialogDescription className="font-body">
-                    Choose package type and fill in the details
+                    {isEditingWithTransport || isEditingWithoutTransport ? "Update package details" : "Choose package type and fill in the details"}
                   </DialogDescription>
                 </DialogHeader>
 
