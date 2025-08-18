@@ -828,6 +828,21 @@ class APIClient {
     }
   }
 
+  async getAvailableGroupTickets(
+    packageType: "with-transport" | "without-transport",
+    departureDate: string,
+    returnDate: string
+  ): Promise<any> {
+    const result = await this.request<any>(
+      `/umrah/group-tickets/available/${packageType}/${departureDate}/${returnDate}`
+    );
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.message || "Failed to get available group tickets");
+  }
+
   async assignPassengerToGroup(assignmentData: {
     group_ticket_id: string;
     passenger_id: string;
