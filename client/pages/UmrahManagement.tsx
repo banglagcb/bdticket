@@ -1621,16 +1621,90 @@ export default function UmrahManagement() {
       >
         <Card className="luxury-card border-0">
           <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 md:space-x-4">
-              <div className="flex-1 max-w-md">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="space-y-4">
+              {/* Main Search */}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 md:space-x-4">
+                <div className="flex-1 max-w-md">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by passenger name, PNR, or passport..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setDateFilter("");
+                    setStatusFilter("");
+                    setAmountFilter("");
+                  }}
+                  className="shrink-0"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear Filters
+                </Button>
+              </div>
+
+              {/* Advanced Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-border/50">
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">Departure Date</Label>
                   <Input
-                    placeholder="Search by passenger name, PNR, or passport..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    type="date"
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                    className="w-full"
                   />
+                </div>
+
+                {activeTab === "without-transport" && (
+                  <>
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">Payment Status</Label>
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">All Status</SelectItem>
+                          <SelectItem value="paid">Fully Paid</SelectItem>
+                          <SelectItem value="pending">Pending Payment</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">Amount Range</Label>
+                      <Select value={amountFilter} onValueChange={setAmountFilter}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Amounts" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">All Amounts</SelectItem>
+                          <SelectItem value="low">৳0 - ৳50,000</SelectItem>
+                          <SelectItem value="medium">৳50,001 - ৳100,000</SelectItem>
+                          <SelectItem value="high">৳100,001+</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
+
+                <div className="flex items-end">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={loadRecords}
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    Refresh
+                  </Button>
                 </div>
               </div>
             </div>
