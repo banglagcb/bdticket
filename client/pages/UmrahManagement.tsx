@@ -233,6 +233,20 @@ export default function UmrahManagement() {
     });
   };
 
+  // Check for available group tickets when with-transport dates change
+  useEffect(() => {
+    if (activeTab === "with-transport" && withTransportForm.departureDate && withTransportForm.returnDate) {
+      checkAvailableGroupTickets("with-transport", withTransportForm.departureDate, withTransportForm.returnDate);
+    }
+  }, [withTransportForm.departureDate, withTransportForm.returnDate, activeTab]);
+
+  // Check for available group tickets when without-transport dates change
+  useEffect(() => {
+    if (activeTab === "without-transport" && withoutTransportForm.flightDepartureDate && withoutTransportForm.returnDate) {
+      checkAvailableGroupTickets("without-transport", withoutTransportForm.flightDepartureDate, withoutTransportForm.returnDate);
+    }
+  }, [withoutTransportForm.flightDepartureDate, withoutTransportForm.returnDate, activeTab]);
+
   const loadRecords = async () => {
     try {
       setLoading(true);
