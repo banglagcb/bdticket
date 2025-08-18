@@ -170,9 +170,12 @@ export default function UmrahManagement() {
 
   // Editing states
   const [isEditingWithTransport, setIsEditingWithTransport] = useState(false);
-  const [isEditingWithoutTransport, setIsEditingWithoutTransport] = useState(false);
-  const [editingWithTransportRecord, setEditingWithTransportRecord] = useState<UmrahWithTransport | null>(null);
-  const [editingWithoutTransportRecord, setEditingWithoutTransportRecord] = useState<UmrahWithoutTransport | null>(null);
+  const [isEditingWithoutTransport, setIsEditingWithoutTransport] =
+    useState(false);
+  const [editingWithTransportRecord, setEditingWithTransportRecord] =
+    useState<UmrahWithTransport | null>(null);
+  const [editingWithoutTransportRecord, setEditingWithoutTransportRecord] =
+    useState<UmrahWithoutTransport | null>(null);
 
   // Filter states
   const [dateFilter, setDateFilter] = useState<string>("");
@@ -180,7 +183,9 @@ export default function UmrahManagement() {
   const [amountFilter, setAmountFilter] = useState<string>("all");
 
   // Bulk operations states
-  const [selectedRecords, setSelectedRecords] = useState<Set<string>>(new Set());
+  const [selectedRecords, setSelectedRecords] = useState<Set<string>>(
+    new Set(),
+  );
   const [showBulkActions, setShowBulkActions] = useState(false);
 
   // Load data on component mount
@@ -202,7 +207,7 @@ export default function UmrahManagement() {
   const checkAvailableGroupTickets = async (
     packageType: "with-transport" | "without-transport",
     departureDate: string,
-    returnDate: string
+    returnDate: string,
   ) => {
     if (!departureDate || !returnDate) return;
 
@@ -210,7 +215,7 @@ export default function UmrahManagement() {
       const availableTickets = await apiClient.getAvailableGroupTickets(
         packageType,
         departureDate,
-        returnDate
+        returnDate,
       );
 
       setAvailableGroupTickets(availableTickets);
@@ -230,10 +235,11 @@ export default function UmrahManagement() {
       // Generate PNR based on group ticket flight details
       const generatedPnr = generatePNR(groupTicket);
 
-      setWithTransportForm(prev => ({
+      setWithTransportForm((prev) => ({
         ...prev,
         // Flight and airline details from group ticket
-        flightAirlineName: groupTicket.departure_airline || prev.flightAirlineName,
+        flightAirlineName:
+          groupTicket.departure_airline || prev.flightAirlineName,
         departureDate: groupTicket.departure_date,
         returnDate: groupTicket.return_date,
         // Auto-generated PNR
@@ -242,7 +248,7 @@ export default function UmrahManagement() {
         referenceAgency: groupTicket.agent_name || prev.referenceAgency,
       }));
     } else {
-      setWithoutTransportForm(prev => ({
+      setWithoutTransportForm((prev) => ({
         ...prev,
         flightDepartureDate: groupTicket.departure_date,
         returnDate: groupTicket.return_date,
@@ -259,7 +265,7 @@ export default function UmrahManagement() {
 
   // Generate PNR based on group ticket details
   const generatePNR = (groupTicket: any): string => {
-    const flightNumber = groupTicket.departure_flight_number || 'GRP';
+    const flightNumber = groupTicket.departure_flight_number || "GRP";
     const timestamp = Date.now().toString().slice(-6);
     const random = Math.random().toString(36).substring(2, 4).toUpperCase();
     return `${flightNumber}${timestamp}${random}`;
@@ -267,17 +273,41 @@ export default function UmrahManagement() {
 
   // Check for available group tickets when with-transport dates change
   useEffect(() => {
-    if (activeTab === "with-transport" && withTransportForm.departureDate && withTransportForm.returnDate) {
-      checkAvailableGroupTickets("with-transport", withTransportForm.departureDate, withTransportForm.returnDate);
+    if (
+      activeTab === "with-transport" &&
+      withTransportForm.departureDate &&
+      withTransportForm.returnDate
+    ) {
+      checkAvailableGroupTickets(
+        "with-transport",
+        withTransportForm.departureDate,
+        withTransportForm.returnDate,
+      );
     }
-  }, [withTransportForm.departureDate, withTransportForm.returnDate, activeTab]);
+  }, [
+    withTransportForm.departureDate,
+    withTransportForm.returnDate,
+    activeTab,
+  ]);
 
   // Check for available group tickets when without-transport dates change
   useEffect(() => {
-    if (activeTab === "without-transport" && withoutTransportForm.flightDepartureDate && withoutTransportForm.returnDate) {
-      checkAvailableGroupTickets("without-transport", withoutTransportForm.flightDepartureDate, withoutTransportForm.returnDate);
+    if (
+      activeTab === "without-transport" &&
+      withoutTransportForm.flightDepartureDate &&
+      withoutTransportForm.returnDate
+    ) {
+      checkAvailableGroupTickets(
+        "without-transport",
+        withoutTransportForm.flightDepartureDate,
+        withoutTransportForm.returnDate,
+      );
     }
-  }, [withoutTransportForm.flightDepartureDate, withoutTransportForm.returnDate, activeTab]);
+  }, [
+    withoutTransportForm.flightDepartureDate,
+    withoutTransportForm.returnDate,
+    activeTab,
+  ]);
 
   const loadRecords = async () => {
     try {
@@ -324,7 +354,9 @@ export default function UmrahManagement() {
     // Enhanced passport validation
     if (!form.passportNumber?.trim()) {
       errors.passportNumber = "Passport number is required";
-    } else if (!/^[A-Z0-9]{6,9}$/.test(form.passportNumber.replace(/\s/g, ''))) {
+    } else if (
+      !/^[A-Z0-9]{6,9}$/.test(form.passportNumber.replace(/\s/g, ""))
+    ) {
       errors.passportNumber = "Invalid passport format";
     }
 
@@ -376,7 +408,8 @@ export default function UmrahManagement() {
       if (returnDate <= departure) {
         errors.returnDate = "Must be after departure date";
       } else {
-        const daysDiff = (returnDate.getTime() - departure.getTime()) / (1000 * 60 * 60 * 24);
+        const daysDiff =
+          (returnDate.getTime() - departure.getTime()) / (1000 * 60 * 60 * 24);
         if (daysDiff < 7) {
           errors.returnDate = "Minimum 7 days required";
         } else if (daysDiff > 90) {
@@ -612,12 +645,14 @@ export default function UmrahManagement() {
       passengerName: record.passengerName || record.passenger_name || "",
       pnr: record.pnr || "",
       passportNumber: record.passportNumber || record.passport_number || "",
-      flightAirlineName: record.flightAirlineName || record.flight_airline_name || "",
+      flightAirlineName:
+        record.flightAirlineName || record.flight_airline_name || "",
       departureDate: record.departureDate || record.departure_date || "",
       returnDate: record.returnDate || record.return_date || "",
       approvedBy: record.approvedBy || record.approved_by || "",
       referenceAgency: record.referenceAgency || record.reference_agency || "",
-      emergencyFlightContact: record.emergencyFlightContact || record.emergency_flight_contact || "",
+      emergencyFlightContact:
+        record.emergencyFlightContact || record.emergency_flight_contact || "",
       passengerMobile: record.passengerMobile || record.passenger_mobile || "",
     });
     setIsEditingWithTransport(true);
@@ -655,7 +690,10 @@ export default function UmrahManagement() {
         passenger_mobile: withTransportForm.passengerMobile,
       };
 
-      await apiClient.updateUmrahWithTransport(editingWithTransportRecord.id, apiData);
+      await apiClient.updateUmrahWithTransport(
+        editingWithTransportRecord.id,
+        apiData,
+      );
 
       toast({
         title: "Success",
@@ -671,7 +709,8 @@ export default function UmrahManagement() {
       console.error("Umrah with transport update error:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update record",
+        description:
+          error instanceof Error ? error.message : "Failed to update record",
         variant: "destructive",
       });
     } finally {
@@ -680,7 +719,11 @@ export default function UmrahManagement() {
   };
 
   const handleDeleteWithTransport = async (recordId: string) => {
-    if (!confirm("Are you sure you want to delete this Umrah with transport record? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this Umrah with transport record? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
@@ -698,7 +741,8 @@ export default function UmrahManagement() {
       console.error("Umrah with transport delete error:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete record",
+        description:
+          error instanceof Error ? error.message : "Failed to delete record",
         variant: "destructive",
       });
     } finally {
@@ -710,7 +754,8 @@ export default function UmrahManagement() {
   const handleEditWithoutTransport = (record: UmrahWithoutTransport) => {
     setEditingWithoutTransportRecord(record);
     setWithoutTransportForm({
-      flightDepartureDate: record.flightDepartureDate || record.flight_departure_date || "",
+      flightDepartureDate:
+        record.flightDepartureDate || record.flight_departure_date || "",
       returnDate: record.returnDate || record.return_date || "",
       passengerName: record.passengerName || record.passenger_name || "",
       passportNumber: record.passportNumber || record.passport_number || "",
@@ -755,7 +800,10 @@ export default function UmrahManagement() {
         remarks: withoutTransportForm.remarks || undefined,
       };
 
-      await apiClient.updateUmrahWithoutTransport(editingWithoutTransportRecord.id, apiData);
+      await apiClient.updateUmrahWithoutTransport(
+        editingWithoutTransportRecord.id,
+        apiData,
+      );
 
       toast({
         title: "Success",
@@ -771,7 +819,8 @@ export default function UmrahManagement() {
       console.error("Umrah without transport update error:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update record",
+        description:
+          error instanceof Error ? error.message : "Failed to update record",
         variant: "destructive",
       });
     } finally {
@@ -780,7 +829,11 @@ export default function UmrahManagement() {
   };
 
   const handleDeleteWithoutTransport = async (recordId: string) => {
-    if (!confirm("Are you sure you want to delete this Umrah without transport record? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this Umrah without transport record? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
@@ -798,7 +851,8 @@ export default function UmrahManagement() {
       console.error("Umrah without transport delete error:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete record",
+        description:
+          error instanceof Error ? error.message : "Failed to delete record",
         variant: "destructive",
       });
     } finally {
@@ -821,8 +875,8 @@ export default function UmrahManagement() {
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       const allIds = new Set([
-        ...filteredWithTransportRecords.map(r => r.id!),
-        ...filteredWithoutTransportRecords.map(r => r.id!)
+        ...filteredWithTransportRecords.map((r) => r.id!),
+        ...filteredWithoutTransportRecords.map((r) => r.id!),
       ]);
       setSelectedRecords(allIds);
       setShowBulkActions(allIds.size > 0);
@@ -842,7 +896,11 @@ export default function UmrahManagement() {
       return;
     }
 
-    if (!confirm(`Are you sure you want to delete ${selectedRecords.size} selected records? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete ${selectedRecords.size} selected records? This action cannot be undone.`,
+      )
+    ) {
       return;
     }
 
@@ -853,29 +911,37 @@ export default function UmrahManagement() {
       let errorCount = 0;
 
       // Delete with-transport records
-      filteredWithTransportRecords.forEach(record => {
+      filteredWithTransportRecords.forEach((record) => {
         if (selectedRecords.has(record.id!)) {
           promises.push(
-            apiClient.deleteUmrahWithTransport(record.id!)
+            apiClient
+              .deleteUmrahWithTransport(record.id!)
               .then(() => successCount++)
               .catch((error) => {
-                console.error(`Failed to delete with-transport record ${record.id}:`, error);
+                console.error(
+                  `Failed to delete with-transport record ${record.id}:`,
+                  error,
+                );
                 errorCount++;
-              })
+              }),
           );
         }
       });
 
       // Delete without-transport records
-      filteredWithoutTransportRecords.forEach(record => {
+      filteredWithoutTransportRecords.forEach((record) => {
         if (selectedRecords.has(record.id!)) {
           promises.push(
-            apiClient.deleteUmrahWithoutTransport(record.id!)
+            apiClient
+              .deleteUmrahWithoutTransport(record.id!)
               .then(() => successCount++)
               .catch((error) => {
-                console.error(`Failed to delete without-transport record ${record.id}:`, error);
+                console.error(
+                  `Failed to delete without-transport record ${record.id}:`,
+                  error,
+                );
                 errorCount++;
-              })
+              }),
           );
         }
       });
@@ -1164,30 +1230,31 @@ export default function UmrahManagement() {
     }, 500);
   };
 
-  const filteredWithTransportRecords = withTransportRecords.filter(
-    (record) => {
-      // Text search
-      const matchesSearch = searchTerm === "" ||
-        (record.passengerName || record.passenger_name || "")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        (record.pnr || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (record.passportNumber || record.passport_number || "")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
+  const filteredWithTransportRecords = withTransportRecords.filter((record) => {
+    // Text search
+    const matchesSearch =
+      searchTerm === "" ||
+      (record.passengerName || record.passenger_name || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (record.pnr || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (record.passportNumber || record.passport_number || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
-      // Date filter
-      const matchesDate = dateFilter === "" ||
-        (record.departureDate || record.departure_date) === dateFilter;
+    // Date filter
+    const matchesDate =
+      dateFilter === "" ||
+      (record.departureDate || record.departure_date) === dateFilter;
 
-      return matchesSearch && matchesDate;
-    }
-  );
+    return matchesSearch && matchesDate;
+  });
 
   const filteredWithoutTransportRecords = withoutTransportRecords.filter(
     (record) => {
       // Text search
-      const matchesSearch = searchTerm === "" ||
+      const matchesSearch =
+        searchTerm === "" ||
         (record.passengerName || record.passenger_name || "")
           .toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
@@ -1196,24 +1263,33 @@ export default function UmrahManagement() {
           .includes(searchTerm.toLowerCase());
 
       // Date filter
-      const matchesDate = dateFilter === "" ||
-        (record.flightDepartureDate || record.flight_departure_date) === dateFilter;
+      const matchesDate =
+        dateFilter === "" ||
+        (record.flightDepartureDate || record.flight_departure_date) ===
+          dateFilter;
 
       // Status filter
-      const remainingAmount = record.remainingAmount || record.remaining_amount || 0;
-      const matchesStatus = statusFilter === "" || statusFilter === "all" ||
+      const remainingAmount =
+        record.remainingAmount || record.remaining_amount || 0;
+      const matchesStatus =
+        statusFilter === "" ||
+        statusFilter === "all" ||
         (statusFilter === "paid" && remainingAmount === 0) ||
         (statusFilter === "pending" && remainingAmount > 0);
 
       // Amount filter
       const totalAmount = record.totalAmount || record.total_amount || 0;
-      const matchesAmount = amountFilter === "" || amountFilter === "all" ||
+      const matchesAmount =
+        amountFilter === "" ||
+        amountFilter === "all" ||
         (amountFilter === "low" && totalAmount <= 50000) ||
-        (amountFilter === "medium" && totalAmount > 50000 && totalAmount <= 100000) ||
+        (amountFilter === "medium" &&
+          totalAmount > 50000 &&
+          totalAmount <= 100000) ||
         (amountFilter === "high" && totalAmount > 100000);
 
       return matchesSearch && matchesDate && matchesStatus && matchesAmount;
-    }
+    },
   );
 
   return (
@@ -1285,10 +1361,14 @@ export default function UmrahManagement() {
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="font-heading">
-                    {isEditingWithTransport || isEditingWithoutTransport ? "Edit Umrah Package" : "Add New Umrah Package"}
+                    {isEditingWithTransport || isEditingWithoutTransport
+                      ? "Edit Umrah Package"
+                      : "Add New Umrah Package"}
                   </DialogTitle>
                   <DialogDescription className="font-body">
-                    {isEditingWithTransport || isEditingWithoutTransport ? "Update package details" : "Choose package type and fill in the details"}
+                    {isEditingWithTransport || isEditingWithoutTransport
+                      ? "Update package details"
+                      : "Choose package type and fill in the details"}
                   </DialogDescription>
                 </DialogHeader>
 
@@ -1459,72 +1539,94 @@ export default function UmrahManagement() {
                         </div>
 
                         {/* Group Ticket Suggestion */}
-                        {showGroupSuggestion && availableGroupTickets.length > 0 && (
-                          <div className="md:col-span-2">
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                              <div className="flex items-start justify-between mb-3">
-                                <div className="flex items-center">
-                                  <Package className="h-5 w-5 text-blue-600 mr-2" />
-                                  <div>
-                                    <h4 className="font-semibold text-blue-900">উপলব্ধ গ্রুপ টিকেট</h4>
-                                    <p className="text-sm text-blue-700">আপনার নির্বাচিত তারিখের জন্য {availableGroupTickets.length}টি গ্রুপ টিকেট পাওয়া গেছে</p>
-                                  </div>
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => setShowGroupSuggestion(false)}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-
-                              <div className="space-y-2">
-                                {availableGroupTickets.map((ticket) => (
-                                  <div
-                                    key={ticket.id}
-                                    className={`border rounded-lg p-3 cursor-pointer transition-colors ${
-                                      selectedGroupTicket?.id === ticket.id
-                                        ? 'border-blue-500 bg-blue-100'
-                                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                                    }`}
-                                    onClick={() => populateFromGroupTicket(ticket)}
-                                  >
-                                    <div className="flex justify-between items-start">
-                                      <div>
-                                        <h5 className="font-medium text-gray-900">{ticket.group_name}</h5>
-                                        <p className="text-sm text-gray-600">
-                                          {ticket.departure_airline} • ফ্লাইট: {ticket.departure_flight_number}
-                                        </p>
-                                        <p className="text-sm text-gray-500">
-                                          এজেন্ট: {ticket.agent_name}
-                                        </p>
-                                      </div>
-                                      <div className="text-right">
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                          {ticket.remaining_tickets} টিকেট বাকি
-                                        </span>
-                                        <p className="text-xs text-gray-500 mt-1">
-                                          {ticket.departure_date} - {ticket.return_date}
-                                        </p>
-                                      </div>
+                        {showGroupSuggestion &&
+                          availableGroupTickets.length > 0 && (
+                            <div className="md:col-span-2">
+                              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div className="flex items-start justify-between mb-3">
+                                  <div className="flex items-center">
+                                    <Package className="h-5 w-5 text-blue-600 mr-2" />
+                                    <div>
+                                      <h4 className="font-semibold text-blue-900">
+                                        উপলব্ধ গ্রুপ টিকেট
+                                      </h4>
+                                      <p className="text-sm text-blue-700">
+                                        আপনার নির্বাচিত তারিখের জন্য{" "}
+                                        {availableGroupTickets.length}টি গ্রুপ
+                                        টিকেট পাওয়া গেছে
+                                      </p>
                                     </div>
                                   </div>
-                                ))}
-                              </div>
-
-                              {selectedGroupTicket && (
-                                <div className="mt-3 pt-3 border-t border-blue-200">
-                                  <p className="text-sm text-blue-700">
-                                    ✓ নির্বাচিত: <strong>{selectedGroupTicket.group_name}</strong>
-                                    (এই যাত্রী যোগের পর {selectedGroupTicket.remaining_tickets - 1} টিকেট বাকি থাকবে)
-                                  </p>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() =>
+                                      setShowGroupSuggestion(false)
+                                    }
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
                                 </div>
-                              )}
+
+                                <div className="space-y-2">
+                                  {availableGroupTickets.map((ticket) => (
+                                    <div
+                                      key={ticket.id}
+                                      className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                                        selectedGroupTicket?.id === ticket.id
+                                          ? "border-blue-500 bg-blue-100"
+                                          : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                                      }`}
+                                      onClick={() =>
+                                        populateFromGroupTicket(ticket)
+                                      }
+                                    >
+                                      <div className="flex justify-between items-start">
+                                        <div>
+                                          <h5 className="font-medium text-gray-900">
+                                            {ticket.group_name}
+                                          </h5>
+                                          <p className="text-sm text-gray-600">
+                                            {ticket.departure_airline} • ফ্লাইট:{" "}
+                                            {ticket.departure_flight_number}
+                                          </p>
+                                          <p className="text-sm text-gray-500">
+                                            এজেন্ট: {ticket.agent_name}
+                                          </p>
+                                        </div>
+                                        <div className="text-right">
+                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            {ticket.remaining_tickets} টিকেট
+                                            বাকি
+                                          </span>
+                                          <p className="text-xs text-gray-500 mt-1">
+                                            {ticket.departure_date} -{" "}
+                                            {ticket.return_date}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {selectedGroupTicket && (
+                                  <div className="mt-3 pt-3 border-t border-blue-200">
+                                    <p className="text-sm text-blue-700">
+                                      ✓ নির্বাচিত:{" "}
+                                      <strong>
+                                        {selectedGroupTicket.group_name}
+                                      </strong>
+                                      (এই যাত্রী যোগের পর{" "}
+                                      {selectedGroupTicket.remaining_tickets -
+                                        1}{" "}
+                                      টিকেট বাকি থাকবে)
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
                         <div className="space-y-2">
                           <Label htmlFor="approvedBy">Approved By *</Label>
@@ -1640,9 +1742,12 @@ export default function UmrahManagement() {
                         >
                           <Save className="h-4 w-4 mr-2" />
                           {loading
-                            ? (isEditingWithTransport ? "Updating..." : "Saving...")
-                            : (isEditingWithTransport ? "Update Package" : "Save Package")
-                          }
+                            ? isEditingWithTransport
+                              ? "Updating..."
+                              : "Saving..."
+                            : isEditingWithTransport
+                              ? "Update Package"
+                              : "Save Package"}
                         </Button>
                       </div>
                     </form>
@@ -1759,72 +1864,94 @@ export default function UmrahManagement() {
                         </div>
 
                         {/* Group Ticket Suggestion for Without Transport */}
-                        {showGroupSuggestion && availableGroupTickets.length > 0 && activeTab === "without-transport" && (
-                          <div className="md:col-span-2">
-                            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                              <div className="flex items-start justify-between mb-3">
-                                <div className="flex items-center">
-                                  <Package className="h-5 w-5 text-green-600 mr-2" />
-                                  <div>
-                                    <h4 className="font-semibold text-green-900">উপলব্ধ গ্রুপ টিকেট</h4>
-                                    <p className="text-sm text-green-700">আপনার নির্বাচিত তারিখের জন্য {availableGroupTickets.length}টি গ্রুপ টিকেট পাওয়া গেছে</p>
-                                  </div>
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => setShowGroupSuggestion(false)}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-
-                              <div className="space-y-2">
-                                {availableGroupTickets.map((ticket) => (
-                                  <div
-                                    key={ticket.id}
-                                    className={`border rounded-lg p-3 cursor-pointer transition-colors ${
-                                      selectedGroupTicket?.id === ticket.id
-                                        ? 'border-green-500 bg-green-100'
-                                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
-                                    }`}
-                                    onClick={() => populateFromGroupTicket(ticket)}
-                                  >
-                                    <div className="flex justify-between items-start">
-                                      <div>
-                                        <h5 className="font-medium text-gray-900">{ticket.group_name}</h5>
-                                        <p className="text-sm text-gray-600">
-                                          উইদাউট ট্রান্সপোর্ট প্যাকেজ
-                                        </p>
-                                        <p className="text-sm text-gray-500">
-                                          এজেন্ট: {ticket.agent_name}
-                                        </p>
-                                      </div>
-                                      <div className="text-right">
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                          {ticket.remaining_tickets} টিকেট বাকি
-                                        </span>
-                                        <p className="text-xs text-gray-500 mt-1">
-                                          {ticket.departure_date} - {ticket.return_date}
-                                        </p>
-                                      </div>
+                        {showGroupSuggestion &&
+                          availableGroupTickets.length > 0 &&
+                          activeTab === "without-transport" && (
+                            <div className="md:col-span-2">
+                              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <div className="flex items-start justify-between mb-3">
+                                  <div className="flex items-center">
+                                    <Package className="h-5 w-5 text-green-600 mr-2" />
+                                    <div>
+                                      <h4 className="font-semibold text-green-900">
+                                        উপলব্ধ গ্রুপ টিকেট
+                                      </h4>
+                                      <p className="text-sm text-green-700">
+                                        আপনার নির্বাচিত তারিখের জন্য{" "}
+                                        {availableGroupTickets.length}টি গ্রুপ
+                                        টিকেট পাওয়া গেছে
+                                      </p>
                                     </div>
                                   </div>
-                                ))}
-                              </div>
-
-                              {selectedGroupTicket && (
-                                <div className="mt-3 pt-3 border-t border-green-200">
-                                  <p className="text-sm text-green-700">
-                                    ✓ নির্বাচিত: <strong>{selectedGroupTicket.group_name}</strong>
-                                    (এই যাত্রী যোগের পর {selectedGroupTicket.remaining_tickets - 1} টিকেট বাকি থাকবে)
-                                  </p>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() =>
+                                      setShowGroupSuggestion(false)
+                                    }
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
                                 </div>
-                              )}
+
+                                <div className="space-y-2">
+                                  {availableGroupTickets.map((ticket) => (
+                                    <div
+                                      key={ticket.id}
+                                      className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                                        selectedGroupTicket?.id === ticket.id
+                                          ? "border-green-500 bg-green-100"
+                                          : "border-gray-200 hover:border-green-300 hover:bg-green-50"
+                                      }`}
+                                      onClick={() =>
+                                        populateFromGroupTicket(ticket)
+                                      }
+                                    >
+                                      <div className="flex justify-between items-start">
+                                        <div>
+                                          <h5 className="font-medium text-gray-900">
+                                            {ticket.group_name}
+                                          </h5>
+                                          <p className="text-sm text-gray-600">
+                                            উইদাউট ট্রান্সপোর্ট প্যাকেজ
+                                          </p>
+                                          <p className="text-sm text-gray-500">
+                                            এজেন্ট: {ticket.agent_name}
+                                          </p>
+                                        </div>
+                                        <div className="text-right">
+                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            {ticket.remaining_tickets} টিকেট
+                                            বাকি
+                                          </span>
+                                          <p className="text-xs text-gray-500 mt-1">
+                                            {ticket.departure_date} -{" "}
+                                            {ticket.return_date}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {selectedGroupTicket && (
+                                  <div className="mt-3 pt-3 border-t border-green-200">
+                                    <p className="text-sm text-green-700">
+                                      ✓ নির্বাচিত:{" "}
+                                      <strong>
+                                        {selectedGroupTicket.group_name}
+                                      </strong>
+                                      (এই যাত্রী যোগের পর{" "}
+                                      {selectedGroupTicket.remaining_tickets -
+                                        1}{" "}
+                                      টিকেট বাকি থাকবে)
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
                         <div className="space-y-2">
                           <Label htmlFor="entryRecordedBy">
@@ -1961,9 +2088,12 @@ export default function UmrahManagement() {
                         >
                           <Save className="h-4 w-4 mr-2" />
                           {loading
-                            ? (isEditingWithoutTransport ? "Updating..." : "Saving...")
-                            : (isEditingWithoutTransport ? "Update Package" : "Save Package")
-                          }
+                            ? isEditingWithoutTransport
+                              ? "Updating..."
+                              : "Saving..."
+                            : isEditingWithoutTransport
+                              ? "Update Package"
+                              : "Save Package"}
                         </Button>
                       </div>
                     </form>
@@ -2028,7 +2158,9 @@ export default function UmrahManagement() {
               {/* Advanced Filters */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-border/50">
                 <div>
-                  <Label className="text-sm font-medium mb-2 block">Departure Date</Label>
+                  <Label className="text-sm font-medium mb-2 block">
+                    Departure Date
+                  </Label>
                   <Input
                     type="date"
                     value={dateFilter}
@@ -2040,29 +2172,43 @@ export default function UmrahManagement() {
                 {activeTab === "without-transport" && (
                   <>
                     <div>
-                      <Label className="text-sm font-medium mb-2 block">Payment Status</Label>
-                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <Label className="text-sm font-medium mb-2 block">
+                        Payment Status
+                      </Label>
+                      <Select
+                        value={statusFilter}
+                        onValueChange={setStatusFilter}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="All Status" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Status</SelectItem>
                           <SelectItem value="paid">Fully Paid</SelectItem>
-                          <SelectItem value="pending">Pending Payment</SelectItem>
+                          <SelectItem value="pending">
+                            Pending Payment
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium mb-2 block">Amount Range</Label>
-                      <Select value={amountFilter} onValueChange={setAmountFilter}>
+                      <Label className="text-sm font-medium mb-2 block">
+                        Amount Range
+                      </Label>
+                      <Select
+                        value={amountFilter}
+                        onValueChange={setAmountFilter}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="All Amounts" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Amounts</SelectItem>
                           <SelectItem value="low">৳0 - ৳50,000</SelectItem>
-                          <SelectItem value="medium">৳50,001 - ৳100,000</SelectItem>
+                          <SelectItem value="medium">
+                            ৳50,001 - ৳100,000
+                          </SelectItem>
                           <SelectItem value="high">৳100,001+</SelectItem>
                         </SelectContent>
                       </Select>
@@ -2098,7 +2244,8 @@ export default function UmrahManagement() {
             <div className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-blue-600" />
               <span className="font-medium text-blue-800">
-                {selectedRecords.size} record{selectedRecords.size !== 1 ? 's' : ''} selected
+                {selectedRecords.size} record
+                {selectedRecords.size !== 1 ? "s" : ""} selected
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -2221,7 +2368,9 @@ export default function UmrahManagement() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleEditWithTransport(record)}
+                                  onClick={() =>
+                                    handleEditWithTransport(record)
+                                  }
                                   title="Edit Record"
                                 >
                                   <Edit className="h-3 w-3" />
@@ -2229,7 +2378,9 @@ export default function UmrahManagement() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleDeleteWithTransport(record.id!)}
+                                  onClick={() =>
+                                    handleDeleteWithTransport(record.id!)
+                                  }
                                   title="Delete Record"
                                   className="text-red-600 hover:text-red-700"
                                 >
@@ -2375,7 +2526,9 @@ export default function UmrahManagement() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleEditWithoutTransport(record)}
+                                  onClick={() =>
+                                    handleEditWithoutTransport(record)
+                                  }
                                   title="Edit Record"
                                 >
                                   <Edit className="h-3 w-3" />
@@ -2383,7 +2536,9 @@ export default function UmrahManagement() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleDeleteWithoutTransport(record.id!)}
+                                  onClick={() =>
+                                    handleDeleteWithoutTransport(record.id!)
+                                  }
                                   title="Delete Record"
                                   className="text-red-600 hover:text-red-700"
                                 >
@@ -2445,10 +2600,13 @@ export default function UmrahManagement() {
                 </div>
                 <div>
                   <h3 className="font-heading font-bold text-lg">
-                    {selectedRecord.passengerName || selectedRecord.passenger_name}
+                    {selectedRecord.passengerName ||
+                      selectedRecord.passenger_name}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {selectedRecord.pnr ? "With Transport Package" : "Without Transport Package"}
+                    {selectedRecord.pnr
+                      ? "With Transport Package"
+                      : "Without Transport Package"}
                   </p>
                 </div>
               </div>
@@ -2463,23 +2621,43 @@ export default function UmrahManagement() {
                   </h4>
                   <div className="space-y-3">
                     <div>
-                      <Label className="text-sm font-medium text-muted-foreground">Passenger Name</Label>
-                      <p className="text-base font-medium">{selectedRecord.passengerName || selectedRecord.passenger_name}</p>
+                      <Label className="text-sm font-medium text-muted-foreground">
+                        Passenger Name
+                      </Label>
+                      <p className="text-base font-medium">
+                        {selectedRecord.passengerName ||
+                          selectedRecord.passenger_name}
+                      </p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-muted-foreground">Passport Number</Label>
-                      <p className="text-base">{selectedRecord.passportNumber || selectedRecord.passport_number}</p>
+                      <Label className="text-sm font-medium text-muted-foreground">
+                        Passport Number
+                      </Label>
+                      <p className="text-base">
+                        {selectedRecord.passportNumber ||
+                          selectedRecord.passport_number}
+                      </p>
                     </div>
                     {selectedRecord.pnr && (
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">PNR</Label>
-                        <p className="text-base font-mono">{selectedRecord.pnr}</p>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          PNR
+                        </Label>
+                        <p className="text-base font-mono">
+                          {selectedRecord.pnr}
+                        </p>
                       </div>
                     )}
-                    {selectedRecord.passengerMobile || selectedRecord.passenger_mobile ? (
+                    {selectedRecord.passengerMobile ||
+                    selectedRecord.passenger_mobile ? (
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Mobile</Label>
-                        <p className="text-base">{selectedRecord.passengerMobile || selectedRecord.passenger_mobile}</p>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Mobile
+                        </Label>
+                        <p className="text-base">
+                          {selectedRecord.passengerMobile ||
+                            selectedRecord.passenger_mobile}
+                        </p>
                       </div>
                     ) : null}
                   </div>
@@ -2493,38 +2671,57 @@ export default function UmrahManagement() {
                   </h4>
                   <div className="space-y-3">
                     <div>
-                      <Label className="text-sm font-medium text-muted-foreground">Departure Date</Label>
+                      <Label className="text-sm font-medium text-muted-foreground">
+                        Departure Date
+                      </Label>
                       <p className="text-base">
-                        {new Date(selectedRecord.departureDate || selectedRecord.departure_date || selectedRecord.flightDepartureDate || selectedRecord.flight_departure_date).toLocaleDateString('en-GB', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
+                        {new Date(
+                          selectedRecord.departureDate ||
+                            selectedRecord.departure_date ||
+                            selectedRecord.flightDepartureDate ||
+                            selectedRecord.flight_departure_date,
+                        ).toLocaleDateString("en-GB", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-muted-foreground">Return Date</Label>
+                      <Label className="text-sm font-medium text-muted-foreground">
+                        Return Date
+                      </Label>
                       <p className="text-base">
-                        {new Date(selectedRecord.returnDate || selectedRecord.return_date).toLocaleDateString('en-GB', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
+                        {new Date(
+                          selectedRecord.returnDate ||
+                            selectedRecord.return_date,
+                        ).toLocaleDateString("en-GB", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </p>
                     </div>
-                    {selectedRecord.flightAirlineName || selectedRecord.flight_airline_name ? (
+                    {selectedRecord.flightAirlineName ||
+                    selectedRecord.flight_airline_name ? (
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Flight/Airline</Label>
-                        <p className="text-base">{selectedRecord.flightAirlineName || selectedRecord.flight_airline_name}</p>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Flight/Airline
+                        </Label>
+                        <p className="text-base">
+                          {selectedRecord.flightAirlineName ||
+                            selectedRecord.flight_airline_name}
+                        </p>
                       </div>
                     ) : null}
                   </div>
                 </div>
 
                 {/* Financial Information (for without transport) */}
-                {(selectedRecord.totalAmount || selectedRecord.total_amount) && (
+                {(selectedRecord.totalAmount ||
+                  selectedRecord.total_amount) && (
                   <div className="space-y-4">
                     <h4 className="font-semibold text-base flex items-center gap-2">
                       <CreditCard className="h-4 w-4" />
@@ -2532,25 +2729,46 @@ export default function UmrahManagement() {
                     </h4>
                     <div className="space-y-3">
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Total Amount</Label>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Total Amount
+                        </Label>
                         <p className="text-base font-bold text-green-600">
-                          {formatCurrency(selectedRecord.totalAmount || selectedRecord.total_amount)}
+                          {formatCurrency(
+                            selectedRecord.totalAmount ||
+                              selectedRecord.total_amount,
+                          )}
                         </p>
                       </div>
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Amount Paid</Label>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Amount Paid
+                        </Label>
                         <p className="text-base font-medium">
-                          {formatCurrency(selectedRecord.amountPaid || selectedRecord.amount_paid || 0)}
+                          {formatCurrency(
+                            selectedRecord.amountPaid ||
+                              selectedRecord.amount_paid ||
+                              0,
+                          )}
                         </p>
                       </div>
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Remaining Amount</Label>
-                        <p className={`text-base font-bold ${
-                          (selectedRecord.remainingAmount || selectedRecord.remaining_amount || 0) > 0
-                            ? 'text-orange-600'
-                            : 'text-green-600'
-                        }`}>
-                          {formatCurrency(selectedRecord.remainingAmount || selectedRecord.remaining_amount || 0)}
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Remaining Amount
+                        </Label>
+                        <p
+                          className={`text-base font-bold ${
+                            (selectedRecord.remainingAmount ||
+                              selectedRecord.remaining_amount ||
+                              0) > 0
+                              ? "text-orange-600"
+                              : "text-green-600"
+                          }`}
+                        >
+                          {formatCurrency(
+                            selectedRecord.remainingAmount ||
+                              selectedRecord.remaining_amount ||
+                              0,
+                          )}
                         </p>
                       </div>
                     </div>
@@ -2566,38 +2784,69 @@ export default function UmrahManagement() {
                   <div className="space-y-3">
                     {selectedRecord.approvedBy || selectedRecord.approved_by ? (
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Approved By</Label>
-                        <p className="text-base">{selectedRecord.approvedBy || selectedRecord.approved_by}</p>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Approved By
+                        </Label>
+                        <p className="text-base">
+                          {selectedRecord.approvedBy ||
+                            selectedRecord.approved_by}
+                        </p>
                       </div>
                     ) : null}
-                    {selectedRecord.referenceAgency || selectedRecord.reference_agency ? (
+                    {selectedRecord.referenceAgency ||
+                    selectedRecord.reference_agency ? (
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Reference Agency</Label>
-                        <p className="text-base">{selectedRecord.referenceAgency || selectedRecord.reference_agency}</p>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Reference Agency
+                        </Label>
+                        <p className="text-base">
+                          {selectedRecord.referenceAgency ||
+                            selectedRecord.reference_agency}
+                        </p>
                       </div>
                     ) : null}
-                    {selectedRecord.entryRecordedBy || selectedRecord.entry_recorded_by ? (
+                    {selectedRecord.entryRecordedBy ||
+                    selectedRecord.entry_recorded_by ? (
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Entry Recorded By</Label>
-                        <p className="text-base">{selectedRecord.entryRecordedBy || selectedRecord.entry_recorded_by}</p>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Entry Recorded By
+                        </Label>
+                        <p className="text-base">
+                          {selectedRecord.entryRecordedBy ||
+                            selectedRecord.entry_recorded_by}
+                        </p>
                       </div>
                     ) : null}
-                    {selectedRecord.emergencyFlightContact || selectedRecord.emergency_flight_contact ? (
+                    {selectedRecord.emergencyFlightContact ||
+                    selectedRecord.emergency_flight_contact ? (
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Emergency Contact</Label>
-                        <p className="text-base">{selectedRecord.emergencyFlightContact || selectedRecord.emergency_flight_contact}</p>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Emergency Contact
+                        </Label>
+                        <p className="text-base">
+                          {selectedRecord.emergencyFlightContact ||
+                            selectedRecord.emergency_flight_contact}
+                        </p>
                       </div>
                     ) : null}
                     {selectedRecord.remarks && (
                       <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Remarks</Label>
-                        <p className="text-sm bg-gray-50 p-3 rounded-md">{selectedRecord.remarks}</p>
+                        <Label className="text-sm font-medium text-muted-foreground">
+                          Remarks
+                        </Label>
+                        <p className="text-sm bg-gray-50 p-3 rounded-md">
+                          {selectedRecord.remarks}
+                        </p>
                       </div>
                     )}
                     <div>
-                      <Label className="text-sm font-medium text-muted-foreground">Created Date</Label>
+                      <Label className="text-sm font-medium text-muted-foreground">
+                        Created Date
+                      </Label>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(selectedRecord.createdAt || selectedRecord.created_at).toLocaleString()}
+                        {new Date(
+                          selectedRecord.createdAt || selectedRecord.created_at,
+                        ).toLocaleString()}
                       </p>
                     </div>
                   </div>

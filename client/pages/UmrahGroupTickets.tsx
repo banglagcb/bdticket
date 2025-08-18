@@ -322,8 +322,10 @@ export default function UmrahGroupTickets() {
 
   const handleDelete = async (ticketId: string) => {
     // Find the group ticket to check assigned passengers
-    const groupTicket = groupTickets.find(g => g.id === ticketId);
-    const assignedCount = groupTicket ? (groupTicket.ticket_count - groupTicket.remaining_tickets) : 0;
+    const groupTicket = groupTickets.find((g) => g.id === ticketId);
+    const assignedCount = groupTicket
+      ? groupTicket.ticket_count - groupTicket.remaining_tickets
+      : 0;
 
     let confirmMessage = "আপনি কি নিশ্চিত যে এই গ্রুপ টিকেট ডিলিট ���রতে চান?";
 
@@ -346,8 +348,11 @@ export default function UmrahGroupTickets() {
       // Check if error has passenger details
       if (error.details && error.details.passengers) {
         const passengerList = error.details.passengers
-          .map((p: any) => `• ${p.name} (${p.type === 'with-transport' ? 'PNR: ' + p.pnr : 'Passport: ' + p.passport})`)
-          .join('\n');
+          .map(
+            (p: any) =>
+              `• ${p.name} (${p.type === "with-transport" ? "PNR: " + p.pnr : "Passport: " + p.passport})`,
+          )
+          .join("\n");
 
         toast({
           title: "ডিলিট করা যাবে না",
@@ -357,29 +362,35 @@ export default function UmrahGroupTickets() {
       } else {
         toast({
           title: "ত্রুটি",
-          description: error instanceof Error
-            ? (error.message === "Cannot delete group ticket with assigned passengers"
+          description:
+            error instanceof Error
+              ? error.message ===
+                "Cannot delete group ticket with assigned passengers"
                 ? "এই গ্রুপ টিকেটে যাত্রী নিযুক্ত আছে। প্রথমে যাত্রীদের সরান।"
-                : error.message)
-            : "গ্রুপ টিকেট ডিলিট করতে ব্যর্থ",
+                : error.message
+              : "গ্রুপ টিকেট ডিলিট করতে ব্যর্থ",
           variant: "destructive",
         });
       }
     }
   };
 
-  const viewAssignedPassengers = async (ticketId: string, groupName: string) => {
+  const viewAssignedPassengers = async (
+    ticketId: string,
+    groupName: string,
+  ) => {
     try {
       // This would need an API endpoint to get assigned passengers
       // For now, show a simple info dialog
       const confirmed = confirm(
-        `গ্রুপ টিকেট: ${groupName}\n\nনিযুক্ত যাত্রীদের তালিকা দেখতে চান?\n\n(নোট: এই গ্রুপ টিকেটে যাত্রী নিযুক্ত থাকার কারণে এটি ডিলিট করা যাবে না। প্রথমে যাত্রীদের অন্য গ্রুপে সরান বা unassign করুন।)`
+        `গ্রুপ টিকেট: ${groupName}\n\nনিযুক্ত যাত্রীদের তালিকা দেখতে চান?\n\n(নোট: এই গ্রুপ টিকেটে যাত্রী নিযুক্ত থাকার কারণে এটি ডিলিট করা যাবে না। প্রথমে যাত্রীদের অন্য গ্রুপে সরান বা unassign করুন।)`,
       );
 
       if (confirmed) {
         toast({
           title: "তথ্য",
-          description: "যাত্রীদের বিস্তারিত তথ্যের জন্য Umrah Management সেকশনে যান।",
+          description:
+            "যাত্রীদের বিস্তারিত তথ্যের জন্য Umrah Management সেকশনে যান।",
         });
       }
     } catch (error) {
@@ -661,18 +672,23 @@ export default function UmrahGroupTickets() {
                                   {group.departure_airline && (
                                     <div className="flex items-center gap-1 text-blue-600">
                                       <Plane className="h-3 w-3" />
-                                      {group.departure_airline} {group.departure_flight_number}
+                                      {group.departure_airline}{" "}
+                                      {group.departure_flight_number}
                                     </div>
                                   )}
                                   {group.return_airline && (
                                     <div className="flex items-center gap-1 text-green-600">
                                       <Plane className="h-3 w-3 rotate-180" />
-                                      {group.return_airline} {group.return_flight_number}
+                                      {group.return_airline}{" "}
+                                      {group.return_flight_number}
                                     </div>
                                   )}
-                                  {!group.departure_airline && !group.return_airline && (
-                                    <span className="text-muted-foreground">No flight details</span>
-                                  )}
+                                  {!group.departure_airline &&
+                                    !group.return_airline && (
+                                      <span className="text-muted-foreground">
+                                        No flight details
+                                      </span>
+                                    )}
                                 </div>
                               </TableCell>
                               <TableCell>
@@ -701,9 +717,16 @@ export default function UmrahGroupTickets() {
                                   </Button>
 
                                   {/* Show passengers button if there are assigned passengers */}
-                                  {(group.ticket_count - group.remaining_tickets) > 0 && (
+                                  {group.ticket_count -
+                                    group.remaining_tickets >
+                                    0 && (
                                     <Button
-                                      onClick={() => viewAssignedPassengers(group.id!, group.group_name)}
+                                      onClick={() =>
+                                        viewAssignedPassengers(
+                                          group.id!,
+                                          group.group_name,
+                                        )
+                                      }
                                       variant="outline"
                                       size="sm"
                                       className="touch-target text-blue-600 hover:text-blue-700"
@@ -718,8 +741,18 @@ export default function UmrahGroupTickets() {
                                     variant="outline"
                                     size="sm"
                                     className="touch-target text-red-600 hover:text-red-700"
-                                    disabled={(group.ticket_count - group.remaining_tickets) > 0}
-                                    title={(group.ticket_count - group.remaining_tickets) > 0 ? "যাত্রী নিযুক্ত থাকায় ডিলিট করা যাবে না" : "গ্রুপ টিকেট ডিলিট করুন"}
+                                    disabled={
+                                      group.ticket_count -
+                                        group.remaining_tickets >
+                                      0
+                                    }
+                                    title={
+                                      group.ticket_count -
+                                        group.remaining_tickets >
+                                      0
+                                        ? "যাত্রী নিযুক্ত থাকায় ডিলিট করা যাবে না"
+                                        : "গ্রুপ টিকেট ডিলিট করুন"
+                                    }
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
@@ -875,7 +908,9 @@ export default function UmrahGroupTickets() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="departureFlightNumber">Flight Number</Label>
+                      <Label htmlFor="departureFlightNumber">
+                        Flight Number
+                      </Label>
                       <Input
                         id="departureFlightNumber"
                         value={formData.departure_flight_number || ""}

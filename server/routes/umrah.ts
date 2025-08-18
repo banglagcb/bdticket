@@ -162,7 +162,9 @@ router.post("/with-transport", authenticate, (req, res) => {
     try {
       if (validatedData.group_ticket_id) {
         // Manual assignment to specific group ticket
-        const groupTicket = UmrahGroupTicketRepository.findById(validatedData.group_ticket_id);
+        const groupTicket = UmrahGroupTicketRepository.findById(
+          validatedData.group_ticket_id,
+        );
         if (!groupTicket) {
           return res.status(400).json({
             success: false,
@@ -186,7 +188,9 @@ router.post("/with-transport", authenticate, (req, res) => {
         });
 
         // Update remaining tickets count
-        UmrahGroupTicketRepository.updateRemainingTickets(validatedData.group_ticket_id);
+        UmrahGroupTicketRepository.updateRemainingTickets(
+          validatedData.group_ticket_id,
+        );
       } else {
         // Auto-assign to available group ticket
         groupAssignment = UmrahGroupTicketRepository.autoAssignToGroupTicket(
@@ -194,7 +198,7 @@ router.post("/with-transport", authenticate, (req, res) => {
           "with-transport",
           validatedData.departure_date,
           validatedData.return_date,
-          req.user!.id
+          req.user!.id,
         );
       }
     } catch (autoAssignError) {
@@ -211,7 +215,9 @@ router.post("/with-transport", authenticate, (req, res) => {
       details: JSON.stringify({
         passenger_name: validatedData.passenger_name,
         pnr: validatedData.pnr,
-        auto_assigned_to_group: groupAssignment ? groupAssignment.group_ticket_id : null,
+        auto_assigned_to_group: groupAssignment
+          ? groupAssignment.group_ticket_id
+          : null,
       }),
       ip_address: req.ip,
       user_agent: req.get("User-Agent"),
@@ -448,7 +454,9 @@ router.post("/without-transport", authenticate, (req, res) => {
     try {
       if (validatedData.group_ticket_id) {
         // Manual assignment to specific group ticket
-        const groupTicket = UmrahGroupTicketRepository.findById(validatedData.group_ticket_id);
+        const groupTicket = UmrahGroupTicketRepository.findById(
+          validatedData.group_ticket_id,
+        );
         if (!groupTicket) {
           return res.status(400).json({
             success: false,
@@ -472,7 +480,9 @@ router.post("/without-transport", authenticate, (req, res) => {
         });
 
         // Update remaining tickets count
-        UmrahGroupTicketRepository.updateRemainingTickets(validatedData.group_ticket_id);
+        UmrahGroupTicketRepository.updateRemainingTickets(
+          validatedData.group_ticket_id,
+        );
       } else {
         // Auto-assign to available group ticket
         groupAssignment = UmrahGroupTicketRepository.autoAssignToGroupTicket(
@@ -480,7 +490,7 @@ router.post("/without-transport", authenticate, (req, res) => {
           "without-transport",
           validatedData.flight_departure_date,
           validatedData.return_date,
-          req.user!.id
+          req.user!.id,
         );
       }
     } catch (autoAssignError) {
@@ -498,7 +508,9 @@ router.post("/without-transport", authenticate, (req, res) => {
         passenger_name: validatedData.passenger_name,
         total_amount: validatedData.total_amount,
         amount_paid: validatedData.amount_paid,
-        auto_assigned_to_group: groupAssignment ? groupAssignment.group_ticket_id : null,
+        auto_assigned_to_group: groupAssignment
+          ? groupAssignment.group_ticket_id
+          : null,
       }),
       ip_address: req.ip,
       user_agent: req.get("User-Agent"),
@@ -1032,20 +1044,24 @@ router.delete(
       const assignments = UmrahGroupBookingRepository.findByGroupTicketId(id);
       if (assignments.length > 0) {
         // Get passenger details for better error message
-        const passengerDetails = assignments.map(assignment => {
-          if (assignment.passenger_type === 'with-transport') {
-            const passenger = UmrahWithTransportRepository.findById(assignment.passenger_id);
+        const passengerDetails = assignments.map((assignment) => {
+          if (assignment.passenger_type === "with-transport") {
+            const passenger = UmrahWithTransportRepository.findById(
+              assignment.passenger_id,
+            );
             return {
-              type: 'with-transport',
-              name: passenger?.passenger_name || 'Unknown',
-              pnr: passenger?.pnr || 'N/A'
+              type: "with-transport",
+              name: passenger?.passenger_name || "Unknown",
+              pnr: passenger?.pnr || "N/A",
             };
           } else {
-            const passenger = UmrahWithoutTransportRepository.findById(assignment.passenger_id);
+            const passenger = UmrahWithoutTransportRepository.findById(
+              assignment.passenger_id,
+            );
             return {
-              type: 'without-transport',
-              name: passenger?.passenger_name || 'Unknown',
-              passport: passenger?.passport_number || 'N/A'
+              type: "without-transport",
+              name: passenger?.passenger_name || "Unknown",
+              passport: passenger?.passport_number || "N/A",
             };
           }
         });
@@ -1055,8 +1071,8 @@ router.delete(
           message: "Cannot delete group ticket with assigned passengers",
           details: {
             assignedCount: assignments.length,
-            passengers: passengerDetails
-          }
+            passengers: passengerDetails,
+          },
         });
       }
 
@@ -1231,35 +1247,46 @@ router.delete(
 );
 
 // Get available group tickets for auto-assignment
-router.get("/group-tickets/available/:packageType/:departureDate/:returnDate", authenticate, (req, res) => {
-  try {
-    const { packageType, departureDate, returnDate } = req.params;
+router.get(
+  "/group-tickets/available/:packageType/:departureDate/:returnDate",
+  authenticate,
+  (req, res) => {
+    try {
+      const { packageType, departureDate, returnDate } = req.params;
 
-    if (packageType !== "with-transport" && packageType !== "without-transport") {
-      return res.status(400).json({
+      if (
+        packageType !== "with-transport" &&
+        packageType !== "without-transport"
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid package type",
+        });
+      }
+
+      const availableGroups =
+        UmrahGroupTicketRepository.findAvailableGroupTickets(
+          packageType as "with-transport" | "without-transport",
+          departureDate,
+          returnDate,
+        );
+
+      res.json({
+        success: true,
+        data: availableGroups,
+        totalAvailableTickets: availableGroups.reduce(
+          (sum, group) => sum + (group.remaining_tickets || 0),
+          0,
+        ),
+      });
+    } catch (error) {
+      console.error("Error fetching available group tickets:", error);
+      res.status(500).json({
         success: false,
-        message: "Invalid package type",
+        message: "Failed to fetch available group tickets",
       });
     }
-
-    const availableGroups = UmrahGroupTicketRepository.findAvailableGroupTickets(
-      packageType as "with-transport" | "without-transport",
-      departureDate,
-      returnDate
-    );
-
-    res.json({
-      success: true,
-      data: availableGroups,
-      totalAvailableTickets: availableGroups.reduce((sum, group) => sum + (group.remaining_tickets || 0), 0),
-    });
-  } catch (error) {
-    console.error("Error fetching available group tickets:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch available group tickets",
-    });
-  }
-});
+  },
+);
 
 export default router;
