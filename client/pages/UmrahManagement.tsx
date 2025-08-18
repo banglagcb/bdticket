@@ -162,6 +162,11 @@ export default function UmrahManagement() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Auto-population states
+  const [availableGroupTickets, setAvailableGroupTickets] = useState<any[]>([]);
+  const [showGroupSuggestion, setShowGroupSuggestion] = useState(false);
+  const [selectedGroupTicket, setSelectedGroupTicket] = useState<any>(null);
+
   // Load data on component mount
   useEffect(() => {
     loadRecords();
