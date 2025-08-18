@@ -289,38 +289,83 @@ export default function UmrahManagement() {
   ): Record<string, string> => {
     const errors: Record<string, string> = {};
 
-    if (!form.passengerName.trim())
+    // Enhanced passenger name validation
+    if (!form.passengerName?.trim()) {
       errors.passengerName = "Passenger name is required";
-    if (!form.pnr.trim()) errors.pnr = "PNR is required";
-    if (!form.passportNumber.trim())
-      errors.passportNumber = "Passport number is required";
-    if (!form.flightAirlineName.trim())
-      errors.flightAirlineName = "Flight/Airline name is required";
-    if (!form.departureDate)
-      errors.departureDate = "Departure date is required";
-    if (!form.returnDate) errors.returnDate = "Return date is required";
-    if (!form.approvedBy.trim()) errors.approvedBy = "Approved by is required";
-    if (!form.referenceAgency.trim())
-      errors.referenceAgency = "Reference agency is required";
+    } else if (form.passengerName.trim().length < 2) {
+      errors.passengerName = "Name must be at least 2 characters";
+    } else if (!/^[a-zA-Z\s.'-]+$/.test(form.passengerName)) {
+      errors.passengerName = "Name contains invalid characters";
+    }
 
-    if (!form.emergencyFlightContact.trim()) {
+    // Enhanced PNR validation
+    if (!form.pnr?.trim()) {
+      errors.pnr = "PNR is required";
+    } else if (form.pnr.trim().length < 5) {
+      errors.pnr = "PNR must be at least 5 characters";
+    }
+
+    // Enhanced passport validation
+    if (!form.passportNumber?.trim()) {
+      errors.passportNumber = "Passport number is required";
+    } else if (!/^[A-Z0-9]{6,9}$/.test(form.passportNumber.replace(/\s/g, ''))) {
+      errors.passportNumber = "Invalid passport format";
+    }
+
+    if (!form.flightAirlineName?.trim()) {
+      errors.flightAirlineName = "Flight/Airline name is required";
+    }
+
+    // Enhanced date validation
+    if (!form.departureDate) {
+      errors.departureDate = "Departure date is required";
+    } else {
+      const departure = new Date(form.departureDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (departure < today) {
+        errors.departureDate = "Cannot be in the past";
+      }
+    }
+
+    if (!form.returnDate) {
+      errors.returnDate = "Return date is required";
+    }
+
+    if (!form.approvedBy?.trim()) {
+      errors.approvedBy = "Approved by is required";
+    }
+
+    if (!form.referenceAgency?.trim()) {
+      errors.referenceAgency = "Reference agency is required";
+    }
+
+    // Enhanced phone validation
+    if (!form.emergencyFlightContact?.trim()) {
       errors.emergencyFlightContact = "Emergency contact is required";
     } else if (!validateBangladeshiPhone(form.emergencyFlightContact)) {
-      errors.emergencyFlightContact = "Invalid phone number format";
+      errors.emergencyFlightContact = "Invalid phone format (+880XXXXXXXXX)";
     }
 
-    if (!form.passengerMobile.trim()) {
+    if (!form.passengerMobile?.trim()) {
       errors.passengerMobile = "Passenger mobile is required";
     } else if (!validateBangladeshiPhone(form.passengerMobile)) {
-      errors.passengerMobile = "Invalid phone number format";
+      errors.passengerMobile = "Invalid phone format (+880XXXXXXXXX)";
     }
 
-    // Date validation
+    // Enhanced date logic validation
     if (form.departureDate && form.returnDate) {
       const departure = new Date(form.departureDate);
       const returnDate = new Date(form.returnDate);
       if (returnDate <= departure) {
-        errors.returnDate = "Return date must be after departure date";
+        errors.returnDate = "Must be after departure date";
+      } else {
+        const daysDiff = (returnDate.getTime() - departure.getTime()) / (1000 * 60 * 60 * 24);
+        if (daysDiff < 7) {
+          errors.returnDate = "Minimum 7 days required";
+        } else if (daysDiff > 90) {
+          errors.returnDate = "Maximum 90 days allowed";
+        }
       }
     }
 
