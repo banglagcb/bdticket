@@ -176,8 +176,8 @@ export default function UmrahManagement() {
 
   // Filter states
   const [dateFilter, setDateFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const [amountFilter, setAmountFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [amountFilter, setAmountFilter] = useState<string>("all");
 
   // Bulk operations states
   const [selectedRecords, setSelectedRecords] = useState<Set<string>>(new Set());
@@ -1793,7 +1793,7 @@ export default function UmrahManagement() {
                         Group Ticket Management
                       </h3>
                       <p className="text-muted-foreground font-body mb-4">
-                        গ্রুপ ���িকে�� ম্যান��জ��েন্ট নিচের মেইন সেকশনে পাবেন।
+                        গ্রুপ ���িকেট ম্যান��জ��েন্ট নিচের মেইন সেকশনে পাবেন।
                       </p>
                     </div>
                   </TabsContent>
