@@ -47,6 +47,7 @@ const umrahWithoutTransportSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format")
     .optional(),
   remarks: z.string().optional(),
+  group_ticket_id: z.string().optional(), // For auto-deduction from group tickets
 });
 
 const paymentUpdateSchema = z.object({
