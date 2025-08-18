@@ -578,6 +578,7 @@ class APIClient {
     reference_agency: string;
     emergency_flight_contact: string;
     passenger_mobile: string;
+    group_ticket_id?: string; // For auto-deduction from group tickets
   }): Promise<any> {
     const result = await this.request<any>("/umrah/with-transport", {
       method: "POST",
