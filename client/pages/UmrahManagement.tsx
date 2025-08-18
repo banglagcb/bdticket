@@ -958,24 +958,55 @@ export default function UmrahManagement() {
   };
 
   const filteredWithTransportRecords = withTransportRecords.filter(
-    (record) =>
-      (record.passengerName || record.passenger_name || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (record.pnr || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (record.passportNumber || record.passport_number || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()),
+    (record) => {
+      // Text search
+      const matchesSearch = searchTerm === "" ||
+        (record.passengerName || record.passenger_name || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (record.pnr || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (record.passportNumber || record.passport_number || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+
+      // Date filter
+      const matchesDate = dateFilter === "" ||
+        (record.departureDate || record.departure_date) === dateFilter;
+
+      return matchesSearch && matchesDate;
+    }
   );
 
   const filteredWithoutTransportRecords = withoutTransportRecords.filter(
-    (record) =>
-      (record.passengerName || record.passenger_name || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (record.passportNumber || record.passport_number || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()),
+    (record) => {
+      // Text search
+      const matchesSearch = searchTerm === "" ||
+        (record.passengerName || record.passenger_name || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (record.passportNumber || record.passport_number || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+
+      // Date filter
+      const matchesDate = dateFilter === "" ||
+        (record.flightDepartureDate || record.flight_departure_date) === dateFilter;
+
+      // Status filter
+      const remainingAmount = record.remainingAmount || record.remaining_amount || 0;
+      const matchesStatus = statusFilter === "" ||
+        (statusFilter === "paid" && remainingAmount === 0) ||
+        (statusFilter === "pending" && remainingAmount > 0);
+
+      // Amount filter
+      const totalAmount = record.totalAmount || record.total_amount || 0;
+      const matchesAmount = amountFilter === "" ||
+        (amountFilter === "low" && totalAmount <= 50000) ||
+        (amountFilter === "medium" && totalAmount > 50000 && totalAmount <= 100000) ||
+        (amountFilter === "high" && totalAmount > 100000);
+
+      return matchesSearch && matchesDate && matchesStatus && matchesAmount;
+    }
   );
 
   return (
