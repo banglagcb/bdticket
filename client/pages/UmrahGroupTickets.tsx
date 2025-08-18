@@ -327,7 +327,7 @@ export default function UmrahGroupTickets() {
       await apiClient.deleteUmrahGroupTicket(ticketId);
       toast({
         title: "সফল হয়েছে",
-        description: "গ্রুপ টিকেট সফলভাবে ডিলিট করা হয়েছে",
+        description: "গ্রুপ টিকেট সফলভাবে ডিল��ট করা হয়েছে",
       });
       loadGroupTickets();
     } catch (error: any) {
@@ -355,6 +355,30 @@ export default function UmrahGroupTickets() {
           variant: "destructive",
         });
       }
+    }
+  };
+
+  const viewAssignedPassengers = async (ticketId: string, groupName: string) => {
+    try {
+      // This would need an API endpoint to get assigned passengers
+      // For now, show a simple info dialog
+      const confirmed = confirm(
+        `গ্রুপ টিকেট: ${groupName}\n\nনিযুক্ত যাত্রীদের তালিকা দেখতে চান?\n\n(নোট: এই গ্রুপ টিকেটে যাত্রী নিযুক্ত থাকার কারণে এটি ডিলিট করা যাবে না। প্রথমে যাত্রীদের অন্য গ্রুপে সরান বা unassign করুন।)`
+      );
+
+      if (confirmed) {
+        toast({
+          title: "তথ্য",
+          description: "যাত্রীদের বিস্তারিত তথ্যের জন্য Umrah Management সেকশনে যান।",
+        });
+      }
+    } catch (error) {
+      console.error("Error viewing passengers:", error);
+      toast({
+        title: "ত্রুটি",
+        description: "যাত্রীদের তথ্য লোড করতে ব্যর্থ",
+        variant: "destructive",
+      });
     }
   };
 
