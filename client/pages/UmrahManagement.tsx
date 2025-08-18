@@ -487,6 +487,107 @@ export default function UmrahManagement() {
     setErrors({});
   };
 
+  // Edit handlers for with-transport
+  const handleEditWithTransport = (record: UmrahWithTransport) => {
+    setEditingWithTransportRecord(record);
+    setWithTransportForm({
+      passengerName: record.passengerName || record.passenger_name || "",
+      pnr: record.pnr || "",
+      passportNumber: record.passportNumber || record.passport_number || "",
+      flightAirlineName: record.flightAirlineName || record.flight_airline_name || "",
+      departureDate: record.departureDate || record.departure_date || "",
+      returnDate: record.returnDate || record.return_date || "",
+      approvedBy: record.approvedBy || record.approved_by || "",
+      referenceAgency: record.referenceAgency || record.reference_agency || "",
+      emergencyFlightContact: record.emergencyFlightContact || record.emergency_flight_contact || "",
+      passengerMobile: record.passengerMobile || record.passenger_mobile || "",
+    });
+    setIsEditingWithTransport(true);
+    setIsFormDialogOpen(true);
+  };
+
+  const handleUpdateWithTransport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formErrors = validateWithTransportForm(withTransportForm);
+    setErrors(formErrors);
+
+    if (Object.keys(formErrors).length > 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors in the form",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!editingWithTransportRecord?.id) return;
+
+    try {
+      setLoading(true);
+      const apiData = {
+        passenger_name: withTransportForm.passengerName,
+        pnr: withTransportForm.pnr,
+        passport_number: withTransportForm.passportNumber,
+        flight_airline_name: withTransportForm.flightAirlineName,
+        departure_date: withTransportForm.departureDate,
+        return_date: withTransportForm.returnDate,
+        approved_by: withTransportForm.approvedBy,
+        reference_agency: withTransportForm.referenceAgency,
+        emergency_flight_contact: withTransportForm.emergencyFlightContact,
+        passenger_mobile: withTransportForm.passengerMobile,
+      };
+
+      await apiClient.updateUmrahWithTransport(editingWithTransportRecord.id, apiData);
+
+      toast({
+        title: "Success",
+        description: "Umrah with transport record updated successfully",
+      });
+
+      setIsFormDialogOpen(false);
+      setIsEditingWithTransport(false);
+      setEditingWithTransportRecord(null);
+      resetWithTransportForm();
+      loadRecords();
+    } catch (error) {
+      console.error("Umrah with transport update error:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update record",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteWithTransport = async (recordId: string) => {
+    if (!confirm("Are you sure you want to delete this Umrah with transport record? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await apiClient.deleteUmrahWithTransport(recordId);
+
+      toast({
+        title: "Success",
+        description: "Umrah with transport record deleted successfully",
+      });
+
+      loadRecords();
+    } catch (error) {
+      console.error("Umrah with transport delete error:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete record",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getDayOfWeek = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
