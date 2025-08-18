@@ -1820,6 +1820,46 @@ export default function UmrahManagement() {
         </Card>
       </motion.div>
 
+      {/* Bulk Actions */}
+      {showBulkActions && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-blue-600" />
+              <span className="font-medium text-blue-800">
+                {selectedRecords.size} record{selectedRecords.size !== 1 ? 's' : ''} selected
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedRecords(new Set());
+                  setShowBulkActions(false);
+                }}
+              >
+                Clear Selection
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={loading}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Selected
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Main Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
