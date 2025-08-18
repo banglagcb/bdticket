@@ -188,7 +188,10 @@ router.post("/with-transport", authenticate, (req, res) => {
     res.status(201).json({
       success: true,
       data: umrahPackage,
-      message: "Umrah with transport package created successfully",
+      groupAssignment: groupAssignment,
+      message: groupAssignment
+        ? "Umrah with transport package created and auto-assigned to group ticket"
+        : "Umrah with transport package created successfully",
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
