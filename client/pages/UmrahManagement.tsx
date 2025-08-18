@@ -167,6 +167,12 @@ export default function UmrahManagement() {
   const [showGroupSuggestion, setShowGroupSuggestion] = useState(false);
   const [selectedGroupTicket, setSelectedGroupTicket] = useState<any>(null);
 
+  // Editing states
+  const [isEditingWithTransport, setIsEditingWithTransport] = useState(false);
+  const [isEditingWithoutTransport, setIsEditingWithoutTransport] = useState(false);
+  const [editingWithTransportRecord, setEditingWithTransportRecord] = useState<UmrahWithTransport | null>(null);
+  const [editingWithoutTransportRecord, setEditingWithoutTransportRecord] = useState<UmrahWithoutTransport | null>(null);
+
   // Load data on component mount
   useEffect(() => {
     loadRecords();
