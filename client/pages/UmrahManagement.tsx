@@ -741,7 +741,14 @@ export default function UmrahManagement() {
   };
 
   const handleBulkDelete = async () => {
-    if (selectedRecords.size === 0) return;
+    if (selectedRecords.size === 0) {
+      toast({
+        title: "Warning",
+        description: "No records selected for deletion",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (!confirm(`Are you sure you want to delete ${selectedRecords.size} selected records? This action cannot be undone.`)) {
       return;
@@ -750,27 +757,57 @@ export default function UmrahManagement() {
     try {
       setLoading(true);
       const promises: Promise<any>[] = [];
+      let successCount = 0;
+      let errorCount = 0;
 
       // Delete with-transport records
       filteredWithTransportRecords.forEach(record => {
         if (selectedRecords.has(record.id!)) {
-          promises.push(apiClient.deleteUmrahWithTransport(record.id!));
+          promises.push(
+            apiClient.deleteUmrahWithTransport(record.id!)
+              .then(() => successCount++)
+              .catch((error) => {
+                console.error(`Failed to delete with-transport record ${record.id}:`, error);
+                errorCount++;
+              })
+          );
         }
       });
 
       // Delete without-transport records
       filteredWithoutTransportRecords.forEach(record => {
         if (selectedRecords.has(record.id!)) {
-          promises.push(apiClient.deleteUmrahWithoutTransport(record.id!));
+          promises.push(
+            apiClient.deleteUmrahWithoutTransport(record.id!)
+              .then(() => successCount++)
+              .catch((error) => {
+                console.error(`Failed to delete without-transport record ${record.id}:`, error);
+                errorCount++;
+              })
+          );
         }
       });
 
       await Promise.all(promises);
 
-      toast({
-        title: "Success",
-        description: `${selectedRecords.size} records deleted successfully`,
-      });
+      if (errorCount === 0) {
+        toast({
+          title: "Success",
+          description: `${successCount} records deleted successfully`,
+        });
+      } else if (successCount > 0) {
+        toast({
+          title: "Partial Success",
+          description: `${successCount} records deleted, ${errorCount} failed`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete any records",
+          variant: "destructive",
+        });
+      }
 
       setSelectedRecords(new Set());
       setShowBulkActions(false);
@@ -779,7 +816,7 @@ export default function UmrahManagement() {
       console.error("Bulk delete error:", error);
       toast({
         title: "Error",
-        description: "Failed to delete some records",
+        description: "An unexpected error occurred during bulk deletion",
         variant: "destructive",
       });
     } finally {
