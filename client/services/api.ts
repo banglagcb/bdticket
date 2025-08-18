@@ -926,6 +926,7 @@ export const {
   createUmrahGroupTicket,
   updateUmrahGroupTicket,
   deleteUmrahGroupTicket,
+  getAvailableGroupTickets,
   assignPassengerToGroup,
   removePassengerFromGroup,
 } = apiClient;
