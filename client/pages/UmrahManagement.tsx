@@ -1877,7 +1877,7 @@ export default function UmrahManagement() {
                           <SelectValue placeholder="All Amounts" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Amounts</SelectItem>
+                          <SelectItem value="all">All Amounts</SelectItem>
                           <SelectItem value="low">৳0 - ৳50,000</SelectItem>
                           <SelectItem value="medium">৳50,001 - ৳100,000</SelectItem>
                           <SelectItem value="high">৳100,001+</SelectItem>
