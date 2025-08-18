@@ -600,6 +600,9 @@ export default function UmrahManagement() {
     setErrors({});
     setIsEditingWithoutTransport(false);
     setEditingWithoutTransportRecord(null);
+    setSelectedGroupTicket(null);
+    setShowGroupSuggestion(false);
+    setAvailableGroupTickets([]);
   };
 
   // Edit handlers for with-transport
