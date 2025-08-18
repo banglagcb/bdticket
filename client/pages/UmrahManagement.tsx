@@ -1440,6 +1440,74 @@ export default function UmrahManagement() {
                           )}
                         </div>
 
+                        {/* Group Ticket Suggestion */}
+                        {showGroupSuggestion && availableGroupTickets.length > 0 && (
+                          <div className="md:col-span-2">
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-center">
+                                  <Package className="h-5 w-5 text-blue-600 mr-2" />
+                                  <div>
+                                    <h4 className="font-semibold text-blue-900">উপলব্ধ গ্রুপ টিকেট</h4>
+                                    <p className="text-sm text-blue-700">আপনার নির্বাচিত তারিখের জন্য {availableGroupTickets.length}টি গ্রুপ টিকেট পাওয়া গেছে</p>
+                                  </div>
+                                </div>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setShowGroupSuggestion(false)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+
+                              <div className="space-y-2">
+                                {availableGroupTickets.map((ticket) => (
+                                  <div
+                                    key={ticket.id}
+                                    className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                                      selectedGroupTicket?.id === ticket.id
+                                        ? 'border-blue-500 bg-blue-100'
+                                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                                    }`}
+                                    onClick={() => populateFromGroupTicket(ticket)}
+                                  >
+                                    <div className="flex justify-between items-start">
+                                      <div>
+                                        <h5 className="font-medium text-gray-900">{ticket.group_name}</h5>
+                                        <p className="text-sm text-gray-600">
+                                          {ticket.departure_airline} • ফ্লাইট: {ticket.departure_flight_number}
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                          এজেন্ট: {ticket.agent_name}
+                                        </p>
+                                      </div>
+                                      <div className="text-right">
+                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                          {ticket.remaining_tickets} টিকেট বাকি
+                                        </span>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                          {ticket.departure_date} - {ticket.return_date}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {selectedGroupTicket && (
+                                <div className="mt-3 pt-3 border-t border-blue-200">
+                                  <p className="text-sm text-blue-700">
+                                    ✓ নির্বাচিত: <strong>{selectedGroupTicket.group_name}</strong>
+                                    (এই যাত্রী যোগের পর {selectedGroupTicket.remaining_tickets - 1} টিকেট বাকি থাকবে)
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
                         <div className="space-y-2">
                           <Label htmlFor="approvedBy">Approved By *</Label>
                           <Input
