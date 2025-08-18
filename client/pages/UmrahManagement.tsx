@@ -1028,7 +1028,13 @@ export default function UmrahManagement() {
 
             <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="velvet-button text-primary-foreground font-body">
+                <Button
+                  className="velvet-button text-primary-foreground font-body"
+                  onClick={() => {
+                    resetWithTransportForm();
+                    resetWithoutTransportForm();
+                  }}
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Add New Package
                 </Button>
