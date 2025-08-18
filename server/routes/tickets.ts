@@ -332,31 +332,6 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
   }
 });
 
-// Get dashboard statistics
-router.get("/dashboard/stats", async (req: Request, res: Response) => {
-  try {
-    const stats = TicketRepository.getDashboardStats();
-
-    // Remove profit info if user doesn't have permission
-    const userCanViewProfit = hasPermission(req.user!.role, "view_profit");
-    if (!userCanViewProfit) {
-      delete stats.estimatedProfit;
-    }
-
-    res.json({
-      success: true,
-      message: "Dashboard statistics retrieved successfully",
-      data: stats,
-    });
-  } catch (error) {
-    console.error("Get dashboard stats error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-});
-
 // Get countries with ticket counts
 router.get("/countries/stats", async (req: Request, res: Response) => {
   try {
