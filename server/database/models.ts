@@ -1312,6 +1312,70 @@ export class UmrahGroupTicketRepository {
       )
       .all(`%${searchTerm}%`, `%${searchTerm}%`) as UmrahGroupTicket[];
   }
+
+  // Update remaining tickets when a booking is assigned
+  static updateRemainingTickets(groupTicketId: string): void {
+    const assignedCount = db
+      .prepare("SELECT COUNT(*) as count FROM umrah_group_bookings WHERE group_ticket_id = ?")
+      .get(groupTicketId) as { count: number };
+
+    const groupTicket = this.findById(groupTicketId);
+    if (!groupTicket) return;
+
+    const remainingTickets = groupTicket.ticket_count - assignedCount.count;
+
+    db.prepare("UPDATE umrah_group_tickets SET remaining_tickets = ? WHERE id = ?")
+      .run(remainingTickets, groupTicketId);
+  }
+
+  // Find available group tickets for auto-assignment
+  static findAvailableGroupTickets(
+    packageType: "with-transport" | "without-transport",
+    departureDate: string,
+    returnDate: string
+  ): UmrahGroupTicket[] {
+    return db
+      .prepare(
+        `
+        SELECT * FROM umrah_group_tickets
+        WHERE package_type = ?
+          AND departure_date = ?
+          AND return_date = ?
+          AND remaining_tickets > 0
+        ORDER BY created_at ASC
+      `,
+      )
+      .all(packageType, departureDate, returnDate) as UmrahGroupTicket[];
+  }
+
+  // Auto-assign passenger to an available group ticket
+  static autoAssignToGroupTicket(
+    passengerId: string,
+    passengerType: "with-transport" | "without-transport",
+    departureDate: string,
+    returnDate: string,
+    assignedBy: string
+  ): UmrahGroupBooking | null {
+    const availableGroups = this.findAvailableGroupTickets(passengerType, departureDate, returnDate);
+
+    if (availableGroups.length === 0) return null;
+
+    // Get the first available group (FIFO)
+    const selectedGroup = availableGroups[0];
+
+    // Create the assignment
+    const assignment = UmrahGroupBookingRepository.create({
+      group_ticket_id: selectedGroup.id,
+      passenger_id: passengerId,
+      passenger_type: passengerType,
+      assigned_by: assignedBy,
+    });
+
+    // Update remaining tickets
+    this.updateRemainingTickets(selectedGroup.id);
+
+    return assignment;
+  }
 }
 
 export class UmrahGroupBookingRepository {
