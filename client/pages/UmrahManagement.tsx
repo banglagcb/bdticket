@@ -588,6 +588,106 @@ export default function UmrahManagement() {
     }
   };
 
+  // Edit handlers for without-transport
+  const handleEditWithoutTransport = (record: UmrahWithoutTransport) => {
+    setEditingWithoutTransportRecord(record);
+    setWithoutTransportForm({
+      flightDepartureDate: record.flightDepartureDate || record.flight_departure_date || "",
+      returnDate: record.returnDate || record.return_date || "",
+      passengerName: record.passengerName || record.passenger_name || "",
+      passportNumber: record.passportNumber || record.passport_number || "",
+      entryRecordedBy: record.entryRecordedBy || record.entry_recorded_by || "",
+      totalAmount: record.totalAmount || record.total_amount || 0,
+      amountPaid: record.amountPaid || record.amount_paid || 0,
+      remainingAmount: record.remainingAmount || record.remaining_amount || 0,
+      lastPaymentDate: record.lastPaymentDate || record.last_payment_date || "",
+      remarks: record.remarks || "",
+    });
+    setIsEditingWithoutTransport(true);
+    setIsFormDialogOpen(true);
+  };
+
+  const handleUpdateWithoutTransport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formErrors = validateWithoutTransportForm(withoutTransportForm);
+    setErrors(formErrors);
+
+    if (Object.keys(formErrors).length > 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors in the form",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!editingWithoutTransportRecord?.id) return;
+
+    try {
+      setLoading(true);
+      const apiData = {
+        flight_departure_date: withoutTransportForm.flightDepartureDate,
+        return_date: withoutTransportForm.returnDate,
+        passenger_name: withoutTransportForm.passengerName,
+        passport_number: withoutTransportForm.passportNumber,
+        entry_recorded_by: withoutTransportForm.entryRecordedBy,
+        total_amount: withoutTransportForm.totalAmount,
+        amount_paid: withoutTransportForm.amountPaid,
+        last_payment_date: withoutTransportForm.lastPaymentDate || undefined,
+        remarks: withoutTransportForm.remarks || undefined,
+      };
+
+      await apiClient.updateUmrahWithoutTransport(editingWithoutTransportRecord.id, apiData);
+
+      toast({
+        title: "Success",
+        description: "Umrah without transport record updated successfully",
+      });
+
+      setIsFormDialogOpen(false);
+      setIsEditingWithoutTransport(false);
+      setEditingWithoutTransportRecord(null);
+      resetWithoutTransportForm();
+      loadRecords();
+    } catch (error) {
+      console.error("Umrah without transport update error:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update record",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteWithoutTransport = async (recordId: string) => {
+    if (!confirm("Are you sure you want to delete this Umrah without transport record? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await apiClient.deleteUmrahWithoutTransport(recordId);
+
+      toast({
+        title: "Success",
+        description: "Umrah without transport record deleted successfully",
+      });
+
+      loadRecords();
+    } catch (error) {
+      console.error("Umrah without transport delete error:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete record",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getDayOfWeek = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -1469,7 +1569,7 @@ export default function UmrahManagement() {
                         Group Ticket Management
                       </h3>
                       <p className="text-muted-foreground font-body mb-4">
-                        গ্রুপ ���িকেট ম্যানেজমেন্ট নিচের মেইন সেকশনে পাবেন।
+                        গ্রুপ ���িকেট ম্যান��জমেন্ট নিচের মেইন সেকশনে পাবেন।
                       </p>
                     </div>
                   </TabsContent>
