@@ -763,6 +763,144 @@ export default function UmrahGroupTickets() {
               </div>
             </div>
 
+            {/* Flight Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Flight Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Departure Flight Details */}
+                <div className="space-y-4 p-4 border rounded-lg bg-blue-50/50">
+                  <h4 className="font-medium text-blue-800 flex items-center gap-2">
+                    <Plane className="h-4 w-4" />
+                    Departure Flight (যাওয়ার ফ্লাইট)
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="departureAirline">Airline Name</Label>
+                      <Input
+                        id="departureAirline"
+                        value={formData.departure_airline || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            departure_airline: e.target.value,
+                          }))
+                        }
+                        placeholder="e.g., Biman Bangladesh"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="departureFlightNumber">Flight Number</Label>
+                      <Input
+                        id="departureFlightNumber"
+                        value={formData.departure_flight_number || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            departure_flight_number: e.target.value,
+                          }))
+                        }
+                        placeholder="e.g., BG147"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="departureTime">Departure Time</Label>
+                      <Input
+                        id="departureTime"
+                        type="time"
+                        value={formData.departure_time || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            departure_time: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="departureRoute">Route</Label>
+                      <Input
+                        id="departureRoute"
+                        value={formData.departure_route || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            departure_route: e.target.value,
+                          }))
+                        }
+                        placeholder="e.g., DAC → JED"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Return Flight Details */}
+                <div className="space-y-4 p-4 border rounded-lg bg-green-50/50">
+                  <h4 className="font-medium text-green-800 flex items-center gap-2">
+                    <Plane className="h-4 w-4 rotate-180" />
+                    Return Flight (ফিরতি ফ্লাইট)
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="returnAirline">Airline Name</Label>
+                      <Input
+                        id="returnAirline"
+                        value={formData.return_airline || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            return_airline: e.target.value,
+                          }))
+                        }
+                        placeholder="e.g., Biman Bangladesh"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="returnFlightNumber">Flight Number</Label>
+                      <Input
+                        id="returnFlightNumber"
+                        value={formData.return_flight_number || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            return_flight_number: e.target.value,
+                          }))
+                        }
+                        placeholder="e.g., BG148"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="returnTime">Return Time</Label>
+                      <Input
+                        id="returnTime"
+                        type="time"
+                        value={formData.return_time || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            return_time: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="returnRoute">Route</Label>
+                      <Input
+                        id="returnRoute"
+                        value={formData.return_route || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            return_route: e.target.value,
+                          }))
+                        }
+                        placeholder="e.g., JED → DAC"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Financial Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Financial Details</h3>
