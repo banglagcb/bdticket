@@ -352,6 +352,12 @@ export default function UmrahManagement() {
 
   const handleSubmitWithTransport = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isEditingWithTransport) {
+      await handleUpdateWithTransport(e);
+      return;
+    }
+
     const formErrors = validateWithTransportForm(withTransportForm);
     setErrors(formErrors);
 
@@ -1569,7 +1575,7 @@ export default function UmrahManagement() {
                         Group Ticket Management
                       </h3>
                       <p className="text-muted-foreground font-body mb-4">
-                        গ্রুপ ���িকেট ম্যান��জমেন্ট নিচের মেইন সেকশনে পাবেন।
+                        গ্রুপ ���িকেট ম্যান��জ��েন্ট নিচের মেইন সেকশনে পাবেন।
                       </p>
                     </div>
                   </TabsContent>
