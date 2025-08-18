@@ -1940,20 +1940,175 @@ export default function UmrahManagement() {
             <DialogTitle className="font-heading">Package Details</DialogTitle>
           </DialogHeader>
           {selectedRecord && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                {Object.entries(selectedRecord).map(([key, value]) => (
-                  <div key={key} className="space-y-1">
-                    <Label className="text-sm font-medium capitalize">
-                      {key.replace(/([A-Z])/g, " $1").trim()}
-                    </Label>
-                    <p className="text-sm text-foreground/70">
-                      {typeof value === "number" && key.includes("Amount")
-                        ? formatCurrency(value as number)
-                        : String(value)}
-                    </p>
+            <div className="space-y-6">
+              {/* Package Header */}
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                <div className="p-2 bg-blue-500 rounded-full">
+                  {selectedRecord.pnr ? (
+                    <Plane className="h-5 w-5 text-white" />
+                  ) : (
+                    <Users className="h-5 w-5 text-white" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-lg">
+                    {selectedRecord.passengerName || selectedRecord.passenger_name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedRecord.pnr ? "With Transport Package" : "Without Transport Package"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Package Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-base flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Basic Information
+                  </h4>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Passenger Name</Label>
+                      <p className="text-base font-medium">{selectedRecord.passengerName || selectedRecord.passenger_name}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Passport Number</Label>
+                      <p className="text-base">{selectedRecord.passportNumber || selectedRecord.passport_number}</p>
+                    </div>
+                    {selectedRecord.pnr && (
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">PNR</Label>
+                        <p className="text-base font-mono">{selectedRecord.pnr}</p>
+                      </div>
+                    )}
+                    {selectedRecord.passengerMobile || selectedRecord.passenger_mobile ? (
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Mobile</Label>
+                        <p className="text-base">{selectedRecord.passengerMobile || selectedRecord.passenger_mobile}</p>
+                      </div>
+                    ) : null}
                   </div>
-                ))}
+                </div>
+
+                {/* Travel Information */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-base flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Travel Information
+                  </h4>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Departure Date</Label>
+                      <p className="text-base">
+                        {new Date(selectedRecord.departureDate || selectedRecord.departure_date || selectedRecord.flightDepartureDate || selectedRecord.flight_departure_date).toLocaleDateString('en-GB', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Return Date</Label>
+                      <p className="text-base">
+                        {new Date(selectedRecord.returnDate || selectedRecord.return_date).toLocaleDateString('en-GB', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                    {selectedRecord.flightAirlineName || selectedRecord.flight_airline_name ? (
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Flight/Airline</Label>
+                        <p className="text-base">{selectedRecord.flightAirlineName || selectedRecord.flight_airline_name}</p>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+
+                {/* Financial Information (for without transport) */}
+                {(selectedRecord.totalAmount || selectedRecord.total_amount) && (
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-base flex items-center gap-2">
+                      <CreditCard className="h-4 w-4" />
+                      Financial Details
+                    </h4>
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Total Amount</Label>
+                        <p className="text-base font-bold text-green-600">
+                          {formatCurrency(selectedRecord.totalAmount || selectedRecord.total_amount)}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Amount Paid</Label>
+                        <p className="text-base font-medium">
+                          {formatCurrency(selectedRecord.amountPaid || selectedRecord.amount_paid || 0)}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Remaining Amount</Label>
+                        <p className={`text-base font-bold ${
+                          (selectedRecord.remainingAmount || selectedRecord.remaining_amount || 0) > 0
+                            ? 'text-orange-600'
+                            : 'text-green-600'
+                        }`}>
+                          {formatCurrency(selectedRecord.remainingAmount || selectedRecord.remaining_amount || 0)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Additional Information */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-base flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    Additional Information
+                  </h4>
+                  <div className="space-y-3">
+                    {selectedRecord.approvedBy || selectedRecord.approved_by ? (
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Approved By</Label>
+                        <p className="text-base">{selectedRecord.approvedBy || selectedRecord.approved_by}</p>
+                      </div>
+                    ) : null}
+                    {selectedRecord.referenceAgency || selectedRecord.reference_agency ? (
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Reference Agency</Label>
+                        <p className="text-base">{selectedRecord.referenceAgency || selectedRecord.reference_agency}</p>
+                      </div>
+                    ) : null}
+                    {selectedRecord.entryRecordedBy || selectedRecord.entry_recorded_by ? (
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Entry Recorded By</Label>
+                        <p className="text-base">{selectedRecord.entryRecordedBy || selectedRecord.entry_recorded_by}</p>
+                      </div>
+                    ) : null}
+                    {selectedRecord.emergencyFlightContact || selectedRecord.emergency_flight_contact ? (
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Emergency Contact</Label>
+                        <p className="text-base">{selectedRecord.emergencyFlightContact || selectedRecord.emergency_flight_contact}</p>
+                      </div>
+                    ) : null}
+                    {selectedRecord.remarks && (
+                      <div>
+                        <Label className="text-sm font-medium text-muted-foreground">Remarks</Label>
+                        <p className="text-sm bg-gray-50 p-3 rounded-md">{selectedRecord.remarks}</p>
+                      </div>
+                    )}
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Created Date</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(selectedRecord.createdAt || selectedRecord.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
