@@ -411,6 +411,12 @@ export default function UmrahManagement() {
 
   const handleSubmitWithoutTransport = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isEditingWithoutTransport) {
+      await handleUpdateWithoutTransport(e);
+      return;
+    }
+
     const formErrors = validateWithoutTransportForm(withoutTransportForm);
     setErrors(formErrors);
 
