@@ -1322,7 +1322,10 @@ export default function UmrahManagement() {
                           className="velvet-button"
                         >
                           <Save className="h-4 w-4 mr-2" />
-                          Save Package
+                          {loading
+                            ? (isEditingWithTransport ? "Updating..." : "Saving...")
+                            : (isEditingWithTransport ? "Update Package" : "Save Package")
+                          }
                         </Button>
                       </div>
                     </form>
