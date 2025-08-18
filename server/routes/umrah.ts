@@ -1031,9 +1031,32 @@ router.delete(
       // Check if there are any assignments
       const assignments = UmrahGroupBookingRepository.findByGroupTicketId(id);
       if (assignments.length > 0) {
+        // Get passenger details for better error message
+        const passengerDetails = assignments.map(assignment => {
+          if (assignment.passenger_type === 'with-transport') {
+            const passenger = UmrahWithTransportRepository.findById(assignment.passenger_id);
+            return {
+              type: 'with-transport',
+              name: passenger?.passenger_name || 'Unknown',
+              pnr: passenger?.pnr || 'N/A'
+            };
+          } else {
+            const passenger = UmrahWithoutTransportRepository.findById(assignment.passenger_id);
+            return {
+              type: 'without-transport',
+              name: passenger?.passenger_name || 'Unknown',
+              passport: passenger?.passport_number || 'N/A'
+            };
+          }
+        });
+
         return res.status(400).json({
           success: false,
           message: "Cannot delete group ticket with assigned passengers",
+          details: {
+            assignedCount: assignments.length,
+            passengers: passengerDetails
+          }
         });
       }
 
