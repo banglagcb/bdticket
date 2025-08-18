@@ -321,7 +321,17 @@ export default function UmrahGroupTickets() {
   };
 
   const handleDelete = async (ticketId: string) => {
-    if (!confirm("Are you sure you want to delete this group ticket?")) return;
+    // Find the group ticket to check assigned passengers
+    const groupTicket = groupTickets.find(g => g.id === ticketId);
+    const assignedCount = groupTicket ? (groupTicket.ticket_count - groupTicket.remaining_tickets) : 0;
+
+    let confirmMessage = "আপনি কি নিশ্চিত যে এই গ্রুপ টিকেট ডিলিট ���রতে চান?";
+
+    if (assignedCount > 0) {
+      confirmMessage = `⚠️ সতর্কতা!\n\nএই গ্রুপ টিকেটে ${assignedCount}জন যাত্রী নিযুক্ত আছে।\n\nএটি ডিলিট করা যাবে না যতক্ষণ না সকল যাত্রীকে অন্য গ্রুপে সরানো হয় বা unassign করা হয়।\n\nতবুও চেষ্টা করতে চান? (এটি ব্যর্থ হবে)`;
+    }
+
+    if (!confirm(confirmMessage)) return;
 
     try {
       await apiClient.deleteUmrahGroupTicket(ticketId);
@@ -363,7 +373,7 @@ export default function UmrahGroupTickets() {
       // This would need an API endpoint to get assigned passengers
       // For now, show a simple info dialog
       const confirmed = confirm(
-        `গ্রুপ টিকেট: ${groupName}\n\nনিযুক্ত যাত্রীদের তালিকা দেখতে চান?\n\n(নোট: এই গ্রুপ টিকেটে যাত্রী নিযুক্ত থাকার কারণে এটি ডিলিট করা যাবে না। প্রথমে ��াত্রীদের অন্য গ্রুপে সরান বা unassign করুন।)`
+        `গ্রুপ টিকেট: ${groupName}\n\nনিযুক্ত যাত্রীদের তালিকা দেখতে চান?\n\n(নোট: এই গ্রুপ টিকেটে যাত্রী নিযুক্ত থাকার কারণে এটি ডিলিট করা যাবে না। প্রথমে যাত্রীদের অন্য গ্রুপে সরান বা unassign করুন।)`
       );
 
       if (confirmed) {
