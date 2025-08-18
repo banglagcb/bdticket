@@ -713,6 +713,79 @@ export default function UmrahManagement() {
     }
   };
 
+  // Bulk operations handlers
+  const handleSelectRecord = (recordId: string, checked: boolean) => {
+    const newSelected = new Set(selectedRecords);
+    if (checked) {
+      newSelected.add(recordId);
+    } else {
+      newSelected.delete(recordId);
+    }
+    setSelectedRecords(newSelected);
+    setShowBulkActions(newSelected.size > 0);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = new Set([
+        ...filteredWithTransportRecords.map(r => r.id!),
+        ...filteredWithoutTransportRecords.map(r => r.id!)
+      ]);
+      setSelectedRecords(allIds);
+      setShowBulkActions(allIds.size > 0);
+    } else {
+      setSelectedRecords(new Set());
+      setShowBulkActions(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedRecords.size === 0) return;
+
+    if (!confirm(`Are you sure you want to delete ${selectedRecords.size} selected records? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const promises: Promise<any>[] = [];
+
+      // Delete with-transport records
+      filteredWithTransportRecords.forEach(record => {
+        if (selectedRecords.has(record.id!)) {
+          promises.push(apiClient.deleteUmrahWithTransport(record.id!));
+        }
+      });
+
+      // Delete without-transport records
+      filteredWithoutTransportRecords.forEach(record => {
+        if (selectedRecords.has(record.id!)) {
+          promises.push(apiClient.deleteUmrahWithoutTransport(record.id!));
+        }
+      });
+
+      await Promise.all(promises);
+
+      toast({
+        title: "Success",
+        description: `${selectedRecords.size} records deleted successfully`,
+      });
+
+      setSelectedRecords(new Set());
+      setShowBulkActions(false);
+      loadRecords();
+    } catch (error) {
+      console.error("Bulk delete error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete some records",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getDayOfWeek = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
