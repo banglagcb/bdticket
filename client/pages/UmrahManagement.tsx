@@ -1154,13 +1154,13 @@ export default function UmrahManagement() {
 
       // Status filter
       const remainingAmount = record.remainingAmount || record.remaining_amount || 0;
-      const matchesStatus = statusFilter === "" ||
+      const matchesStatus = statusFilter === "" || statusFilter === "all" ||
         (statusFilter === "paid" && remainingAmount === 0) ||
         (statusFilter === "pending" && remainingAmount > 0);
 
       // Amount filter
       const totalAmount = record.totalAmount || record.total_amount || 0;
-      const matchesAmount = amountFilter === "" ||
+      const matchesAmount = amountFilter === "" || amountFilter === "all" ||
         (amountFilter === "low" && totalAmount <= 50000) ||
         (amountFilter === "medium" && totalAmount > 50000 && totalAmount <= 100000) ||
         (amountFilter === "high" && totalAmount > 100000);
