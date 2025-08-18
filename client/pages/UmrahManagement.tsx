@@ -526,6 +526,8 @@ export default function UmrahManagement() {
         amount_paid: withoutTransportForm.amountPaid,
         last_payment_date: withoutTransportForm.lastPaymentDate || undefined,
         remarks: withoutTransportForm.remarks || undefined,
+        // Include group ticket reference for auto-deduction
+        group_ticket_id: selectedGroupTicket?.id,
       };
       const newRecord = await apiClient.createUmrahWithoutTransport(apiData);
       setWithoutTransportRecords((prev) => [newRecord, ...prev]);
