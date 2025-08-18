@@ -155,6 +155,21 @@ router.post("/with-transport", authenticate, (req, res) => {
       created_by: req.user!.id,
     });
 
+    // Auto-assign to group ticket if available
+    let groupAssignment = null;
+    try {
+      groupAssignment = UmrahGroupTicketRepository.autoAssignToGroupTicket(
+        umrahPackage.id,
+        "with-transport",
+        validatedData.departure_date,
+        validatedData.return_date,
+        req.user!.id
+      );
+    } catch (autoAssignError) {
+      console.warn("Auto-assignment to group ticket failed:", autoAssignError);
+      // Continue with normal flow even if auto-assignment fails
+    }
+
     // Log activity
     ActivityLogRepository.create({
       user_id: req.user!.id,
@@ -164,6 +179,7 @@ router.post("/with-transport", authenticate, (req, res) => {
       details: JSON.stringify({
         passenger_name: validatedData.passenger_name,
         pnr: validatedData.pnr,
+        auto_assigned_to_group: groupAssignment ? groupAssignment.group_ticket_id : null,
       }),
       ip_address: req.ip,
       user_agent: req.get("User-Agent"),
