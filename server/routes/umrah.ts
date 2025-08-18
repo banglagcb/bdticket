@@ -156,19 +156,49 @@ router.post("/with-transport", authenticate, (req, res) => {
       created_by: req.user!.id,
     });
 
-    // Auto-assign to group ticket if available
+    // Handle group ticket assignment and deduction
     let groupAssignment = null;
     try {
-      groupAssignment = UmrahGroupTicketRepository.autoAssignToGroupTicket(
-        umrahPackage.id,
-        "with-transport",
-        validatedData.departure_date,
-        validatedData.return_date,
-        req.user!.id
-      );
+      if (validatedData.group_ticket_id) {
+        // Manual assignment to specific group ticket
+        const groupTicket = UmrahGroupTicketRepository.findById(validatedData.group_ticket_id);
+        if (!groupTicket) {
+          return res.status(400).json({
+            success: false,
+            message: "Selected group ticket not found",
+          });
+        }
+
+        if (groupTicket.remaining_tickets <= 0) {
+          return res.status(400).json({
+            success: false,
+            message: "Selected group ticket has no remaining tickets",
+          });
+        }
+
+        // Create booking assignment
+        groupAssignment = UmrahGroupBookingRepository.create({
+          group_ticket_id: validatedData.group_ticket_id,
+          passenger_id: umrahPackage.id,
+          passenger_type: "with-transport",
+          assigned_by: req.user!.id,
+        });
+
+        // Update remaining tickets count
+        UmrahGroupTicketRepository.updateRemainingTickets(validatedData.group_ticket_id);
+      } else {
+        // Auto-assign to available group ticket
+        groupAssignment = UmrahGroupTicketRepository.autoAssignToGroupTicket(
+          umrahPackage.id,
+          "with-transport",
+          validatedData.departure_date,
+          validatedData.return_date,
+          req.user!.id
+        );
+      }
     } catch (autoAssignError) {
-      console.warn("Auto-assignment to group ticket failed:", autoAssignError);
-      // Continue with normal flow even if auto-assignment fails
+      console.warn("Group ticket assignment failed:", autoAssignError);
+      // Continue with normal flow even if assignment fails
     }
 
     // Log activity
