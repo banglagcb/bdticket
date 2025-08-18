@@ -28,6 +28,7 @@ import {
   TrendingUp,
   DollarSign,
   UserCheck,
+  Info,
 } from "lucide-react";
 import {
   Card,
@@ -697,7 +698,7 @@ export default function UmrahGroupTickets() {
                 Start by creating your first group ticket purchase for{" "}
                 {activeTab === "with-transport"
                   ? "transport সহ"
-                  : "transport ছাড়া"}{" "}
+                  : "transport ছাড��া"}{" "}
                 Umrah packages.
               </p>
               <Button
