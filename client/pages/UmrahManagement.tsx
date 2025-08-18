@@ -178,6 +178,10 @@ export default function UmrahManagement() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [amountFilter, setAmountFilter] = useState<string>("");
 
+  // Bulk operations states
+  const [selectedRecords, setSelectedRecords] = useState<Set<string>>(new Set());
+  const [showBulkActions, setShowBulkActions] = useState(false);
+
   // Load data on component mount
   useEffect(() => {
     loadRecords();
