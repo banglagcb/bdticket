@@ -794,6 +794,15 @@ class APIClient {
     agent_name: string;
     agent_contact?: string;
     purchase_notes?: string;
+    // Flight Details
+    departure_airline?: string;
+    departure_flight_number?: string;
+    departure_time?: string;
+    departure_route?: string;
+    return_airline?: string;
+    return_flight_number?: string;
+    return_time?: string;
+    return_route?: string;
   }): Promise<any> {
     const result = await this.request<any>("/umrah/group-tickets", {
       method: "POST",
