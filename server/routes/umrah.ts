@@ -1145,4 +1145,36 @@ router.delete(
   },
 );
 
+// Get available group tickets for auto-assignment
+router.get("/group-tickets/available/:packageType/:departureDate/:returnDate", authenticate, (req, res) => {
+  try {
+    const { packageType, departureDate, returnDate } = req.params;
+
+    if (packageType !== "with-transport" && packageType !== "without-transport") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid package type",
+      });
+    }
+
+    const availableGroups = UmrahGroupTicketRepository.findAvailableGroupTickets(
+      packageType as "with-transport" | "without-transport",
+      departureDate,
+      returnDate
+    );
+
+    res.json({
+      success: true,
+      data: availableGroups,
+      totalAvailableTickets: availableGroups.reduce((sum, group) => sum + (group.remaining_tickets || 0), 0),
+    });
+  } catch (error) {
+    console.error("Error fetching available group tickets:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch available group tickets",
+    });
+  }
+});
+
 export default router;
