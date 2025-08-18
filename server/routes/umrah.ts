@@ -29,6 +29,7 @@ const umrahWithTransportSchema = z.object({
   reference_agency: z.string().min(1, "Reference agency is required"),
   emergency_flight_contact: z.string().min(1, "Emergency contact is required"),
   passenger_mobile: z.string().min(1, "Passenger mobile is required"),
+  group_ticket_id: z.string().optional(), // For auto-deduction from group tickets
 });
 
 const umrahWithoutTransportSchema = z.object({
