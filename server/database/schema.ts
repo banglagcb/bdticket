@@ -9,8 +9,57 @@ export const db = new Database(dbPath);
 // Enable foreign keys
 db.pragma("foreign_keys = ON");
 
+// Migration function to add missing columns to existing tables
+function migrateDatabase() {
+  try {
+    // Check if umrah_group_tickets table exists and add missing columns
+    const tableExists = db.prepare(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='umrah_group_tickets'"
+    ).get();
+
+    if (tableExists) {
+      // Get current table schema
+      const tableInfo = db.prepare("PRAGMA table_info(umrah_group_tickets)").all();
+      const columnNames = tableInfo.map((col: any) => col.name);
+
+      const newColumns = [
+        { name: 'departure_airline', type: 'TEXT' },
+        { name: 'departure_flight_number', type: 'TEXT' },
+        { name: 'departure_time', type: 'TEXT' },
+        { name: 'departure_route', type: 'TEXT' },
+        { name: 'return_airline', type: 'TEXT' },
+        { name: 'return_flight_number', type: 'TEXT' },
+        { name: 'return_time', type: 'TEXT' },
+        { name: 'return_route', type: 'TEXT' },
+        { name: 'remaining_tickets', type: 'INTEGER NOT NULL DEFAULT 0' }
+      ];
+
+      // Add missing columns
+      for (const column of newColumns) {
+        if (!columnNames.includes(column.name)) {
+          console.log(`Adding column: ${column.name}`);
+          db.exec(`ALTER TABLE umrah_group_tickets ADD COLUMN ${column.name} ${column.type}`);
+        }
+      }
+
+      // Update remaining_tickets for existing records if needed
+      if (!columnNames.includes('remaining_tickets')) {
+        db.exec(`
+          UPDATE umrah_group_tickets
+          SET remaining_tickets = ticket_count
+          WHERE remaining_tickets = 0 OR remaining_tickets IS NULL
+        `);
+      }
+    }
+  } catch (error) {
+    console.error('Migration error:', error);
+  }
+}
+
 // Create tables
 export function initializeDatabase() {
+  // Run migrations first
+  migrateDatabase();
   // Users table
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -405,7 +454,7 @@ export function seedDatabase() {
     // The system is now ready for real ticket data entry
     */
 
-    console.log("✅ Essential data seeded successfully!");
+    console.log("��� Essential data seeded successfully!");
     console.log("🎯 Database is clean and ready for real ticket data!");
     console.log("💼 You can now:");
     console.log("   - Add real ticket batches through Admin → Buy Tickets");
