@@ -579,6 +579,9 @@ export default function UmrahManagement() {
     setErrors({});
     setIsEditingWithTransport(false);
     setEditingWithTransportRecord(null);
+    setSelectedGroupTicket(null);
+    setShowGroupSuggestion(false);
+    setAvailableGroupTickets([]);
   };
 
   const resetWithoutTransportForm = () => {
