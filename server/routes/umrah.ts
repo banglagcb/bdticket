@@ -411,6 +411,21 @@ router.post("/without-transport", authenticate, (req, res) => {
       created_by: req.user!.id,
     });
 
+    // Auto-assign to group ticket if available
+    let groupAssignment = null;
+    try {
+      groupAssignment = UmrahGroupTicketRepository.autoAssignToGroupTicket(
+        umrahPackage.id,
+        "without-transport",
+        validatedData.flight_departure_date,
+        validatedData.return_date,
+        req.user!.id
+      );
+    } catch (autoAssignError) {
+      console.warn("Auto-assignment to group ticket failed:", autoAssignError);
+      // Continue with normal flow even if auto-assignment fails
+    }
+
     // Log activity
     ActivityLogRepository.create({
       user_id: req.user!.id,
@@ -421,6 +436,7 @@ router.post("/without-transport", authenticate, (req, res) => {
         passenger_name: validatedData.passenger_name,
         total_amount: validatedData.total_amount,
         amount_paid: validatedData.amount_paid,
+        auto_assigned_to_group: groupAssignment ? groupAssignment.group_ticket_id : null,
       }),
       ip_address: req.ip,
       user_agent: req.get("User-Agent"),
@@ -429,7 +445,10 @@ router.post("/without-transport", authenticate, (req, res) => {
     res.status(201).json({
       success: true,
       data: umrahPackage,
-      message: "Umrah without transport package created successfully",
+      groupAssignment: groupAssignment,
+      message: groupAssignment
+        ? "Umrah without transport package created and auto-assigned to group ticket"
+        : "Umrah without transport package created successfully",
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
