@@ -227,11 +227,19 @@ export default function UmrahManagement() {
     setSelectedGroupTicket(groupTicket);
 
     if (activeTab === "with-transport") {
+      // Generate PNR based on group ticket flight details
+      const generatedPnr = generatePNR(groupTicket);
+
       setWithTransportForm(prev => ({
         ...prev,
+        // Flight and airline details from group ticket
         flightAirlineName: groupTicket.departure_airline || prev.flightAirlineName,
         departureDate: groupTicket.departure_date,
         returnDate: groupTicket.return_date,
+        // Auto-generated PNR
+        pnr: generatedPnr,
+        // Reference agency from group ticket
+        referenceAgency: groupTicket.agent_name || prev.referenceAgency,
       }));
     } else {
       setWithoutTransportForm(prev => ({
@@ -244,9 +252,17 @@ export default function UmrahManagement() {
     setShowGroupSuggestion(false);
 
     toast({
-      title: "Auto-populated",
-      description: `Form populated with data from group: ${groupTicket.group_name}`,
+      title: "Auto-populated from Group Ticket",
+      description: `ফ্লাইট তথ্য অটো ফিল হয়েছে: ${groupTicket.group_name} (${groupTicket.remaining_tickets} টিকেট বাকি)`,
     });
+  };
+
+  // Generate PNR based on group ticket details
+  const generatePNR = (groupTicket: any): string => {
+    const flightNumber = groupTicket.departure_flight_number || 'GRP';
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.random().toString(36).substring(2, 4).toUpperCase();
+    return `${flightNumber}${timestamp}${random}`;
   };
 
   // Check for available group tickets when with-transport dates change
@@ -439,17 +455,30 @@ export default function UmrahManagement() {
         reference_agency: withTransportForm.referenceAgency,
         emergency_flight_contact: withTransportForm.emergencyFlightContact,
         passenger_mobile: withTransportForm.passengerMobile,
+        // Include group ticket reference for auto-deduction
+        group_ticket_id: selectedGroupTicket?.id,
       };
+
       const newRecord = await apiClient.createUmrahWithTransport(apiData);
       setWithTransportRecords((prev) => [newRecord, ...prev]);
 
+      // Show success with ticket deduction info
+      const deductionMessage = selectedGroupTicket
+        ? ` (১টি টিকেট কাটা হয়েছে ${selectedGroupTicket.group_name} থেকে)`
+        : "";
+
       toast({
-        title: "Success",
-        description: "Umrah with transport record created successfully",
+        title: "সফল হয়েছে",
+        description: `উমরাহ যাত্রী সফলভাবে যোগ করা হয়েছে${deductionMessage}`,
       });
 
       setIsFormDialogOpen(false);
       resetWithTransportForm();
+
+      // Reload data to reflect ticket deduction
+      if (selectedGroupTicket) {
+        loadRecords();
+      }
     } catch (error) {
       console.error("Umrah with transport creation error:", error);
       console.log("Form data sent:", apiData);
