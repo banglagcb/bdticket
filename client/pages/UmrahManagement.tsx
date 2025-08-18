@@ -182,6 +182,57 @@ export default function UmrahManagement() {
     }));
   }, [withoutTransportForm.totalAmount, withoutTransportForm.amountPaid]);
 
+  // Check for available group tickets when dates change
+  const checkAvailableGroupTickets = async (
+    packageType: "with-transport" | "without-transport",
+    departureDate: string,
+    returnDate: string
+  ) => {
+    if (!departureDate || !returnDate) return;
+
+    try {
+      const availableTickets = await apiClient.getAvailableGroupTickets(
+        packageType,
+        departureDate,
+        returnDate
+      );
+
+      setAvailableGroupTickets(availableTickets);
+      setShowGroupSuggestion(availableTickets.length > 0);
+    } catch (error) {
+      console.error("Error checking available group tickets:", error);
+      setAvailableGroupTickets([]);
+      setShowGroupSuggestion(false);
+    }
+  };
+
+  // Auto-populate form with group ticket data
+  const populateFromGroupTicket = (groupTicket: any) => {
+    setSelectedGroupTicket(groupTicket);
+
+    if (activeTab === "with-transport") {
+      setWithTransportForm(prev => ({
+        ...prev,
+        flightAirlineName: groupTicket.departure_airline || prev.flightAirlineName,
+        departureDate: groupTicket.departure_date,
+        returnDate: groupTicket.return_date,
+      }));
+    } else {
+      setWithoutTransportForm(prev => ({
+        ...prev,
+        flightDepartureDate: groupTicket.departure_date,
+        returnDate: groupTicket.return_date,
+      }));
+    }
+
+    setShowGroupSuggestion(false);
+
+    toast({
+      title: "Auto-populated",
+      description: `Form populated with data from group: ${groupTicket.group_name}`,
+    });
+  };
+
   const loadRecords = async () => {
     try {
       setLoading(true);
@@ -1297,7 +1348,7 @@ export default function UmrahManagement() {
                         Group Ticket Management
                       </h3>
                       <p className="text-muted-foreground font-body mb-4">
-                        গ্রুপ টিকেট ম্যানেজমেন্ট নিচের মেইন সেকশনে পাবেন।
+                        গ্রুপ ���িকেট ম্যানেজমেন্ট নিচের মেইন সেকশনে পাবেন।
                       </p>
                     </div>
                   </TabsContent>
