@@ -532,13 +532,23 @@ export default function UmrahManagement() {
       const newRecord = await apiClient.createUmrahWithoutTransport(apiData);
       setWithoutTransportRecords((prev) => [newRecord, ...prev]);
 
+      // Show success with ticket deduction info
+      const deductionMessage = selectedGroupTicket
+        ? ` (১টি টিকেট কাটা হয়েছে ${selectedGroupTicket.group_name} থেকে)`
+        : "";
+
       toast({
-        title: "Success",
-        description: "Umrah without transport record created successfully",
+        title: "সফল হয়েছে",
+        description: `উমরাহ যাত্রী সফলভাবে যোগ করা হয়েছে${deductionMessage}`,
       });
 
       setIsFormDialogOpen(false);
       resetWithoutTransportForm();
+
+      // Reload data to reflect ticket deduction
+      if (selectedGroupTicket) {
+        loadRecords();
+      }
     } catch (error) {
       console.error("Umrah without transport creation error:", error);
       console.log("Form data sent:", apiData);
