@@ -173,6 +173,11 @@ export default function UmrahManagement() {
   const [editingWithTransportRecord, setEditingWithTransportRecord] = useState<UmrahWithTransport | null>(null);
   const [editingWithoutTransportRecord, setEditingWithoutTransportRecord] = useState<UmrahWithoutTransport | null>(null);
 
+  // Filter states
+  const [dateFilter, setDateFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [amountFilter, setAmountFilter] = useState<string>("");
+
   // Load data on component mount
   useEffect(() => {
     loadRecords();
