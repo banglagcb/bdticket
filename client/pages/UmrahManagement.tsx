@@ -1863,11 +1863,26 @@ export default function UmrahManagement() {
                                     setSelectedRecord(record);
                                     setIsViewDialogOpen(true);
                                   }}
+                                  title="View Details"
                                 >
                                   <Eye className="h-3 w-3" />
                                 </Button>
-                                <Button size="sm" variant="outline">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditWithoutTransport(record)}
+                                  title="Edit Record"
+                                >
                                   <Edit className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDeleteWithoutTransport(record.id!)}
+                                  title="Delete Record"
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-3 w-3" />
                                 </Button>
                               </div>
                             </TableCell>
