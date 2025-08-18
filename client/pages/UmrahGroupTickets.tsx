@@ -410,7 +410,7 @@ export default function UmrahGroupTickets() {
                 Umrah Group Ticket Management
               </h1>
               <p className="text-foreground/70 font-body">
-                পৃথক ওমরা গ্রুপের জন্য ��িকেট ক্রয় ও ব্যবস্থাপনা
+                পৃথক ওমরা গ্রুপের জন্য টিকেট ক্রয় ও ব্যবস্থাপনা
               </p>
             </div>
           </div>
@@ -607,6 +607,25 @@ export default function UmrahGroupTickets() {
                                 </div>
                               </TableCell>
                               <TableCell>
+                                <div className="text-sm">
+                                  {group.departure_airline && (
+                                    <div className="flex items-center gap-1 text-blue-600">
+                                      <Plane className="h-3 w-3" />
+                                      {group.departure_airline} {group.departure_flight_number}
+                                    </div>
+                                  )}
+                                  {group.return_airline && (
+                                    <div className="flex items-center gap-1 text-green-600">
+                                      <Plane className="h-3 w-3 rotate-180" />
+                                      {group.return_airline} {group.return_flight_number}
+                                    </div>
+                                  )}
+                                  {!group.departure_airline && !group.return_airline && (
+                                    <span className="text-muted-foreground">No flight details</span>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell>
                                 <Badge variant="secondary">
                                   {group.ticket_count} tickets
                                 </Badge>
@@ -772,7 +791,7 @@ export default function UmrahGroupTickets() {
                 <div className="space-y-4 p-4 border rounded-lg bg-blue-50/50">
                   <h4 className="font-medium text-blue-800 flex items-center gap-2">
                     <Plane className="h-4 w-4" />
-                    Departure Flight (যাওয়া��� ফ্লাইট)
+                    Departure Flight (যাওয়ার ফ্লাইট)
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -838,7 +857,7 @@ export default function UmrahGroupTickets() {
                 <div className="space-y-4 p-4 border rounded-lg bg-green-50/50">
                   <h4 className="font-medium text-green-800 flex items-center gap-2">
                     <Plane className="h-4 w-4 rotate-180" />
-                    Return Flight (���িরতি ফ্লাইট)
+                    Return Flight (ফিরতি ফ্লাইট)
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
