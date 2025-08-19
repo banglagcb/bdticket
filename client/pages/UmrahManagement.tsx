@@ -290,24 +290,8 @@ export default function UmrahManagement() {
     activeTab,
   ]);
 
-  // Check for available group tickets when without-transport dates change
-  useEffect(() => {
-    if (
-      activeTab === "without-transport" &&
-      withoutTransportForm.flightDepartureDate &&
-      withoutTransportForm.returnDate
-    ) {
-      checkAvailableGroupTickets(
-        "without-transport",
-        withoutTransportForm.flightDepartureDate,
-        withoutTransportForm.returnDate,
-      );
-    }
-  }, [
-    withoutTransportForm.flightDepartureDate,
-    withoutTransportForm.returnDate,
-    activeTab,
-  ]);
+  // Group tickets are only available for with-transport packages
+  // Removed without-transport group ticket checking
 
   const loadRecords = async () => {
     try {
