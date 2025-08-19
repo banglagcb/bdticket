@@ -1225,7 +1225,7 @@ export class UmrahGroupTicketRepository {
       ticketData.return_flight_number || null,
       ticketData.return_time || null,
       ticketData.return_route || null,
-      ticketData.ticket_count, // Initially, remaining_tickets = ticket_count
+      ticketData.remaining_tickets || ticketData.ticket_count, // Initially, remaining_tickets = ticket_count
       ticketData.created_by,
       now,
       now,
