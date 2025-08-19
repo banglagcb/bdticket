@@ -1267,13 +1267,10 @@ router.get(
     try {
       const { packageType, departureDate, returnDate } = req.params;
 
-      if (
-        packageType !== "with-transport" &&
-        packageType !== "without-transport"
-      ) {
+      if (packageType !== "with-transport") {
         return res.status(400).json({
           success: false,
-          message: "Invalid package type",
+          message: "Group tickets are only available for with-transport packages",
         });
       }
 
