@@ -320,7 +320,7 @@ export default function UmrahGroupTickets() {
     setIsFormDialogOpen(true);
   };
 
-  const handleDelete = async (ticketId: string) => {
+  const handleDelete = async (ticketId: string, forceDelete: boolean = false) => {
     // Find the group ticket to check assigned passengers
     const groupTicket = groupTickets.find((g) => g.id === ticketId);
     const assignedCount = groupTicket
