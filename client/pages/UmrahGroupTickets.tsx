@@ -113,9 +113,7 @@ interface DateGroupedTickets {
 
 export default function UmrahGroupTickets() {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<
-    "with-transport" | "without-transport"
-  >("with-transport");
+  // Removed activeTab state since we only handle with-transport now
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
