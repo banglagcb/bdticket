@@ -829,13 +829,21 @@ class APIClient {
     throw new Error(result.message || "Failed to update group ticket");
   }
 
-  async deleteUmrahGroupTicket(id: string): Promise<void> {
-    const result = await this.request<any>(`/umrah/group-tickets/${id}`, {
+  async deleteUmrahGroupTicket(id: string, force: boolean = false): Promise<void> {
+    const url = force
+      ? `/umrah/group-tickets/${id}?force=true`
+      : `/umrah/group-tickets/${id}`;
+
+    const result = await this.request<any>(url, {
       method: "DELETE",
     });
 
     if (!result.success) {
-      throw new Error(result.message || "Failed to delete group ticket");
+      // Include additional details for better error handling
+      const error = new Error(result.message || "Failed to delete group ticket");
+      (error as any).canForceDelete = result.canForceDelete;
+      (error as any).details = result.details;
+      throw error;
     }
   }
 
