@@ -118,10 +118,10 @@ export default function UmrahGroupTickets() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Form state
+  // Form state - Always with-transport since without-transport is removed
   const [formData, setFormData] = useState<UmrahGroupTicket>({
     group_name: "",
-    package_type: "with-transport",
+    package_type: "with-transport", // Fixed to with-transport only
     departure_date: "",
     return_date: "",
     ticket_count: 0,
