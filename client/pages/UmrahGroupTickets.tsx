@@ -327,7 +327,7 @@ export default function UmrahGroupTickets() {
       ? groupTicket.ticket_count - groupTicket.remaining_tickets
       : 0;
 
-    let confirmMessage = "আপনি কি নিশ্চিত যে এই গ্রুপ টিকেট ডিলিট ���রতে চান?";
+    let confirmMessage = "আপনি কি নিশ্চিত যে এই গ্রুপ টিকে��� ডিলিট ���রতে চান?";
 
     if (assignedCount > 0 && !forceDelete) {
       confirmMessage = `⚠️ সতর্কতা!\n\nএই গ্রুপ টিকেটে ${assignedCount}জন যাত্রী নিযুক্ত আছে।\n\nএটি ডিলিট করলে সকল যাত্রীর assignment মুছে যাবে।\n\nতবুও ডিলিট করতে চান?`;
@@ -338,7 +338,7 @@ export default function UmrahGroupTickets() {
     if (!confirm(confirmMessage)) return;
 
     try {
-      await apiClient.deleteUmrahGroupTicket(ticketId);
+      await apiClient.deleteUmrahGroupTicket(ticketId, forceDelete);
       toast({
         title: "সফল হয়েছে",
         description: "গ্রুপ টিকেট সফলভাবে ডিল��ট করা হয়েছে",
@@ -370,7 +370,7 @@ export default function UmrahGroupTickets() {
                 "Cannot delete group ticket with assigned passengers"
                 ? "এই গ্রুপ টিকেটে যাত্রী নিযুক্ত আছে। প্রথমে যাত্রীদের সরান।"
                 : error.message
-              : "গ্রুপ টিকেট ডিলিট করতে ব্যর্থ",
+              : "গ্রুপ টিকেট ডিলিট করতে ব্য���্থ",
           variant: "destructive",
         });
       }
@@ -399,7 +399,7 @@ export default function UmrahGroupTickets() {
       console.error("Error viewing passengers:", error);
       toast({
         title: "ত্রুটি",
-        description: "যাত্রীদের তথ্য লোড করতে ব্যর্থ",
+        description: "যাত্রীদের তথ্য লোড করতে ব্য��্থ",
         variant: "destructive",
       });
     }
@@ -473,7 +473,7 @@ export default function UmrahGroupTickets() {
                 Umrah Group Ticket Management
               </h1>
               <p className="text-foreground/70 font-body">
-                পৃথক ওমরা গ্রুপের জন্য টিকেট ক্রয় ও ব্যবস্থ��পনা
+                পৃথক ওমরা গ্র��পের জন্য টিকেট ক্রয় ও ব্যবস্থাপনা
               </p>
             </div>
           </div>
@@ -810,7 +810,7 @@ export default function UmrahGroupTickets() {
             </DialogTitle>
             <DialogDescription>
               {activeTab === "with-transport"
-                ? "Transport স���"
+                ? "Transport সহ"
                 : "Transport ছাড়া"}{" "}
               ওমরা গ্রুপের জন্য টিকেট ক্রয়
             </DialogDescription>
