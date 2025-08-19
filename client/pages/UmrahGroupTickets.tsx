@@ -290,7 +290,7 @@ export default function UmrahGroupTickets() {
   const resetForm = () => {
     setFormData({
       group_name: "",
-      package_type: activeTab,
+      package_type: "with-transport", // Always with-transport
       departure_date: "",
       return_date: "",
       ticket_count: 0,
@@ -342,7 +342,7 @@ export default function UmrahGroupTickets() {
       await apiClient.deleteUmrahGroupTicket(ticketId, forceDelete);
       toast({
         title: "সফল হয��েছে",
-        description: "গ্রুপ টিকেট সফলভাবে ডিল��ট করা হয়েছে",
+        description: "গ্রুপ টিকেট সফলভাবে ডিল��ট কর�� হয়েছে",
       });
       loadGroupTickets();
     } catch (error: any) {
@@ -742,7 +742,7 @@ export default function UmrahGroupTickets() {
                                       group.remaining_tickets >
                                     0
                                       ? "যাত্রী নিযুক্�� থাকায় ডিলিট করা যাবে না"
-                                      : "গ্রুপ টিকেট ডিলিট করুন"
+                                      : "গ্রু��� টিকেট ডিলিট করুন"
                                   }
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -880,7 +880,7 @@ export default function UmrahGroupTickets() {
                 <div className="space-y-4 p-4 border rounded-lg bg-blue-50/50">
                   <h4 className="font-medium text-blue-800 flex items-center gap-2">
                     <Plane className="h-4 w-4" />
-                    Departure Flight (যাওয়ার ফ্লাইট)
+                    Departure Flight (যাওয়ার ফ��লাইট)
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
