@@ -342,7 +342,7 @@ export default function UmrahGroupTickets() {
       await apiClient.deleteUmrahGroupTicket(ticketId, forceDelete);
       toast({
         title: "সফল হয��েছে",
-        description: "গ্রুপ টিকেট সফলভা��ে ডিল��ট করা হয়েছে",
+        description: "গ্রুপ টিকেট সফলভাবে ডিল��ট করা হয়েছে",
       });
       loadGroupTickets();
     } catch (error: any) {
@@ -367,11 +367,11 @@ export default function UmrahGroupTickets() {
         }
       } else {
         toast({
-          title: "ত্রুটি",
+          title: "ত্রুট��",
           description:
             error instanceof Error
               ? error.message
-              : "গ্রুপ টিকেট ডিলিট করতে ব্যর্��",
+              : "গ্রুপ টিকেট ডিলিট করতে ব্যর্থ",
           variant: "destructive",
         });
       }
@@ -573,10 +573,7 @@ export default function UmrahGroupTickets() {
                         {new Date(dateGroup.return_date).toLocaleDateString()}
                       </CardTitle>
                       <CardDescription className="font-body">
-                        {activeTab === "with-transport"
-                          ? "Transport সহ"
-                          : "Transport ছাড়া"}{" "}
-                        ওমরা প্যাকেজ
+                        Transport সহ ওমরা প্যাকেজ
                       </CardDescription>
                     </div>
                     <Button
