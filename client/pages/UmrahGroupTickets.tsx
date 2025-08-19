@@ -767,9 +767,7 @@ export default function UmrahGroupTickets() {
             </h3>
             <p className="text-foreground/70 font-body mb-4">
               Start by creating your first group ticket purchase for{" "}
-              {activeTab === "with-transport"
-                ? "transport সহ"
-                : "transport ছাড��া"}{" "}
+              transport সহ
               Umrah packages.
             </p>
             <Button
