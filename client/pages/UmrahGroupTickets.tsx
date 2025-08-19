@@ -792,9 +792,7 @@ export default function UmrahGroupTickets() {
                 : "New Group Ticket Purchase"}
             </DialogTitle>
             <DialogDescription>
-              {activeTab === "with-transport"
-                ? "Transport সহ"
-                : "Transport ছাড়া"}{" "}
+              Transport সহ
               ওমরা গ্রুপের জন্য টিকেট ক্রয়
             </DialogDescription>
           </DialogHeader>
