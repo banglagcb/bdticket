@@ -829,7 +829,10 @@ class APIClient {
     throw new Error(result.message || "Failed to update group ticket");
   }
 
-  async deleteUmrahGroupTicket(id: string, force: boolean = false): Promise<void> {
+  async deleteUmrahGroupTicket(
+    id: string,
+    force: boolean = false,
+  ): Promise<void> {
     const url = force
       ? `/umrah/group-tickets/${id}?force=true`
       : `/umrah/group-tickets/${id}`;
@@ -840,7 +843,9 @@ class APIClient {
 
     if (!result.success) {
       // Include additional details for better error handling
-      const error = new Error(result.message || "Failed to delete group ticket");
+      const error = new Error(
+        result.message || "Failed to delete group ticket",
+      );
       (error as any).canForceDelete = result.canForceDelete;
       (error as any).details = result.details;
       throw error;
@@ -850,10 +855,10 @@ class APIClient {
   async getAvailableGroupTickets(
     packageType: "with-transport" | "without-transport",
     departureDate: string,
-    returnDate: string
+    returnDate: string,
   ): Promise<any> {
     const result = await this.request<any>(
-      `/umrah/group-tickets/available/${packageType}/${departureDate}/${returnDate}`
+      `/umrah/group-tickets/available/${packageType}/${departureDate}/${returnDate}`,
     );
 
     if (result.success && result.data) {

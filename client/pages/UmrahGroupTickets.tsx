@@ -318,7 +318,10 @@ export default function UmrahGroupTickets() {
     setIsFormDialogOpen(true);
   };
 
-  const handleDelete = async (ticketId: string, forceDelete: boolean = false) => {
+  const handleDelete = async (
+    ticketId: string,
+    forceDelete: boolean = false,
+  ) => {
     // Find the group ticket to check assigned passengers
     const groupTicket = groupTickets.find((g) => g.id === ticketId);
     const assignedCount = groupTicket
@@ -347,15 +350,16 @@ export default function UmrahGroupTickets() {
 
       // Check if this error supports force delete
       if (error.canForceDelete && !forceDelete) {
-        const passengerList = error.details?.passengers
-          ?.map(
-            (p: any) =>
-              `• ${p.name} (${p.type === "with-transport" ? "PNR: " + p.pnr : "Passport: " + p.passport})`,
-          )
-          .join("\n") || '';
+        const passengerList =
+          error.details?.passengers
+            ?.map(
+              (p: any) =>
+                `• ${p.name} (${p.type === "with-transport" ? "PNR: " + p.pnr : "Passport: " + p.passport})`,
+            )
+            .join("\n") || "";
 
         const forceConfirm = confirm(
-          `⚠️ এই গ্রুপ টিকেটে ${error.details?.assignedCount || 0}টি যাত্রী নিযুক্ত আছে:\n\n${passengerList}\n\n🔴 জোরপূর্বক ডিলিট করতে চান?\n\n(এতে সকল যাত্রীর assignment মুছে যাবে)`
+          `⚠️ এই গ্রুপ টিকেটে ${error.details?.assignedCount || 0}টি যাত্রী নিযুক্ত আছে:\n\n${passengerList}\n\n🔴 জোরপূর্বক ডিলিট করতে চান?\n\n(এতে সকল যাত্রীর assignment মুছে যাবে)`,
         );
 
         if (forceConfirm) {
@@ -364,9 +368,10 @@ export default function UmrahGroupTickets() {
       } else {
         toast({
           title: "ত্রুটি",
-          description: error instanceof Error
-            ? error.message
-            : "গ্রুপ টিকেট ডিলিট করতে ব্যর্থ",
+          description:
+            error instanceof Error
+              ? error.message
+              : "গ্রুপ টিকেট ডিলিট করতে ব্যর্থ",
           variant: "destructive",
         });
       }
@@ -500,288 +505,286 @@ export default function UmrahGroupTickets() {
       </motion.div>
 
       {/* Package Type Header - Only With Transport */}
-        <div className="luxury-card border-0 p-4 bg-primary/5">
-          <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-2 text-primary">
-              <Plane className="h-5 w-5" />
-              <h2 className="text-lg font-heading font-bold">ওমরাহ গ্রুপ টিকেট (পরিবহন সহ)</h2>
+      <div className="luxury-card border-0 p-4 bg-primary/5">
+        <div className="flex items-center justify-center">
+          <div className="flex items-center space-x-2 text-primary">
+            <Plane className="h-5 w-5" />
+            <h2 className="text-lg font-heading font-bold">
+              ওমরাহ গ্রুপ টিকেট (পরিবহন সহ)
+            </h2>
+          </div>
+        </div>
+        <p className="text-center text-sm text-muted-foreground mt-2 font-body">
+          গ্রুপ টিকেট ক্রয় শুধুমাত্র "পরিবহন সহ" ওমরাহ প্যাকেজের জন্য প্রযোজ্য
+        </p>
+      </div>
+
+      {/* Search */}
+      <div className="flex items-center space-x-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Search by group name or agent..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 font-body"
+          />
+        </div>
+        <Button
+          onClick={loadGroupTickets}
+          variant="outline"
+          disabled={loading}
+          className="touch-target"
+        >
+          <Filter className="h-4 w-4 mr-2" />
+          Search
+        </Button>
+      </div>
+
+      {/* Date Grouped Cards */}
+      <div id="umrah-groups-container" className="space-y-6">
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="flex items-center space-x-2">
+              <Package className="h-6 w-6 animate-spin text-primary" />
+              <span className="font-body">Loading group tickets...</span>
             </div>
           </div>
-          <p className="text-center text-sm text-muted-foreground mt-2 font-body">
-            গ্রুপ টিকেট ক্রয় শুধুমাত্র "পরিবহন সহ" ওমরাহ প্যাকেজের জন্য প্রযোজ্য
-          </p>
-        </div>
-
-        {/* Search */}
-        <div className="flex items-center space-x-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search by group name or agent..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 font-body"
-            />
-          </div>
-          <Button
-            onClick={loadGroupTickets}
-            variant="outline"
-            disabled={loading}
-            className="touch-target"
-          >
-            <Filter className="h-4 w-4 mr-2" />
-            Search
-          </Button>
-        </div>
-
-        {/* Date Grouped Cards */}
-        <div id="umrah-groups-container" className="space-y-6">
-          {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="flex items-center space-x-2">
-                <Package className="h-6 w-6 animate-spin text-primary" />
-                <span className="font-body">Loading group tickets...</span>
-              </div>
-            </div>
-          ) : dateGroupedTickets.length > 0 ? (
-            dateGroupedTickets.map((dateGroup, index) => (
-              <motion.div
-                key={`${dateGroup.departure_date}_${dateGroup.return_date}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                id={`group-${index}`}
-                className="space-y-4"
-              >
-                <Card className="luxury-card border-0">
-                  <CardHeader>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div>
-                        <CardTitle className="font-heading velvet-text flex items-center gap-2">
-                          <Calendar className="h-5 w-5" />
-                          {new Date(
-                            dateGroup.departure_date,
-                          ).toLocaleDateString()}
-                          <ArrowRight className="h-4 w-4" />
-                          {new Date(dateGroup.return_date).toLocaleDateString()}
-                        </CardTitle>
-                        <CardDescription className="font-body">
-                          {activeTab === "with-transport"
-                            ? "Transport সহ"
-                            : "Transport ছাড়া"}{" "}
-                          ওমরা প্যাকেজ
-                        </CardDescription>
-                      </div>
-                      <Button
-                        onClick={() => exportToPDF(index.toString())}
-                        variant="outline"
-                        size="sm"
-                        className="touch-target"
-                      >
-                        <Printer className="h-4 w-4 mr-2" />
-                        Print Group
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {/* Summary Stats */}
-                    <div className="responsive-grid gap-4 mb-6">
-                      <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
-                        <div className="text-2xl font-heading font-bold text-blue-700">
-                          {dateGroup.group_count}
-                        </div>
-                        <p className="text-sm text-blue-600 font-body">
-                          Groups
-                        </p>
-                      </div>
-                      <div className="text-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                        <div className="text-2xl font-heading font-bold text-green-700">
-                          {dateGroup.total_tickets}
-                        </div>
-                        <p className="text-sm text-green-600 font-body">
-                          Total Tickets
-                        </p>
-                      </div>
-                      <div className="text-center p-4 bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg border border-purple-200">
-                        <div className="text-2xl font-heading font-bold text-purple-700">
-                          ৳{dateGroup.total_cost.toLocaleString()}
-                        </div>
-                        <p className="text-sm text-purple-600 font-body">
-                          Total Investment
-                        </p>
-                      </div>
-                      <div className="text-center p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200">
-                        <div className="text-2xl font-heading font-bold text-orange-700">
-                          ৳
-                          {Math.round(
-                            dateGroup.total_cost / dateGroup.total_tickets,
-                          ).toLocaleString()}
-                        </div>
-                        <p className="text-sm text-orange-600 font-body">
-                          Avg. per Ticket
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Groups Table */}
-                    <div className="mobile-table-scroll">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Group Name</TableHead>
-                            <TableHead>Agent</TableHead>
-                            <TableHead>Flight Details</TableHead>
-                            <TableHead>Tickets</TableHead>
-                            <TableHead>Total Cost</TableHead>
-                            <TableHead>Avg Cost</TableHead>
-                            <TableHead>Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {dateGroup.groups.map((group) => (
-                            <TableRow key={group.id}>
-                              <TableCell className="font-medium">
-                                {group.group_name}
-                              </TableCell>
-                              <TableCell>
-                                <div>
-                                  <div className="font-medium">
-                                    {group.agent_name}
-                                  </div>
-                                  {group.agent_contact && (
-                                    <div className="text-sm text-muted-foreground">
-                                      {group.agent_contact}
-                                    </div>
-                                  )}
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <div className="text-sm">
-                                  {group.departure_airline && (
-                                    <div className="flex items-center gap-1 text-blue-600">
-                                      <Plane className="h-3 w-3" />
-                                      {group.departure_airline}{" "}
-                                      {group.departure_flight_number}
-                                    </div>
-                                  )}
-                                  {group.return_airline && (
-                                    <div className="flex items-center gap-1 text-green-600">
-                                      <Plane className="h-3 w-3 rotate-180" />
-                                      {group.return_airline}{" "}
-                                      {group.return_flight_number}
-                                    </div>
-                                  )}
-                                  {!group.departure_airline &&
-                                    !group.return_airline && (
-                                      <span className="text-muted-foreground">
-                                        No flight details
-                                      </span>
-                                    )}
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <Badge variant="secondary">
-                                  {group.ticket_count} tickets
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                <span className="font-semibold text-green-600">
-                                  ৳{group.total_cost.toLocaleString()}
-                                </span>
-                              </TableCell>
-                              <TableCell>
-                                ৳
-                                {group.average_cost_per_ticket.toLocaleString()}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center space-x-2">
-                                  <Button
-                                    onClick={() => handleEdit(group)}
-                                    variant="outline"
-                                    size="sm"
-                                    className="touch-target"
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-
-                                  {/* Show passengers button if there are assigned passengers */}
-                                  {group.ticket_count -
-                                    group.remaining_tickets >
-                                    0 && (
-                                    <Button
-                                      onClick={() =>
-                                        viewAssignedPassengers(
-                                          group.id!,
-                                          group.group_name,
-                                        )
-                                      }
-                                      variant="outline"
-                                      size="sm"
-                                      className="touch-target text-blue-600 hover:text-blue-700"
-                                      title={`${group.ticket_count - group.remaining_tickets} জন যাত্রী নিযুক্ত`}
-                                    >
-                                      <UserCheck className="h-4 w-4" />
-                                    </Button>
-                                  )}
-
-                                  <Button
-                                    onClick={() => handleDelete(group.id!)}
-                                    variant="outline"
-                                    size="sm"
-                                    className="touch-target text-red-600 hover:text-red-700"
-                                    disabled={
-                                      group.ticket_count -
-                                        group.remaining_tickets >
-                                      0
-                                    }
-                                    title={
-                                      group.ticket_count -
-                                        group.remaining_tickets >
-                                      0
-                                        ? "যাত্রী নিযুক্�� থাকায় ডিলিট করা যাবে না"
-                                        : "গ্রুপ টিকেট ডিলিট করুন"
-                                    }
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))
-          ) : (
+        ) : dateGroupedTickets.length > 0 ? (
+          dateGroupedTickets.map((dateGroup, index) => (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12"
+              key={`${dateGroup.departure_date}_${dateGroup.return_date}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              id={`group-${index}`}
+              className="space-y-4"
             >
-              <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-heading font-bold text-foreground mb-2">
-                No Group Tickets Found
-              </h3>
-              <p className="text-foreground/70 font-body mb-4">
-                Start by creating your first group ticket purchase for{" "}
-                {activeTab === "with-transport"
-                  ? "transport সহ"
-                  : "transport ছাড��া"}{" "}
-                Umrah packages.
-              </p>
-              <Button
-                onClick={() => setIsFormDialogOpen(true)}
-                className="velvet-button text-primary-foreground"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create First Group Purchase
-              </Button>
+              <Card className="luxury-card border-0">
+                <CardHeader>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                      <CardTitle className="font-heading velvet-text flex items-center gap-2">
+                        <Calendar className="h-5 w-5" />
+                        {new Date(
+                          dateGroup.departure_date,
+                        ).toLocaleDateString()}
+                        <ArrowRight className="h-4 w-4" />
+                        {new Date(dateGroup.return_date).toLocaleDateString()}
+                      </CardTitle>
+                      <CardDescription className="font-body">
+                        {activeTab === "with-transport"
+                          ? "Transport সহ"
+                          : "Transport ছাড়া"}{" "}
+                        ওমরা প্যাকেজ
+                      </CardDescription>
+                    </div>
+                    <Button
+                      onClick={() => exportToPDF(index.toString())}
+                      variant="outline"
+                      size="sm"
+                      className="touch-target"
+                    >
+                      <Printer className="h-4 w-4 mr-2" />
+                      Print Group
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {/* Summary Stats */}
+                  <div className="responsive-grid gap-4 mb-6">
+                    <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+                      <div className="text-2xl font-heading font-bold text-blue-700">
+                        {dateGroup.group_count}
+                      </div>
+                      <p className="text-sm text-blue-600 font-body">Groups</p>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                      <div className="text-2xl font-heading font-bold text-green-700">
+                        {dateGroup.total_tickets}
+                      </div>
+                      <p className="text-sm text-green-600 font-body">
+                        Total Tickets
+                      </p>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg border border-purple-200">
+                      <div className="text-2xl font-heading font-bold text-purple-700">
+                        ৳{dateGroup.total_cost.toLocaleString()}
+                      </div>
+                      <p className="text-sm text-purple-600 font-body">
+                        Total Investment
+                      </p>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200">
+                      <div className="text-2xl font-heading font-bold text-orange-700">
+                        ৳
+                        {Math.round(
+                          dateGroup.total_cost / dateGroup.total_tickets,
+                        ).toLocaleString()}
+                      </div>
+                      <p className="text-sm text-orange-600 font-body">
+                        Avg. per Ticket
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Groups Table */}
+                  <div className="mobile-table-scroll">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Group Name</TableHead>
+                          <TableHead>Agent</TableHead>
+                          <TableHead>Flight Details</TableHead>
+                          <TableHead>Tickets</TableHead>
+                          <TableHead>Total Cost</TableHead>
+                          <TableHead>Avg Cost</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {dateGroup.groups.map((group) => (
+                          <TableRow key={group.id}>
+                            <TableCell className="font-medium">
+                              {group.group_name}
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">
+                                  {group.agent_name}
+                                </div>
+                                {group.agent_contact && (
+                                  <div className="text-sm text-muted-foreground">
+                                    {group.agent_contact}
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="text-sm">
+                                {group.departure_airline && (
+                                  <div className="flex items-center gap-1 text-blue-600">
+                                    <Plane className="h-3 w-3" />
+                                    {group.departure_airline}{" "}
+                                    {group.departure_flight_number}
+                                  </div>
+                                )}
+                                {group.return_airline && (
+                                  <div className="flex items-center gap-1 text-green-600">
+                                    <Plane className="h-3 w-3 rotate-180" />
+                                    {group.return_airline}{" "}
+                                    {group.return_flight_number}
+                                  </div>
+                                )}
+                                {!group.departure_airline &&
+                                  !group.return_airline && (
+                                    <span className="text-muted-foreground">
+                                      No flight details
+                                    </span>
+                                  )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">
+                                {group.ticket_count} tickets
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <span className="font-semibold text-green-600">
+                                ৳{group.total_cost.toLocaleString()}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              ৳{group.average_cost_per_ticket.toLocaleString()}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
+                                <Button
+                                  onClick={() => handleEdit(group)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="touch-target"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+
+                                {/* Show passengers button if there are assigned passengers */}
+                                {group.ticket_count - group.remaining_tickets >
+                                  0 && (
+                                  <Button
+                                    onClick={() =>
+                                      viewAssignedPassengers(
+                                        group.id!,
+                                        group.group_name,
+                                      )
+                                    }
+                                    variant="outline"
+                                    size="sm"
+                                    className="touch-target text-blue-600 hover:text-blue-700"
+                                    title={`${group.ticket_count - group.remaining_tickets} জন যাত্রী নিযুক্ত`}
+                                  >
+                                    <UserCheck className="h-4 w-4" />
+                                  </Button>
+                                )}
+
+                                <Button
+                                  onClick={() => handleDelete(group.id!)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="touch-target text-red-600 hover:text-red-700"
+                                  disabled={
+                                    group.ticket_count -
+                                      group.remaining_tickets >
+                                    0
+                                  }
+                                  title={
+                                    group.ticket_count -
+                                      group.remaining_tickets >
+                                    0
+                                      ? "যাত্রী নিযুক্�� থাকায় ডিলিট করা যাবে না"
+                                      : "গ্রুপ টিকেট ডিলিট করুন"
+                                  }
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
-          )}
-        </div>
+          ))
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-heading font-bold text-foreground mb-2">
+              No Group Tickets Found
+            </h3>
+            <p className="text-foreground/70 font-body mb-4">
+              Start by creating your first group ticket purchase for{" "}
+              {activeTab === "with-transport"
+                ? "transport সহ"
+                : "transport ছাড��া"}{" "}
+              Umrah packages.
+            </p>
+            <Button
+              onClick={() => setIsFormDialogOpen(true)}
+              className="velvet-button text-primary-foreground"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create First Group Purchase
+            </Button>
+          </motion.div>
+        )}
+      </div>
 
       {/* Form Dialog */}
       <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>

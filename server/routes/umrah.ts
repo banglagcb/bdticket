@@ -838,7 +838,8 @@ router.get("/group-tickets/by-dates/:packageType", authenticate, (req, res) => {
     if (packageType !== "with-transport") {
       return res.status(400).json({
         success: false,
-        message: "Group tickets by dates are only available for with-transport packages",
+        message:
+          "Group tickets by dates are only available for with-transport packages",
       });
     }
 
@@ -1267,7 +1268,8 @@ router.get(
       if (packageType !== "with-transport") {
         return res.status(400).json({
           success: false,
-          message: "Group tickets are only available for with-transport packages",
+          message:
+            "Group tickets are only available for with-transport packages",
         });
       }
 
@@ -1297,40 +1299,36 @@ router.get(
 );
 
 // Debug endpoint to check group ticket assignments
-router.get(
-  "/debug/group-ticket/:id",
-  authenticate,
-  (req, res) => {
-    try {
-      const { id } = req.params;
+router.get("/debug/group-ticket/:id", authenticate, (req, res) => {
+  try {
+    const { id } = req.params;
 
-      const groupTicket = UmrahGroupTicketRepository.findById(id);
-      if (!groupTicket) {
-        return res.status(404).json({
-          success: false,
-          message: "Group ticket not found",
-        });
-      }
-
-      const assignments = UmrahGroupBookingRepository.findByGroupTicketId(id);
-
-      res.json({
-        success: true,
-        data: {
-          groupTicket,
-          assignments,
-          calculatedRemaining: groupTicket.ticket_count - assignments.length,
-          currentRemaining: groupTicket.remaining_tickets
-        }
-      });
-    } catch (error) {
-      console.error("Error in debug endpoint:", error);
-      res.status(500).json({
+    const groupTicket = UmrahGroupTicketRepository.findById(id);
+    if (!groupTicket) {
+      return res.status(404).json({
         success: false,
-        message: "Debug endpoint failed",
+        message: "Group ticket not found",
       });
     }
-  },
-);
+
+    const assignments = UmrahGroupBookingRepository.findByGroupTicketId(id);
+
+    res.json({
+      success: true,
+      data: {
+        groupTicket,
+        assignments,
+        calculatedRemaining: groupTicket.ticket_count - assignments.length,
+        currentRemaining: groupTicket.remaining_tickets,
+      },
+    });
+  } catch (error) {
+    console.error("Error in debug endpoint:", error);
+    res.status(500).json({
+      success: false,
+      message: "Debug endpoint failed",
+    });
+  }
+});
 
 export default router;

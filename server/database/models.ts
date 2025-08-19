@@ -1316,7 +1316,9 @@ export class UmrahGroupTicketRepository {
   // Update remaining tickets when a booking is assigned
   static updateRemainingTickets(groupTicketId: string): void {
     const assignedCount = db
-      .prepare("SELECT COUNT(*) as count FROM umrah_group_bookings WHERE group_ticket_id = ?")
+      .prepare(
+        "SELECT COUNT(*) as count FROM umrah_group_bookings WHERE group_ticket_id = ?",
+      )
       .get(groupTicketId) as { count: number };
 
     const groupTicket = this.findById(groupTicketId);
@@ -1324,15 +1326,16 @@ export class UmrahGroupTicketRepository {
 
     const remainingTickets = groupTicket.ticket_count - assignedCount.count;
 
-    db.prepare("UPDATE umrah_group_tickets SET remaining_tickets = ? WHERE id = ?")
-      .run(remainingTickets, groupTicketId);
+    db.prepare(
+      "UPDATE umrah_group_tickets SET remaining_tickets = ? WHERE id = ?",
+    ).run(remainingTickets, groupTicketId);
   }
 
   // Find available group tickets for auto-assignment
   static findAvailableGroupTickets(
     packageType: "with-transport" | "without-transport",
     departureDate: string,
-    returnDate: string
+    returnDate: string,
   ): UmrahGroupTicket[] {
     return db
       .prepare(
@@ -1354,9 +1357,13 @@ export class UmrahGroupTicketRepository {
     passengerType: "with-transport" | "without-transport",
     departureDate: string,
     returnDate: string,
-    assignedBy: string
+    assignedBy: string,
   ): UmrahGroupBooking | null {
-    const availableGroups = this.findAvailableGroupTickets(passengerType, departureDate, returnDate);
+    const availableGroups = this.findAvailableGroupTickets(
+      passengerType,
+      departureDate,
+      returnDate,
+    );
 
     if (availableGroups.length === 0) return null;
 
