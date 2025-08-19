@@ -1302,4 +1302,41 @@ router.get(
   },
 );
 
+// Debug endpoint to check group ticket assignments
+router.get(
+  "/debug/group-ticket/:id",
+  authenticate,
+  (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const groupTicket = UmrahGroupTicketRepository.findById(id);
+      if (!groupTicket) {
+        return res.status(404).json({
+          success: false,
+          message: "Group ticket not found",
+        });
+      }
+
+      const assignments = UmrahGroupBookingRepository.findByGroupTicketId(id);
+
+      res.json({
+        success: true,
+        data: {
+          groupTicket,
+          assignments,
+          calculatedRemaining: groupTicket.ticket_count - assignments.length,
+          currentRemaining: groupTicket.remaining_tickets
+        }
+      });
+    } catch (error) {
+      console.error("Error in debug endpoint:", error);
+      res.status(500).json({
+        success: false,
+        message: "Debug endpoint failed",
+      });
+    }
+  },
+);
+
 export default router;
