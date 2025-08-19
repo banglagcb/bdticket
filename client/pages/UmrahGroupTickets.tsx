@@ -342,7 +342,7 @@ export default function UmrahGroupTickets() {
       await apiClient.deleteUmrahGroupTicket(ticketId, forceDelete);
       toast({
         title: "সফল হয��েছে",
-        description: "গ্রুপ টিকেট সফলভাবে ডিল��ট কর�� হয়েছে",
+        description: "গ্রুপ টিকেট সফলভাবে ডিল��ট করা হয়েছে",
       });
       loadGroupTickets();
     } catch (error: any) {
@@ -400,7 +400,7 @@ export default function UmrahGroupTickets() {
       console.error("Error viewing passengers:", error);
       toast({
         title: "ত্রুটি",
-        description: "যাত্রীদের তথ��য লোড করতে ব্যর্থ",
+        description: "যাত্রীদের ত�����য লোড করতে ব্যর্থ",
         variant: "destructive",
       });
     }
@@ -421,7 +421,7 @@ export default function UmrahGroupTickets() {
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Umrah Group Tickets - ${activeTab === "with-transport" ? "With Transport" : "Without Transport"}</title>
+          <title>Umrah Group Tickets - With Transport</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
             .header { text-align: center; margin-bottom: 30px; }
@@ -742,7 +742,7 @@ export default function UmrahGroupTickets() {
                                       group.remaining_tickets >
                                     0
                                       ? "যাত্রী নিযুক্�� থাকায় ডিলিট করা যাবে না"
-                                      : "গ্রু��� টিকেট ডিলিট করুন"
+                                      : "গ্রুপ টিকেট ডিলিট করুন"
                                   }
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -880,7 +880,7 @@ export default function UmrahGroupTickets() {
                 <div className="space-y-4 p-4 border rounded-lg bg-blue-50/50">
                   <h4 className="font-medium text-blue-800 flex items-center gap-2">
                     <Plane className="h-4 w-4" />
-                    Departure Flight (যাওয়ার ফ��লাইট)
+                    Departure Flight (যাও��়ার ফ্লাইট)
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
