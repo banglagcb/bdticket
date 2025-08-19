@@ -330,7 +330,7 @@ export default function UmrahGroupTickets() {
     if (assignedCount > 0 && !forceDelete) {
       confirmMessage = `⚠️ সতর্কত���!\n\nএই গ্রুপ টিকেটে ${assignedCount}জন যাত্রী নিযুক্ত আছে।\n\nএটি ডিলিট করলে সকল যাত্রীর assignment মুছে যাবে।\n\nতবুও ডিলিট করতে চান?`;
     } else if (forceDelete) {
-      confirmMessage = `🔴 জোরপূর্বক ডিলিট!\n\nআপনি ${assignedCount}জন যাত্রী সহ এই গ্রুপ টিকেট মুছে ফেলতে চাচ্ছেন।\n\n⚠️ এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না!\n\nনিশ্চিত করুন?`;
+      confirmMessage = `🔴 জোরপূর্বক ডিলিট!\n\nআপনি ${assignedCount}জন যাত্রী সহ এই গ্রুপ টিকেট মুছে ফেলতে চাচ্ছেন।\n\n⚠️ এই কাজটি পূর��বাবস্থায় ফেরানো যাবে না!\n\nনিশ্চিত করুন?`;
     }
 
     if (!confirm(confirmMessage)) return;
@@ -499,12 +499,7 @@ export default function UmrahGroupTickets() {
         </div>
       </motion.div>
 
-      {/* Package Type Tabs */}
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab as any}
-        className="space-y-6"
-      >
+      {/* Package Type Header - Only With Transport */}
         <div className="luxury-card border-0 p-4 bg-primary/5">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-2 text-primary">
@@ -787,7 +782,6 @@ export default function UmrahGroupTickets() {
             </motion.div>
           )}
         </div>
-      </Tabs>
 
       {/* Form Dialog */}
       <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
