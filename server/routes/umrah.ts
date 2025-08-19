@@ -60,7 +60,7 @@ const paymentUpdateSchema = z.object({
 
 const umrahGroupTicketSchema = z.object({
   group_name: z.string().min(1, "Group name is required"),
-  package_type: z.enum(["with-transport", "without-transport"]),
+  package_type: z.literal("with-transport").default("with-transport"), // Only with-transport allowed
   departure_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
