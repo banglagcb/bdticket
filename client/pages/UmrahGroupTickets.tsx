@@ -340,7 +340,7 @@ export default function UmrahGroupTickets() {
     try {
       await apiClient.deleteUmrahGroupTicket(ticketId, forceDelete);
       toast({
-        title: "সফল হয়েছে",
+        title: "সফল হয��েছে",
         description: "গ্রুপ টিকেট সফলভাবে ডিল��ট করা হয়েছে",
       });
       loadGroupTickets();
@@ -397,7 +397,7 @@ export default function UmrahGroupTickets() {
       console.error("Error viewing passengers:", error);
       toast({
         title: "ত্রুটি",
-        description: "যাত্রীদের তথ্য লোড করতে ব্যর্থ",
+        description: "যাত্রীদের তথ��য লোড করতে ব্যর্থ",
         variant: "destructive",
       });
     }
@@ -507,22 +507,17 @@ export default function UmrahGroupTickets() {
         onValueChange={setActiveTab as any}
         className="space-y-6"
       >
-        <TabsList className="responsive-grid w-full luxury-card border-0 p-1">
-          <TabsTrigger
-            value="with-transport"
-            className="data-[state=active]:velvet-button data-[state=active]:text-primary-foreground font-body touch-target"
-          >
-            <Plane className="h-4 w-4 mr-2" />
-            With Transport
-          </TabsTrigger>
-          <TabsTrigger
-            value="without-transport"
-            className="data-[state=active]:velvet-button data-[state=active]:text-primary-foreground font-body touch-target"
-          >
-            <MapPin className="h-4 w-4 mr-2" />
-            Without Transport
-          </TabsTrigger>
-        </TabsList>
+        <div className="luxury-card border-0 p-4 bg-primary/5">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center space-x-2 text-primary">
+              <Plane className="h-5 w-5" />
+              <h2 className="text-lg font-heading font-bold">ওমরাহ গ্রুপ টিকেট (পরিবহন সহ)</h2>
+            </div>
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-2 font-body">
+            গ্রুপ টিকেট ক্রয় শুধুমাত্র "পরিবহন সহ" ওমরাহ প্যাকেজের জন্য প্রযোজ্য
+          </p>
+        </div>
 
         {/* Search */}
         <div className="flex items-center space-x-4">
