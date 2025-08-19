@@ -1039,10 +1039,11 @@ router.delete(
   (req, res) => {
     try {
       const { id } = req.params;
+      const { force } = req.query; // Get force parameter from query string
 
       // Check if there are any assignments
       const assignments = UmrahGroupBookingRepository.findByGroupTicketId(id);
-      if (assignments.length > 0) {
+      if (assignments.length > 0 && !force) {
         // Get passenger details for better error message
         const passengerDetails = assignments.map((assignment) => {
           if (assignment.passenger_type === "with-transport") {
@@ -1069,11 +1070,23 @@ router.delete(
         return res.status(400).json({
           success: false,
           message: "Cannot delete group ticket with assigned passengers",
+          canForceDelete: true, // Indicate that force delete is possible
           details: {
             assignedCount: assignments.length,
             passengers: passengerDetails,
           },
         });
+      }
+
+      // If force delete, remove all assignments first
+      if (force && assignments.length > 0) {
+        // Delete all group bookings for this ticket
+        for (const assignment of assignments) {
+          UmrahGroupBookingRepository.deleteByPassenger(
+            assignment.passenger_id,
+            assignment.passenger_type,
+          );
+        }
       }
 
       const deleted = UmrahGroupTicketRepository.delete(id);
