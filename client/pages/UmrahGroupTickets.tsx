@@ -155,7 +155,7 @@ export default function UmrahGroupTickets() {
   // Load data
   useEffect(() => {
     loadGroupTickets();
-  }, [activeTab]);
+  }, []); // Removed activeTab dependency since we only have with-transport
 
   // Auto-calculate average cost
   useEffect(() => {
@@ -174,8 +174,8 @@ export default function UmrahGroupTickets() {
     try {
       setLoading(true);
       const [groupedData, allTickets] = await Promise.all([
-        apiClient.getUmrahGroupTicketsByDates(activeTab),
-        apiClient.getUmrahGroupTickets(activeTab, searchTerm),
+        apiClient.getUmrahGroupTicketsByDates("with-transport"),
+        apiClient.getUmrahGroupTickets("with-transport", searchTerm),
       ]);
 
       setDateGroupedTickets(groupedData || []);
@@ -209,7 +209,7 @@ export default function UmrahGroupTickets() {
       } else {
         await apiClient.createUmrahGroupTicket({
           ...formData,
-          package_type: activeTab,
+          package_type: "with-transport", // Always with-transport
         });
         toast({
           title: "Success",
@@ -328,7 +328,7 @@ export default function UmrahGroupTickets() {
     let confirmMessage = "আপনি কি নিশ্চিত যে এই গ্রুপ টিকেট ডিলিট ���রতে চান?";
 
     if (assignedCount > 0 && !forceDelete) {
-      confirmMessage = `⚠️ সতর্কতা!\n\nএই গ্রুপ টিকেটে ${assignedCount}জন যাত্রী নিযুক্ত আছে।\n\nএটি ডিলিট করলে সকল যাত্রীর assignment মুছে যাবে।\n\nতবুও ডিলিট করতে চান?`;
+      confirmMessage = `⚠️ সতর্কত���!\n\nএই গ্রুপ টিকেটে ${assignedCount}জন যাত্রী নিযুক্ত আছে।\n\nএটি ডিলিট করলে সকল যাত্রীর assignment মুছে যাবে।\n\nতবুও ডিলিট করতে চান?`;
     } else if (forceDelete) {
       confirmMessage = `🔴 জোরপূর্বক ডিলিট!\n\nআপনি ${assignedCount}জন যাত্রী সহ এই গ্রুপ টিকেট মুছে ফেলতে চাচ্ছেন।\n\n⚠️ এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না!\n\nনিশ্চিত করুন?`;
     }
