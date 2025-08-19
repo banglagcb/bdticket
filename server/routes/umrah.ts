@@ -835,13 +835,10 @@ router.get("/group-tickets/by-dates/:packageType", authenticate, (req, res) => {
   try {
     const { packageType } = req.params;
 
-    if (
-      packageType !== "with-transport" &&
-      packageType !== "without-transport"
-    ) {
+    if (packageType !== "with-transport") {
       return res.status(400).json({
         success: false,
-        message: "Invalid package type",
+        message: "Group tickets by dates are only available for with-transport packages",
       });
     }
 
