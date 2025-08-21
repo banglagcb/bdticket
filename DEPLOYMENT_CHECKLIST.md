@@ -93,7 +93,7 @@ CORS_ORIGINS=https://your-app.vercel.app
 
 - Output: `dist/server/node-build.mjs`
 - Size: ~148KB
-- Target: Node.js 18.x
+- Target: Node.js 22.x
 - External deps: better-sqlite3, express, etc.
 
 **API Function:**
