@@ -75,8 +75,6 @@ const App = () => (
               <Routes>
                 {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
-                <Route path="/countries-demo" element={<CountriesDemo />} />
-                <Route path="/booking-demo" element={<BookingSystemDemo />} />
 
                 {/* Protected Routes with Layout */}
                 <Route
