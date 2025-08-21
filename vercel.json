@@ -1,13 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist/spa",
-  "installCommand": "npm install",
-  "framework": "vite",
   "functions": {
-    "api/*.js": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 30
+    "api/index.js": {
+      "runtime": "@vercel/node@3.0.7"
     }
   },
   "rewrites": [
