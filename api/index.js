@@ -3,7 +3,7 @@ let app;
 
 export default async function handler(req, res) {
   if (!app) {
-    const { createServer } = await import('../dist/server/node-build.mjs');
+    const { createServer } = await import("../dist/server/node-build.mjs");
     app = createServer();
   }
 

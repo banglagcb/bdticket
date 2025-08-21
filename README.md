@@ -26,23 +26,26 @@ Complete Travel Agency Management System for Bangladeshi Agencies with Internati
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Development
 
 1. Clone the repository
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Create environment file:
+
    ```bash
    cp .env.example .env
    ```
 
 4. Start development server:
+
    ```bash
    npm run dev
    ```
@@ -62,11 +65,13 @@ This application is optimized for Vercel deployment:
 1. Push your code to a Git repository (GitHub, GitLab, etc.)
 
 2. Connect your repository to Vercel:
+
    - Go to [vercel.com](https://vercel.com)
    - Import your repository
    - Vercel will automatically detect the configuration
 
 3. Set environment variables in Vercel dashboard:
+
    ```
    NODE_ENV=production
    JWT_SECRET=your-super-secure-jwt-secret-here
@@ -75,6 +80,7 @@ This application is optimized for Vercel deployment:
 4. Deploy!
 
 The `vercel.json` configuration file handles:
+
 - API routes through serverless functions
 - Static file serving
 - SPA routing
@@ -83,11 +89,11 @@ The `vercel.json` configuration file handles:
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NODE_ENV` | Environment mode | `development` |
-| `JWT_SECRET` | Secret key for JWT tokens | Required in production |
-| `DATABASE_URL` | Database connection string | Uses local SQLite |
+| Variable       | Description                | Default                |
+| -------------- | -------------------------- | ---------------------- |
+| `NODE_ENV`     | Environment mode           | `development`          |
+| `JWT_SECRET`   | Secret key for JWT tokens  | Required in production |
+| `DATABASE_URL` | Database connection string | Uses local SQLite      |
 
 ## Project Structure
 
