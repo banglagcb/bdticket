@@ -14,7 +14,7 @@
 
 - [x] `vercel.json` - Vercel configuration
 - [x] `api/index.js` - Serverless API handler
-- [x] `package.json` - Updated with Node.js 18.x engines
+- [x] `package.json` - Updated with Node.js 22.x engines
 - [x] `dist/spa/` - Client build output (after `npm run build`)
 - [x] `dist/server/node-build.mjs` - Server build output
 - [x] `.env.production.example` - Environment variables template
