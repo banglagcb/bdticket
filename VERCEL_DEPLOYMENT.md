@@ -49,7 +49,7 @@ CORS_ORIGINS=https://your-app-name.vercel.app
 ### ধাপ ৫: Deployment
 
 1. "Deploy" বাটন ক্লিক করুন
-2. Build process সম্পূর্ণ হওয়ার জন্য অপেক্ষা করুন (৫-১০ মিনিট)
+2. Build process সম্পূর্ণ হওয়ার জন্য অপেক্ষা করুন (৫-১�� মিনিট)
 3. Deployment সফল হলে আপনার app URL পাবেন
 
 ## 🔧 Post-Deployment Configuration
@@ -93,7 +93,7 @@ CORS_ORIGINS=https://your-app.vercel.app,https://custom-domain.com,https://www.c
 ### ১. Build Failed
 
 - **সমস্যা:** Node.js version mismatch
-- **সমাধান:** Vercel dashboard এ Node.js version 22.x set করুন
+- **সমাধান:** Vercel dashboard এ Node.js version 20.x set কর��ন
 
 ### ২. API Routes না কাজ করা
 
@@ -153,7 +153,7 @@ Vercel Dashboard এ monitor করতে পারেন:
 যদি কোন সমস্যা হয়:
 
 1. Vercel Function Logs check করুন
-2. Browser Console এ error ��েখুন
+2. Browser Console এ error দেখুন
 3. Network tab এ API responses check করুন
 
 ## 🎉 Success!
