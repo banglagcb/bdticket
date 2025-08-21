@@ -5,7 +5,7 @@
 - [x] **Clean codebase** - সব test files, demo files, documentation removed
 - [x] **Vercel configuration** - vercel.json properly configured
 - [x] **API handler** - Serverless function optimized for Vercel
-- [x] **Build configuration** - Node.js 22.x target, externals configured
+- [x] **Build configuration** - Node.js 20.x target, externals configured
 - [x] **Environment setup** - Production environment template created
 - [x] **Build test** - `npm run build` successful
 - [x] **File structure** - All required files in place
