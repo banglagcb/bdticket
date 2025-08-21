@@ -17,18 +17,9 @@
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.ts",
-    "build:netlify": "node scripts/netlify-build.js",
     "start": "node dist/server/node-build.mjs",
-    "test": "vitest --run",
     "format.fix": "prettier --write .",
-    "typecheck": "tsc",
-    "verify-deployment": "node scripts/verify-deployment.js",
-    "clear-dummy-data": "node clear-dummy-data.js",
-    "verify-db": "node verify-clean-db.js",
-    "verify-app-cleanup": "node verify-app-cleanup.js",
-    "verify-360-validation": "node verify-360-validation.js",
-    "test-ticket-batch": "node test-ticket-batch.js",
-    "test-dashboard-stats": "node test-dashboard-stats.js"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
