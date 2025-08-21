@@ -122,3 +122,9 @@ bd-ticketpro.db*
 uploads/
 storage/
 backups/
+
+# Vercel deployment
+.vercel
+
+# Build artifacts to keep clean
+dist/
