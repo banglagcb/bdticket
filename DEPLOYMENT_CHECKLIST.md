@@ -135,7 +135,7 @@ CORS_ORIGINS=https://your-app.vercel.app
 
 **Common Issues:**
 
-1. **Build fails** → Check Node.js version in Vercel settings
+1. **Build fails** → Check Node.js version in Vercel settings (must be 22.x)
 2. **API not working** → Verify environment variables
 3. **Database error** → Check file permissions in `/tmp/`
 4. **Authentication fails** → Verify JWT_SECRET is set
