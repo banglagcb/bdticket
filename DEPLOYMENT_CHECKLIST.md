@@ -23,6 +23,7 @@
 ## Deployment Steps 🚀
 
 ### 1. GitHub Push
+
 ```bash
 git add .
 git commit -m "Ready for Vercel deployment"
@@ -30,18 +31,22 @@ git push origin main
 ```
 
 ### 2. Vercel Import
+
 - Go to [vercel.com](https://vercel.com)
 - Import from GitHub
 - Select your repository
 
 ### 3. Configure Environment Variables
+
 **Required:**
+
 ```
 JWT_SECRET=your-32-character-secret-key
 NODE_ENV=production
 ```
 
 **Optional:**
+
 ```
 DEBUG=false
 DATABASE_PATH=/tmp/bd-ticketpro.db
@@ -49,17 +54,20 @@ CORS_ORIGINS=https://your-app.vercel.app
 ```
 
 ### 4. Deploy
+
 - Click "Deploy"
 - Wait for build completion (5-10 minutes)
 
 ## Post-Deployment Verification ✅
 
 ### 1. Test Basic Functionality
+
 - [ ] Homepage loads (`https://your-app.vercel.app`)
 - [ ] Login page accessible (`/login`)
 - [ ] API health check (`/api/ping`)
 
 ### 2. Test Core Features
+
 - [ ] Login with admin/admin123
 - [ ] Dashboard displays
 - [ ] Countries page works
@@ -67,6 +75,7 @@ CORS_ORIGINS=https://your-app.vercel.app
 - [ ] Umrah management works
 
 ### 3. Security Check
+
 - [ ] Change default admin password
 - [ ] Verify HTTPS (automatic with Vercel)
 - [ ] Check CORS headers
@@ -75,17 +84,20 @@ CORS_ORIGINS=https://your-app.vercel.app
 ## Build Information 📊
 
 **Client Build:**
+
 - Output: `dist/spa/`
 - Size: ~1.7MB (optimized chunks)
 - Assets: Images, CSS, JS properly chunked
 
 **Server Build:**
+
 - Output: `dist/server/node-build.mjs`
 - Size: ~148KB
 - Target: Node.js 18.x
 - External deps: better-sqlite3, express, etc.
 
 **API Function:**
+
 - Runtime: @vercel/node@3.0.7
 - Max Duration: 30 seconds
 - Cold start optimized
@@ -122,12 +134,14 @@ CORS_ORIGINS=https://your-app.vercel.app
 ## Troubleshooting 🔧
 
 **Common Issues:**
+
 1. **Build fails** → Check Node.js version in Vercel settings
 2. **API not working** → Verify environment variables
 3. **Database error** → Check file permissions in `/tmp/`
 4. **Authentication fails** → Verify JWT_SECRET is set
 
 **Logs to check:**
+
 - Vercel Function Logs
 - Browser Console
 - Network tab for API responses
@@ -135,6 +149,7 @@ CORS_ORIGINS=https://your-app.vercel.app
 ## Success Metrics 🎉
 
 **Ready for production when:**
+
 - [x] All builds successful
 - [x] All core features working
 - [x] Security measures in place

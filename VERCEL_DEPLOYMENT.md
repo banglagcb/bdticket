@@ -32,12 +32,14 @@ Vercel এ import করার সময়:
 Vercel Dashboard এ Environment Variables add করুন:
 
 **Required Variables:**
+
 ```
 NODE_ENV=production
 JWT_SECRET=আপনার-সিকিউর-জেডব্লিউটি-সিক্রেট-কী-৩২-ক্যারেক্টার-মিনিমাম
 ```
 
 **Optional Variables:**
+
 ```
 DEBUG=false
 DATABASE_PATH=/tmp/bd-ticketpro.db
@@ -89,18 +91,22 @@ CORS_ORIGINS=https://your-app.vercel.app,https://custom-domain.com,https://www.c
 ## 🚨 Common Issues এবং Solutions
 
 ### ১. Build Failed
+
 - **সমস্যা:** Node.js version mismatch
 - **সমাধান:** Vercel dashboard এ Node.js version 18.x set করুন
 
 ### ২. API Routes না কাজ করা
+
 - **সমস্যা:** Function timeout
 - **সমাধান:** vercel.json এ maxDuration increase করুন
 
 ### ৩. Database Connection Error
+
 - **সমস্যা:** SQLite file permission
 - **সমাধান:** `/tmp/` path use করুন Vercel এ
 
 ### ৪. Authentication না কাজ করা
+
 - **সমস্যা:** JWT_SECRET missing
 - **সমাধান:** Environment variables properly set করুন
 
@@ -109,12 +115,14 @@ CORS_ORIGINS=https://your-app.vercel.app,https://custom-domain.com,https://www.c
 Code update করার পর:
 
 1. **Local এ test করুন:**
+
    ```bash
    npm run build
    npm run start
    ```
 
 2. **GitHub এ push করুন:**
+
    ```bash
    git add .
    git commit -m "Update: description of changes"
@@ -153,6 +161,7 @@ Vercel Dashboard এ monitor করতে পারেন:
 সফলভাবে deploy হলে আপনার Travel Agency Management System ready!
 
 **Features Available:**
+
 - ✅ Dashboard
 - ✅ Countries Management
 - ✅ Tickets Management
