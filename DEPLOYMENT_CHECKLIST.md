@@ -98,7 +98,7 @@ CORS_ORIGINS=https://your-app.vercel.app
 
 **API Function:**
 
-- Runtime: @vercel/node@3.0.7
+- Runtime: @vercel/node@3.1.5
 - Max Duration: 30 seconds
 - Cold start optimized
 
