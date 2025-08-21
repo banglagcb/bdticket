@@ -4,6 +4,9 @@
   "description": "Complete Travel Agency Management System for Bangladeshi Agencies - International Flight Ticket Management",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
   "pkg": {
     "assets": [
       "dist/spa/*"
