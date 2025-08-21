@@ -46,8 +46,6 @@ import Bookings from "./pages/Bookings";
 import UmrahManagement from "./pages/UmrahManagement";
 import Settings from "./pages/Settings";
 import Reports from "./pages/Reports";
-import CountriesDemo from "./pages/CountriesDemo";
-import BookingSystemDemo from "./pages/BookingSystemDemo";
 import NotFound from "./pages/NotFound";
 
 // Placeholder components for routes not yet implemented
