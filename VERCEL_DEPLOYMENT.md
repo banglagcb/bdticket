@@ -93,7 +93,7 @@ CORS_ORIGINS=https://your-app.vercel.app,https://custom-domain.com,https://www.c
 ### ১. Build Failed
 
 - **সমস্যা:** Node.js version mismatch
-- **সমাধান:** Vercel dashboard এ Node.js version 18.x set করুন
+- **সমাধান:** Vercel dashboard এ Node.js version 22.x set করুন
 
 ### ২. API Routes না কাজ করা
 
@@ -153,7 +153,7 @@ Vercel Dashboard এ monitor করতে পারেন:
 যদি কোন সমস্যা হয়:
 
 1. Vercel Function Logs check করুন
-2. Browser Console এ error দেখুন
+2. Browser Console এ error ��েখুন
 3. Network tab এ API responses check করুন
 
 ## 🎉 Success!
