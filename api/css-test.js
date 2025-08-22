@@ -1,15 +1,15 @@
 // Test endpoint to check CSS loading issues
 export default function handler(req, res) {
   // Handle CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     const testHTML = `
 <!DOCTYPE html>
 <html lang="en">
@@ -82,7 +82,7 @@ export default function handler(req, res) {
         <div class="info">
             <h3>📋 Debug Info:</h3>
             <p><strong>Current URL:</strong> ${req.headers.host}${req.url}</p>
-            <p><strong>User Agent:</strong> ${req.headers['user-agent']?.slice(0, 100) || 'Unknown'}...</p>
+            <p><strong>User Agent:</strong> ${req.headers["user-agent"]?.slice(0, 100) || "Unknown"}...</p>
             <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
         </div>
 
@@ -111,12 +111,12 @@ export default function handler(req, res) {
 </html>
     `;
 
-    res.setHeader('Content-Type', 'text/html');
+    res.setHeader("Content-Type", "text/html");
     return res.status(200).send(testHTML);
   }
 
   return res.status(405).json({
     success: false,
-    message: "Method not allowed"
+    message: "Method not allowed",
   });
 }
