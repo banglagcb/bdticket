@@ -60,7 +60,30 @@ export function createServer() {
       status: "healthy",
       timestamp: new Date().toISOString(),
       version: "1.0.0",
+      environment: process.env.VERCEL ? "vercel" : "local",
     });
+  });
+
+  // Debug endpoint for troubleshooting
+  app.get("/api/health", (_req, res) => {
+    try {
+      const dbHealth = db ? "connected" : "disconnected";
+      res.json({
+        success: true,
+        message: "API is running",
+        database: dbHealth,
+        environment: process.env.VERCEL ? "vercel" : "local",
+        timestamp: new Date().toISOString(),
+        path: process.cwd(),
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Health check failed",
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      });
+    }
   });
 
   // API Routes
