@@ -15,6 +15,10 @@
     "api/debug.js": {
       "runtime": "@vercel/node@3.1.5",
       "maxDuration": 10
+    },
+    "api/test.js": {
+      "runtime": "@vercel/node@3.1.5",
+      "maxDuration": 10
     }
   },
   "build": {
