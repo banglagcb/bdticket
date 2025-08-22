@@ -14,13 +14,24 @@ import umrahRoutes from "./routes/umrah";
 export function createServer() {
   const app = express();
 
-  // Initialize database
+  // Initialize database with better error handling
   try {
+    console.log("Initializing database...");
     initializeDatabase();
-    seedDatabase();
-    console.log("Database initialized and seeded successfully");
+    console.log("Database schema initialized successfully");
+
+    try {
+      seedDatabase();
+      console.log("Database seeded successfully");
+    } catch (seedError) {
+      console.warn("Database seeding error (continuing anyway):", seedError.message);
+    }
+
+    console.log("Database initialization completed");
   } catch (error) {
     console.error("Database initialization error:", error);
+    console.error("Error details:", error.stack);
+    // Don't throw - allow server to start even with DB issues for debugging
   }
 
   // Middleware - Allow all origins for Vercel deployment
