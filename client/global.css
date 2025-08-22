@@ -1,6 +1,12 @@
-/* Preload critical fonts for better performance */
+/* Preload critical fonts for better performance with fallbacks */
 @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap")
 layer(fonts);
+
+/* Ensure fallback fonts are always available */
+:root {
+  --font-heading: "Oswald", "Arial Black", "Helvetica Bold", sans-serif;
+  --font-body: "Montserrat", "Arial", "Helvetica", sans-serif;
+}
 
 /* Optimized animations */
 @keyframes glow {
