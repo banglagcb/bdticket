@@ -798,29 +798,51 @@ export interface ActivityLog {
 
 export class ActivityLogRepository {
   static create(logData: Omit<ActivityLog, "id" | "created_at">): ActivityLog {
-    const id = uuidv4();
-    const now = new Date().toISOString();
+    try {
+      const id = uuidv4();
+      const now = new Date().toISOString();
 
-    const stmt = db.prepare(`
-      INSERT INTO activity_logs (id, user_id, action, entity_type, entity_id, details, ip_address, user_agent, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+      console.log("Creating activity log:", {
+        id,
+        user_id: logData.user_id,
+        action: logData.action,
+        entity_type: logData.entity_type,
+        entity_id: logData.entity_id,
+      });
 
-    stmt.run(
-      id,
-      logData.user_id,
-      logData.action,
-      logData.entity_type,
-      logData.entity_id,
-      logData.details,
-      logData.ip_address,
-      logData.user_agent,
-      now,
-    );
+      const stmt = db.prepare(`
+        INSERT INTO activity_logs (id, user_id, action, entity_type, entity_id, details, ip_address, user_agent, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
 
-    return db
-      .prepare("SELECT * FROM activity_logs WHERE id = ?")
-      .get(id) as ActivityLog;
+      const result = stmt.run(
+        id,
+        logData.user_id,
+        logData.action,
+        logData.entity_type,
+        logData.entity_id || null,
+        logData.details || null,
+        logData.ip_address || null,
+        logData.user_agent || null,
+        now,
+      );
+
+      console.log("Activity log insert result:", result);
+
+      const createdLog = db
+        .prepare("SELECT * FROM activity_logs WHERE id = ?")
+        .get(id) as ActivityLog;
+
+      if (!createdLog) {
+        throw new Error("Failed to retrieve created activity log");
+      }
+
+      return createdLog;
+    } catch (error) {
+      console.error("Error in ActivityLogRepository.create:", error);
+      console.error("Log data:", logData);
+      throw error;
+    }
   }
 
   static findByUser(userId: string, limit: number = 50): ActivityLog[] {
