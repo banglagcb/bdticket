@@ -23,14 +23,13 @@ export function createServer() {
     console.error("Database initialization error:", error);
   }
 
-  // Middleware
+  // Middleware - Allow all origins for Vercel deployment
   app.use(
     cors({
-      origin:
-        process.env.NODE_ENV === "production"
-          ? ["https://your-domain.com"] // Add your production domain
-          : ["http://localhost:3000", "http://localhost:5173"], // Development origins
+      origin: true, // Allow all origins for now
       credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     }),
   );
 
