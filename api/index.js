@@ -16,11 +16,24 @@ export default async function handler(req, res) {
     if (!app) {
       console.log("Initializing BD TicketPro server...");
       
-      // Dynamic import to handle ES modules
-      const { createServer } = await import("../dist/server/node-build.mjs");
-      app = createServer();
-      
-      console.log("Server initialized successfully");
+      try {
+        // Try different import paths for Vercel
+        let createServerModule;
+        try {
+          createServerModule = await import("../dist/server/node-build.mjs");
+        } catch (e) {
+          console.log("Trying alternative import path...");
+          createServerModule = await import("./dist/server/node-build.mjs");
+        }
+        
+        const { createServer } = createServerModule;
+        app = createServer();
+        
+        console.log("Server initialized successfully");
+      } catch (importError) {
+        console.error("Failed to import server:", importError);
+        throw new Error("Server initialization failed: " + importError.message);
+      }
     }
 
     // Add request logging
@@ -43,6 +56,7 @@ export default async function handler(req, res) {
       success: false,
       message: "Internal server error",
       error: process.env.NODE_ENV === "development" ? error.message : "Server error",
+      details: error.stack ? error.stack.split('\n').slice(0, 5) : [],
       timestamp: new Date().toISOString()
     });
   }
