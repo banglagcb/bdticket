@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { initializeDatabase, seedDatabase } from "./database/schema";
+import { initializeDatabase, seedDatabase, db } from "./database/schema";
 
 // Import API routes
 import authRoutes from "./routes/auth";
