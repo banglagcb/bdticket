@@ -3,7 +3,14 @@ import { join } from "path";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 
-const dbPath = join(process.cwd(), "bd-ticketpro.db");
+// Handle different environments (Vercel uses /tmp for writable storage)
+const isVercel = process.env.VERCEL === "1";
+const dbPath = isVercel
+  ? join("/tmp", "bd-ticketpro.db")
+  : join(process.cwd(), "bd-ticketpro.db");
+
+console.log(`Database path: ${dbPath}`);
+
 export const db = new Database(dbPath);
 
 // Enable foreign keys
