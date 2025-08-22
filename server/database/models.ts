@@ -188,32 +188,57 @@ export class TicketBatchRepository {
   static create(
     batchData: Omit<TicketBatch, "id" | "created_at">,
   ): TicketBatch {
-    const id = uuidv4();
-    const now = new Date().toISOString();
+    try {
+      const id = uuidv4();
+      const now = new Date().toISOString();
 
-    const stmt = db.prepare(`
-      INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, agent_address, remarks, document_url, created_by, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+      console.log("Creating ticket batch with data:", {
+        id,
+        country_code: batchData.country_code,
+        airline_name: batchData.airline_name,
+        flight_date: batchData.flight_date,
+        flight_time: batchData.flight_time,
+        buying_price: batchData.buying_price,
+        quantity: batchData.quantity,
+        agent_name: batchData.agent_name,
+        created_by: batchData.created_by,
+      });
 
-    stmt.run(
-      id,
-      batchData.country_code,
-      batchData.airline_name,
-      batchData.flight_date,
-      batchData.flight_time,
-      batchData.buying_price,
-      batchData.quantity,
-      batchData.agent_name,
-      batchData.agent_contact,
-      batchData.agent_address,
-      batchData.remarks,
-      batchData.document_url,
-      batchData.created_by,
-      now,
-    );
+      const stmt = db.prepare(`
+        INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, agent_address, remarks, document_url, created_by, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
 
-    return this.findById(id)!;
+      const result = stmt.run(
+        id,
+        batchData.country_code,
+        batchData.airline_name,
+        batchData.flight_date,
+        batchData.flight_time,
+        batchData.buying_price,
+        batchData.quantity,
+        batchData.agent_name,
+        batchData.agent_contact || null,
+        batchData.agent_address || null,
+        batchData.remarks || null,
+        batchData.document_url || null,
+        batchData.created_by,
+        now,
+      );
+
+      console.log("Ticket batch insert result:", result);
+
+      const createdBatch = this.findById(id);
+      if (!createdBatch) {
+        throw new Error("Failed to retrieve created ticket batch");
+      }
+
+      return createdBatch;
+    } catch (error) {
+      console.error("Error in TicketBatchRepository.create:", error);
+      console.error("Batch data:", batchData);
+      throw error;
+    }
   }
 
   static getStatsByCountry(): Array<{
