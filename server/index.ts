@@ -86,6 +86,49 @@ export function createServer() {
     }
   });
 
+  // Database test endpoint
+  app.get("/api/test-db", (req, res) => {
+    try {
+      console.log("Testing database connection...");
+
+      // Test basic database query
+      const userCount = db.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
+      console.log("User count:", userCount.count);
+
+      // Test table existence
+      const tables = db.prepare(`
+        SELECT name FROM sqlite_master WHERE type='table'
+        ORDER BY name
+      `).all() as { name: string }[];
+      console.log("Tables:", tables.map(t => t.name));
+
+      // Test if activity_logs table exists and is accessible
+      const activityLogCount = db.prepare("SELECT COUNT(*) as count FROM activity_logs").get() as { count: number };
+      console.log("Activity log count:", activityLogCount.count);
+
+      res.json({
+        success: true,
+        message: "Database test successful",
+        data: {
+          userCount: userCount.count,
+          activityLogCount: activityLogCount.count,
+          tables: tables.map(t => t.name),
+          dbPath: process.env.VERCEL ? "/tmp/bd-ticketpro.db" : "bd-ticketpro.db",
+        },
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("Database test error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Database test failed",
+        error: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
   // API Routes
   app.use("/api/auth", authRoutes);
   app.use("/api/tickets", ticketRoutes);
