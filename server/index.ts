@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { initializeDatabase, seedDatabase } from "./database/schema";
+import { initializeDatabase, seedDatabase, db } from "./database/schema";
 
 // Import API routes
 import authRoutes from "./routes/auth";
@@ -14,23 +14,33 @@ import umrahRoutes from "./routes/umrah";
 export function createServer() {
   const app = express();
 
-  // Initialize database
+  // Initialize database with better error handling
   try {
+    console.log("Initializing database...");
     initializeDatabase();
-    seedDatabase();
-    console.log("Database initialized and seeded successfully");
+    console.log("Database schema initialized successfully");
+
+    try {
+      seedDatabase();
+      console.log("Database seeded successfully");
+    } catch (seedError) {
+      console.warn("Database seeding error (continuing anyway):", seedError.message);
+    }
+
+    console.log("Database initialization completed");
   } catch (error) {
     console.error("Database initialization error:", error);
+    console.error("Error details:", error.stack);
+    // Don't throw - allow server to start even with DB issues for debugging
   }
 
-  // Middleware
+  // Middleware - Allow all origins for Vercel deployment
   app.use(
     cors({
-      origin:
-        process.env.NODE_ENV === "production"
-          ? ["https://your-domain.com"] // Add your production domain
-          : ["http://localhost:3000", "http://localhost:5173"], // Development origins
+      origin: true, // Allow all origins for now
       credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     }),
   );
 
@@ -50,7 +60,30 @@ export function createServer() {
       status: "healthy",
       timestamp: new Date().toISOString(),
       version: "1.0.0",
+      environment: process.env.VERCEL ? "vercel" : "local",
     });
+  });
+
+  // Debug endpoint for troubleshooting
+  app.get("/api/health", (_req, res) => {
+    try {
+      const dbHealth = db ? "connected" : "disconnected";
+      res.json({
+        success: true,
+        message: "API is running",
+        database: dbHealth,
+        environment: process.env.VERCEL ? "vercel" : "local",
+        timestamp: new Date().toISOString(),
+        path: process.cwd(),
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Health check failed",
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      });
+    }
   });
 
   // API Routes
