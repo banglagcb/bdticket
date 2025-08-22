@@ -17,21 +17,36 @@ export function createServer() {
   // Initialize database with better error handling
   try {
     console.log("Initializing database...");
+    console.log("Database file path:", process.env.VERCEL ? "/tmp/bd-ticketpro.db" : "bd-ticketpro.db");
+
     initializeDatabase();
     console.log("Database schema initialized successfully");
+
+    // Test database connection immediately after initialization
+    try {
+      const testQuery = db.prepare("SELECT COUNT(*) as count FROM users").get();
+      console.log("Database connection test successful:", testQuery);
+    } catch (testError) {
+      console.error("Database connection test failed:", testError);
+      throw testError;
+    }
 
     try {
       seedDatabase();
       console.log("Database seeded successfully");
     } catch (seedError) {
       console.warn("Database seeding error (continuing anyway):", seedError.message);
+      console.warn("Seed error stack:", seedError.stack);
     }
 
-    console.log("Database initialization completed");
+    console.log("Database initialization completed successfully");
   } catch (error) {
-    console.error("Database initialization error:", error);
+    console.error("Critical database initialization error:", error);
     console.error("Error details:", error.stack);
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
     // Don't throw - allow server to start even with DB issues for debugging
+    console.warn("Server starting despite database issues - some functionality may be limited");
   }
 
   // Middleware - Allow all origins for Vercel deployment
