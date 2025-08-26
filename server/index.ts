@@ -210,6 +210,49 @@ export function createServer() {
     }
   });
 
+  // Test routes endpoint (bypasses auth for debugging)
+  app.get("/api/test-routes", async (req, res) => {
+    try {
+      console.log("[TEST-ROUTES] Testing internal route access...");
+
+      const { TicketRepository } = require("./database/models");
+
+      // Test dashboard stats logic directly
+      const stats = TicketRepository.getDashboardStats();
+      console.log("[TEST-ROUTES] Dashboard stats:", stats);
+
+      // Test bookings logic directly
+      const { BookingRepository } = require("./database/models");
+      const bookings = BookingRepository.findAll().slice(0, 5);
+      console.log("[TEST-ROUTES] Sample bookings:", bookings.length);
+
+      res.json({
+        success: true,
+        message: "Routes test completed",
+        data: {
+          dashboardStats: stats,
+          bookingsCount: bookings.length,
+          sampleBookings: bookings,
+          routes: {
+            tickets: "Available",
+            bookings: "Available",
+            auth: "Available"
+          }
+        },
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("[TEST-ROUTES] Error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Routes test failed",
+        error: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
   // Database test endpoint
   app.get("/api/test-db", (req, res) => {
     try {
