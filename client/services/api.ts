@@ -27,6 +27,16 @@ class APIClient {
     this.baseURL = baseURL;
     // Load token from localStorage if available
     this.authToken = localStorage.getItem("bd_ticket_pro_token");
+    console.log(`[API-CLIENT] Initialized with token:`, this.authToken ? `${this.authToken.substring(0, 30)}...` : "None");
+  }
+
+  // Refresh token from localStorage before each request
+  private refreshToken(): void {
+    const storedToken = localStorage.getItem("bd_ticket_pro_token");
+    if (storedToken !== this.authToken) {
+      console.log(`[API-CLIENT] Token updated from localStorage`);
+      this.authToken = storedToken;
+    }
   }
 
   private async request<T>(
@@ -34,6 +44,9 @@ class APIClient {
     options: RequestInit = {},
   ): Promise<{ success: boolean; message: string; data?: T; errors?: any[] }> {
     const url = `${this.baseURL}${endpoint}`;
+
+    // Refresh token from localStorage before each request
+    this.refreshToken();
 
     // Debug token status
     console.log(`[API-CLIENT] Request to ${endpoint}:`, {
