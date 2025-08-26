@@ -102,10 +102,13 @@ class APIClient {
       if (!response.ok) {
         // If unauthorized, clear authentication data
         if (response.status === 401) {
+          console.log(`[API-CLIENT] Authentication failed (401). Clearing stored tokens.`);
+          console.log(`[API-CLIENT] Previous token:`, this.authToken ? `${this.authToken.substring(0, 30)}...` : "None");
           this.authToken = null;
           localStorage.removeItem("bd_ticket_pro_token");
           localStorage.removeItem("bd_ticket_pro_user");
         }
+
         // Better error message for validation errors
         let errorMessage =
           result.message || `HTTP error! status: ${response.status}`;
@@ -119,6 +122,11 @@ class APIClient {
             )
             .join(", ");
           errorMessage = `Validation error: ${fieldErrors}`;
+        }
+
+        // Add more context for authentication errors
+        if (response.status === 401) {
+          errorMessage = `Authentication failed: ${errorMessage}`;
         }
 
         throw new Error(errorMessage);
