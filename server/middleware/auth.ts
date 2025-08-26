@@ -11,7 +11,8 @@ declare global {
   }
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || "bd-ticketpro-secret-key-2024-production";
+const JWT_SECRET =
+  process.env.JWT_SECRET || "bd-ticketpro-secret-key-2024-production";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 
 export interface JWTPayload {
@@ -43,7 +44,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   console.log("[AUTH] Processing authentication for:", req.method, req.path);
 
   const authHeader = req.headers.authorization;
-  console.log("[AUTH] Authorization header:", authHeader ? `${authHeader.substring(0, 20)}...` : "None");
+  console.log(
+    "[AUTH] Authorization header:",
+    authHeader ? `${authHeader.substring(0, 20)}...` : "None",
+  );
 
   const token =
     authHeader && authHeader.startsWith("Bearer ")
@@ -62,7 +66,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 
   const payload = verifyToken(token);
   if (!payload) {
-    console.log("[AUTH] Token verification failed for token:", token.substring(0, 20) + "...");
+    console.log(
+      "[AUTH] Token verification failed for token:",
+      token.substring(0, 20) + "...",
+    );
     return res.status(401).json({
       success: false,
       message: "Invalid or expired token",
@@ -72,25 +79,30 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   console.log("[AUTH] Token verified successfully. Payload:", {
     userId: payload.userId,
     username: payload.username,
-    role: payload.role
+    role: payload.role,
   });
 
   // Get user from database
   console.log("[AUTH] Looking up user by ID:", payload.userId);
   const user = UserRepository.findById(payload.userId);
 
-  console.log("[AUTH] Database lookup result:", user ? {
-    id: user.id,
-    username: user.username,
-    status: user.status,
-    role: user.role
-  } : "No user found");
+  console.log(
+    "[AUTH] Database lookup result:",
+    user
+      ? {
+          id: user.id,
+          username: user.username,
+          status: user.status,
+          role: user.role,
+        }
+      : "No user found",
+  );
 
   if (!user || user.status !== "active") {
     console.log("[AUTH] Authentication failed - User not found or inactive:", {
       userExists: !!user,
       userStatus: user?.status,
-      expectedStatus: "active"
+      expectedStatus: "active",
     });
     return res.status(401).json({
       success: false,

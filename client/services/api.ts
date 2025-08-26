@@ -27,7 +27,10 @@ class APIClient {
     this.baseURL = baseURL;
     // Load token from localStorage if available
     this.authToken = localStorage.getItem("bd_ticket_pro_token");
-    console.log(`[API-CLIENT] Initialized with token:`, this.authToken ? `${this.authToken.substring(0, 30)}...` : "None");
+    console.log(
+      `[API-CLIENT] Initialized with token:`,
+      this.authToken ? `${this.authToken.substring(0, 30)}...` : "None",
+    );
   }
 
   // Refresh token from localStorage before each request
@@ -51,8 +54,10 @@ class APIClient {
     // Debug token status
     console.log(`[API-CLIENT] Request to ${endpoint}:`, {
       hasToken: !!this.authToken,
-      tokenPrefix: this.authToken ? this.authToken.substring(0, 20) + "..." : "None",
-      localStorageToken: !!localStorage.getItem("bd_ticket_pro_token")
+      tokenPrefix: this.authToken
+        ? this.authToken.substring(0, 20) + "..."
+        : "None",
+      localStorageToken: !!localStorage.getItem("bd_ticket_pro_token"),
     });
 
     const config: RequestInit = {
@@ -67,7 +72,9 @@ class APIClient {
     try {
       console.log(`API Request: ${options.method || "GET"} ${url}`);
       if (this.authToken) {
-        console.log(`[API-CLIENT] Using auth token: ${this.authToken.substring(0, 30)}...`);
+        console.log(
+          `[API-CLIENT] Using auth token: ${this.authToken.substring(0, 30)}...`,
+        );
       }
 
       // Use stored original fetch to bypass third-party script interference
@@ -102,8 +109,13 @@ class APIClient {
       if (!response.ok) {
         // If unauthorized, clear authentication data
         if (response.status === 401) {
-          console.log(`[API-CLIENT] Authentication failed (401). Clearing stored tokens.`);
-          console.log(`[API-CLIENT] Previous token:`, this.authToken ? `${this.authToken.substring(0, 30)}...` : "None");
+          console.log(
+            `[API-CLIENT] Authentication failed (401). Clearing stored tokens.`,
+          );
+          console.log(
+            `[API-CLIENT] Previous token:`,
+            this.authToken ? `${this.authToken.substring(0, 30)}...` : "None",
+          );
           this.authToken = null;
           localStorage.removeItem("bd_ticket_pro_token");
           localStorage.removeItem("bd_ticket_pro_user");

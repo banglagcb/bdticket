@@ -17,7 +17,10 @@ export function createServer() {
   // Initialize database with better error handling
   try {
     console.log("Initializing database...");
-    console.log("Database file path:", process.env.VERCEL ? "/tmp/bd-ticketpro.db" : "bd-ticketpro.db");
+    console.log(
+      "Database file path:",
+      process.env.VERCEL ? "/tmp/bd-ticketpro.db" : "bd-ticketpro.db",
+    );
 
     initializeDatabase();
     console.log("Database schema initialized successfully");
@@ -35,7 +38,10 @@ export function createServer() {
       seedDatabase();
       console.log("Database seeded successfully");
     } catch (seedError) {
-      console.warn("Database seeding error (continuing anyway):", seedError.message);
+      console.warn(
+        "Database seeding error (continuing anyway):",
+        seedError.message,
+      );
       console.warn("Seed error stack:", seedError.stack);
     }
 
@@ -46,7 +52,9 @@ export function createServer() {
     console.error("Error name:", error.name);
     console.error("Error message:", error.message);
     // Don't throw - allow server to start even with DB issues for debugging
-    console.warn("Server starting despite database issues - some functionality may be limited");
+    console.warn(
+      "Server starting despite database issues - some functionality may be limited",
+    );
   }
 
   // Middleware - Allow all origins for Vercel deployment
@@ -111,14 +119,17 @@ export function createServer() {
 
       // Test with a sample user
       const testUser = {
-        id: '3eadba8b-5fb2-4eaa-87ed-0bf1132c8e1a',
-        username: 'admin',
-        role: 'admin'
+        id: "3eadba8b-5fb2-4eaa-87ed-0bf1132c8e1a",
+        username: "admin",
+        role: "admin",
       };
 
       console.log("[JWT-DEBUG] Generating token for test user:", testUser);
       const token = generateToken(testUser);
-      console.log("[JWT-DEBUG] Generated token:", token.substring(0, 50) + "...");
+      console.log(
+        "[JWT-DEBUG] Generated token:",
+        token.substring(0, 50) + "...",
+      );
 
       console.log("[JWT-DEBUG] Verifying the generated token...");
       const payload = verifyToken(token);
@@ -128,12 +139,17 @@ export function createServer() {
       const { UserRepository } = require("./database/models");
       console.log("[JWT-DEBUG] Looking up user in database...");
       const dbUser = UserRepository.findById(testUser.id);
-      console.log("[JWT-DEBUG] Database user:", dbUser ? {
-        id: dbUser.id,
-        username: dbUser.username,
-        status: dbUser.status,
-        role: dbUser.role
-      } : "Not found");
+      console.log(
+        "[JWT-DEBUG] Database user:",
+        dbUser
+          ? {
+              id: dbUser.id,
+              username: dbUser.username,
+              status: dbUser.status,
+              role: dbUser.role,
+            }
+          : "Not found",
+      );
 
       res.json({
         success: true,
@@ -145,7 +161,7 @@ export function createServer() {
           dbUserFound: !!dbUser,
           dbUserStatus: dbUser?.status,
           jwtSecret: process.env.JWT_SECRET || "default",
-          environment: process.env.VERCEL ? "vercel" : "local"
+          environment: process.env.VERCEL ? "vercel" : "local",
         },
         timestamp: new Date().toISOString(),
       });
@@ -167,7 +183,11 @@ export function createServer() {
       console.log("[DEBUG] Fetching all users from database...");
 
       // Get all users
-      const users = db.prepare("SELECT id, username, name, email, role, status, created_at FROM users").all();
+      const users = db
+        .prepare(
+          "SELECT id, username, name, email, role, status, created_at FROM users",
+        )
+        .all();
       console.log("[DEBUG] Found users:", users);
 
       res.json({
@@ -196,18 +216,29 @@ export function createServer() {
       console.log("Testing database connection...");
 
       // Test basic database query
-      const userCount = db.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
+      const userCount = db
+        .prepare("SELECT COUNT(*) as count FROM users")
+        .get() as { count: number };
       console.log("User count:", userCount.count);
 
       // Test table existence
-      const tables = db.prepare(`
+      const tables = db
+        .prepare(
+          `
         SELECT name FROM sqlite_master WHERE type='table'
         ORDER BY name
-      `).all() as { name: string }[];
-      console.log("Tables:", tables.map(t => t.name));
+      `,
+        )
+        .all() as { name: string }[];
+      console.log(
+        "Tables:",
+        tables.map((t) => t.name),
+      );
 
       // Test if activity_logs table exists and is accessible
-      const activityLogCount = db.prepare("SELECT COUNT(*) as count FROM activity_logs").get() as { count: number };
+      const activityLogCount = db
+        .prepare("SELECT COUNT(*) as count FROM activity_logs")
+        .get() as { count: number };
       console.log("Activity log count:", activityLogCount.count);
 
       res.json({
@@ -216,8 +247,10 @@ export function createServer() {
         data: {
           userCount: userCount.count,
           activityLogCount: activityLogCount.count,
-          tables: tables.map(t => t.name),
-          dbPath: process.env.VERCEL ? "/tmp/bd-ticketpro.db" : "bd-ticketpro.db",
+          tables: tables.map((t) => t.name),
+          dbPath: process.env.VERCEL
+            ? "/tmp/bd-ticketpro.db"
+            : "bd-ticketpro.db",
         },
         timestamp: new Date().toISOString(),
       });
