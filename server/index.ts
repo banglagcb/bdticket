@@ -101,6 +101,35 @@ export function createServer() {
     }
   });
 
+  // Debug users endpoint
+  app.get("/api/debug-users", (req, res) => {
+    try {
+      console.log("[DEBUG] Fetching all users from database...");
+
+      // Get all users
+      const users = db.prepare("SELECT id, username, name, email, role, status, created_at FROM users").all();
+      console.log("[DEBUG] Found users:", users);
+
+      res.json({
+        success: true,
+        message: "Users retrieved for debugging",
+        data: {
+          userCount: users.length,
+          users: users,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("[DEBUG] Error fetching users:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch users",
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
   // Database test endpoint
   app.get("/api/test-db", (req, res) => {
     try {
