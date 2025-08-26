@@ -215,16 +215,20 @@ export function createServer() {
     try {
       console.log("[TEST-ROUTES] Testing internal route access...");
 
-      const { TicketRepository } = require("./database/models");
+      const { TicketRepository, BookingRepository, UserRepository } = require("./database/models");
+      const { generateToken } = require("./middleware/auth");
 
       // Test dashboard stats logic directly
       const stats = TicketRepository.getDashboardStats();
       console.log("[TEST-ROUTES] Dashboard stats:", stats);
 
       // Test bookings logic directly
-      const { BookingRepository } = require("./database/models");
       const bookings = BookingRepository.findAll().slice(0, 5);
       console.log("[TEST-ROUTES] Sample bookings:", bookings.length);
+
+      // Test token generation for admin user
+      const adminUser = UserRepository.findByUsername("admin");
+      const testToken = adminUser ? generateToken(adminUser) : null;
 
       res.json({
         success: true,
@@ -233,10 +237,15 @@ export function createServer() {
           dashboardStats: stats,
           bookingsCount: bookings.length,
           sampleBookings: bookings,
+          testToken: testToken ? testToken.substring(0, 50) + "..." : "No token",
           routes: {
             tickets: "Available",
             bookings: "Available",
             auth: "Available"
+          },
+          instructions: {
+            testDashboard: `curl -H "Authorization: Bearer ${testToken}" ${req.protocol}://${req.get('host')}/api/tickets/dashboard/stats`,
+            testBookings: `curl -H "Authorization: Bearer ${testToken}" ${req.protocol}://${req.get('host')}/api/bookings`
           }
         },
         timestamp: new Date().toISOString(),
