@@ -55,24 +55,48 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 
   const payload = verifyToken(token);
   if (!payload) {
+    console.log("[AUTH] Token verification failed for token:", token.substring(0, 20) + "...");
     return res.status(401).json({
       success: false,
       message: "Invalid or expired token",
     });
   }
 
+  console.log("[AUTH] Token verified successfully. Payload:", {
+    userId: payload.userId,
+    username: payload.username,
+    role: payload.role
+  });
+
   // Get user from database
+  console.log("[AUTH] Looking up user by ID:", payload.userId);
   const user = UserRepository.findById(payload.userId);
+
+  console.log("[AUTH] Database lookup result:", user ? {
+    id: user.id,
+    username: user.username,
+    status: user.status,
+    role: user.role
+  } : "No user found");
+
   if (!user || user.status !== "active") {
+    console.log("[AUTH] Authentication failed - User not found or inactive:", {
+      userExists: !!user,
+      userStatus: user?.status,
+      expectedStatus: "active"
+    });
     return res.status(401).json({
       success: false,
       message: "User not found or inactive",
     });
   }
 
+  console.log("[AUTH] Authentication successful for user:", user.username);
+
   // Remove password hash from user object
   delete user.password_hash;
   req.user = user;
+  console.log("[AUTH] User attached to request. Proceeding to route handler.");
   next();
 }
 
