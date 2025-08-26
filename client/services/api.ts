@@ -35,6 +35,13 @@ class APIClient {
   ): Promise<{ success: boolean; message: string; data?: T; errors?: any[] }> {
     const url = `${this.baseURL}${endpoint}`;
 
+    // Debug token status
+    console.log(`[API-CLIENT] Request to ${endpoint}:`, {
+      hasToken: !!this.authToken,
+      tokenPrefix: this.authToken ? this.authToken.substring(0, 20) + "..." : "None",
+      localStorageToken: !!localStorage.getItem("bd_ticket_pro_token")
+    });
+
     const config: RequestInit = {
       headers: {
         "Content-Type": "application/json",
@@ -46,6 +53,9 @@ class APIClient {
 
     try {
       console.log(`API Request: ${options.method || "GET"} ${url}`);
+      if (this.authToken) {
+        console.log(`[API-CLIENT] Using auth token: ${this.authToken.substring(0, 30)}...`);
+      }
 
       // Use stored original fetch to bypass third-party script interference
       const response = await originalFetch(url, config);
