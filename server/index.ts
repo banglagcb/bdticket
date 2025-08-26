@@ -101,6 +101,66 @@ export function createServer() {
     }
   });
 
+  // JWT debug endpoint
+  app.get("/api/debug-jwt", (req, res) => {
+    try {
+      console.log("[JWT-DEBUG] Testing JWT functionality...");
+
+      // Import JWT functions
+      const { generateToken, verifyToken } = require("./middleware/auth");
+
+      // Test with a sample user
+      const testUser = {
+        id: '3eadba8b-5fb2-4eaa-87ed-0bf1132c8e1a',
+        username: 'admin',
+        role: 'admin'
+      };
+
+      console.log("[JWT-DEBUG] Generating token for test user:", testUser);
+      const token = generateToken(testUser);
+      console.log("[JWT-DEBUG] Generated token:", token.substring(0, 50) + "...");
+
+      console.log("[JWT-DEBUG] Verifying the generated token...");
+      const payload = verifyToken(token);
+      console.log("[JWT-DEBUG] Verification result:", payload);
+
+      // Test database lookup
+      const { UserRepository } = require("./database/models");
+      console.log("[JWT-DEBUG] Looking up user in database...");
+      const dbUser = UserRepository.findById(testUser.id);
+      console.log("[JWT-DEBUG] Database user:", dbUser ? {
+        id: dbUser.id,
+        username: dbUser.username,
+        status: dbUser.status,
+        role: dbUser.role
+      } : "Not found");
+
+      res.json({
+        success: true,
+        message: "JWT debug test completed",
+        data: {
+          tokenGenerated: !!token,
+          tokenLength: token.length,
+          verificationResult: payload,
+          dbUserFound: !!dbUser,
+          dbUserStatus: dbUser?.status,
+          jwtSecret: process.env.JWT_SECRET || "default",
+          environment: process.env.VERCEL ? "vercel" : "local"
+        },
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("[JWT-DEBUG] Error:", error);
+      res.status(500).json({
+        success: false,
+        message: "JWT debug test failed",
+        error: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
   // Debug users endpoint
   app.get("/api/debug-users", (req, res) => {
     try {
