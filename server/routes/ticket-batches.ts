@@ -158,9 +158,15 @@ router.post(
   requirePermission("create_batches"),
   async (req: Request, res: Response) => {
     try {
+      console.log("Creating ticket batch - Request body:", req.body);
+      console.log("User:", req.user?.id, req.user?.username);
+
+      // Validate request body
       const batchData = createBatchSchema.parse(req.body);
+      console.log("Batch data validated successfully:", batchData);
 
       // Create the ticket batch
+      console.log("Creating ticket batch in database...");
       const batch = TicketBatchRepository.create({
         country_code: batchData.country.toUpperCase(),
         airline_name: batchData.airline,
@@ -169,73 +175,99 @@ router.post(
         buying_price: batchData.buyingPrice,
         quantity: batchData.quantity,
         agent_name: batchData.agentName,
-        agent_contact: batchData.agentContact,
-        agent_address: batchData.agentAddress,
-        remarks: batchData.remarks,
+        agent_contact: batchData.agentContact || null,
+        agent_address: batchData.agentAddress || null,
+        remarks: batchData.remarks || null,
         created_by: req.user!.id,
       });
+      console.log("Ticket batch created successfully:", batch.id);
 
       // Create individual tickets for this batch
+      console.log(`Creating ${batchData.quantity} individual tickets...`);
       const createdTickets = [];
+
       for (let i = 1; i <= batchData.quantity; i++) {
-        // Generate flight number (simplified)
-        const airlineCode =
-          batchData.airline === "Air Arabia"
-            ? "G9"
-            : batchData.airline === "Emirates"
-              ? "EK"
-              : batchData.airline === "Qatar Airways"
-                ? "QR"
-                : batchData.airline === "Saudi Airlines"
-                  ? "SV"
-                  : batchData.airline === "Flydubai"
-                    ? "FZ"
-                    : "XX";
-
-        const flightNumber = `${airlineCode} ${Math.floor(Math.random() * 900) + 100}`;
-        const sellingPrice = calculateOptimalSellingPrice(
-          batchData.buyingPrice,
-          batchData.country.toUpperCase(),
-        );
-
-        const ticket = TicketRepository.create({
-          batch_id: batch.id,
-          flight_number: flightNumber,
-          status: "available",
-          selling_price: sellingPrice,
-          aircraft:
+        try {
+          // Generate flight number (simplified)
+          const airlineCode =
             batchData.airline === "Air Arabia"
-              ? "Airbus A320"
+              ? "G9"
               : batchData.airline === "Emirates"
-                ? "Boeing 777"
+                ? "EK"
                 : batchData.airline === "Qatar Airways"
-                  ? "Boeing 787"
-                  : "Airbus A321",
-          terminal: `Terminal ${Math.floor(Math.random() * 3) + 1}`,
-          arrival_time: "18:45", // Default arrival time
-          duration: "4h 15m", // Default duration
-          available_seats: 1,
-          total_seats: 1,
-        });
+                  ? "QR"
+                  : batchData.airline === "Saudi Airlines"
+                    ? "SV"
+                    : batchData.airline === "Flydubai"
+                      ? "FZ"
+                      : "XX";
 
-        createdTickets.push(ticket);
+          const flightNumber = `${airlineCode} ${Math.floor(Math.random() * 900) + 100}`;
+
+          // Calculate selling price with fallback
+          let sellingPrice;
+          try {
+            sellingPrice = calculateOptimalSellingPrice(
+              batchData.buyingPrice,
+              batchData.country.toUpperCase(),
+            );
+          } catch (priceError) {
+            console.warn("Error calculating optimal selling price:", priceError);
+            // Fallback to 30% markup
+            sellingPrice = Math.round(batchData.buyingPrice * 1.3);
+          }
+
+          const ticket = TicketRepository.create({
+            batch_id: batch.id,
+            flight_number: flightNumber,
+            status: "available",
+            selling_price: sellingPrice,
+            aircraft:
+              batchData.airline === "Air Arabia"
+                ? "Airbus A320"
+                : batchData.airline === "Emirates"
+                  ? "Boeing 777"
+                  : batchData.airline === "Qatar Airways"
+                    ? "Boeing 787"
+                    : "Airbus A321",
+            terminal: `Terminal ${Math.floor(Math.random() * 3) + 1}`,
+            arrival_time: "18:45", // Default arrival time
+            duration: "4h 15m", // Default duration
+            available_seats: 1,
+            total_seats: 1,
+          });
+
+          createdTickets.push(ticket);
+          console.log(`Created ticket ${i}/${batchData.quantity}: ${ticket.id}`);
+        } catch (ticketError) {
+          console.error(`Error creating ticket ${i}:`, ticketError);
+          throw ticketError;
+        }
       }
 
+      console.log(`Successfully created ${createdTickets.length} tickets`);
+
       // Log activity
-      ActivityLogRepository.create({
-        user_id: req.user!.id,
-        action: "create_ticket_batch",
-        entity_type: "ticket_batch",
-        entity_id: batch.id,
-        details: JSON.stringify({
-          airline: batchData.airline,
-          country: batchData.country,
-          quantity: batchData.quantity,
-          buying_price: batchData.buyingPrice,
-        }),
-        ip_address: req.ip || req.connection.remoteAddress,
-        user_agent: req.get("User-Agent"),
-      });
+      try {
+        ActivityLogRepository.create({
+          user_id: req.user!.id,
+          action: "create_ticket_batch",
+          entity_type: "ticket_batch",
+          entity_id: batch.id,
+          details: JSON.stringify({
+            airline: batchData.airline,
+            country: batchData.country,
+            quantity: batchData.quantity,
+            buying_price: batchData.buyingPrice,
+          }),
+          ip_address: req.ip || req.connection.remoteAddress || "unknown",
+          user_agent: req.get("User-Agent") || "unknown",
+        });
+        console.log("Activity logged successfully");
+      } catch (logError) {
+        console.warn("Failed to log activity:", logError);
+        // Don't fail the request for logging errors
+      }
 
       res.status(201).json({
         success: true,
@@ -247,8 +279,10 @@ router.post(
       });
     } catch (error) {
       console.error("Create ticket batch error:", error);
+      console.error("Error stack:", error.stack);
 
       if (error instanceof z.ZodError) {
+        console.error("Zod validation errors:", error.errors);
         return res.status(400).json({
           success: false,
           message: "Validation error",
@@ -256,9 +290,20 @@ router.post(
         });
       }
 
+      // Provide more specific error messages for database issues
+      if (error.message && error.message.includes("SQLITE_")) {
+        console.error("Database error detected:", error.message);
+        return res.status(500).json({
+          success: false,
+          message: "Database error occurred",
+          error: process.env.NODE_ENV === "development" ? error.message : undefined,
+        });
+      }
+
       res.status(500).json({
         success: false,
         message: "Internal server error",
+        error: process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
   },

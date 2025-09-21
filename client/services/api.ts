@@ -27,6 +27,19 @@ class APIClient {
     this.baseURL = baseURL;
     // Load token from localStorage if available
     this.authToken = localStorage.getItem("bd_ticket_pro_token");
+    console.log(
+      `[API-CLIENT] Initialized with token:`,
+      this.authToken ? `${this.authToken.substring(0, 30)}...` : "None",
+    );
+  }
+
+  // Refresh token from localStorage before each request
+  private refreshToken(): void {
+    const storedToken = localStorage.getItem("bd_ticket_pro_token");
+    if (storedToken !== this.authToken) {
+      console.log(`[API-CLIENT] Token updated from localStorage`);
+      this.authToken = storedToken;
+    }
   }
 
   private async request<T>(
@@ -34,6 +47,18 @@ class APIClient {
     options: RequestInit = {},
   ): Promise<{ success: boolean; message: string; data?: T; errors?: any[] }> {
     const url = `${this.baseURL}${endpoint}`;
+
+    // Refresh token from localStorage before each request
+    this.refreshToken();
+
+    // Debug token status
+    console.log(`[API-CLIENT] Request to ${endpoint}:`, {
+      hasToken: !!this.authToken,
+      tokenPrefix: this.authToken
+        ? this.authToken.substring(0, 20) + "..."
+        : "None",
+      localStorageToken: !!localStorage.getItem("bd_ticket_pro_token"),
+    });
 
     const config: RequestInit = {
       headers: {
@@ -46,6 +71,11 @@ class APIClient {
 
     try {
       console.log(`API Request: ${options.method || "GET"} ${url}`);
+      if (this.authToken) {
+        console.log(
+          `[API-CLIENT] Using auth token: ${this.authToken.substring(0, 30)}...`,
+        );
+      }
 
       // Use stored original fetch to bypass third-party script interference
       const response = await originalFetch(url, config);
@@ -79,10 +109,18 @@ class APIClient {
       if (!response.ok) {
         // If unauthorized, clear authentication data
         if (response.status === 401) {
+          console.log(
+            `[API-CLIENT] Authentication failed (401). Clearing stored tokens.`,
+          );
+          console.log(
+            `[API-CLIENT] Previous token:`,
+            this.authToken ? `${this.authToken.substring(0, 30)}...` : "None",
+          );
           this.authToken = null;
           localStorage.removeItem("bd_ticket_pro_token");
           localStorage.removeItem("bd_ticket_pro_user");
         }
+
         // Better error message for validation errors
         let errorMessage =
           result.message || `HTTP error! status: ${response.status}`;
@@ -96,6 +134,11 @@ class APIClient {
             )
             .join(", ");
           errorMessage = `Validation error: ${fieldErrors}`;
+        }
+
+        // Add more context for authentication errors
+        if (response.status === 401) {
+          errorMessage = `Authentication failed: ${errorMessage}`;
         }
 
         throw new Error(errorMessage);

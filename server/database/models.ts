@@ -188,32 +188,57 @@ export class TicketBatchRepository {
   static create(
     batchData: Omit<TicketBatch, "id" | "created_at">,
   ): TicketBatch {
-    const id = uuidv4();
-    const now = new Date().toISOString();
+    try {
+      const id = uuidv4();
+      const now = new Date().toISOString();
 
-    const stmt = db.prepare(`
-      INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, agent_address, remarks, document_url, created_by, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+      console.log("Creating ticket batch with data:", {
+        id,
+        country_code: batchData.country_code,
+        airline_name: batchData.airline_name,
+        flight_date: batchData.flight_date,
+        flight_time: batchData.flight_time,
+        buying_price: batchData.buying_price,
+        quantity: batchData.quantity,
+        agent_name: batchData.agent_name,
+        created_by: batchData.created_by,
+      });
 
-    stmt.run(
-      id,
-      batchData.country_code,
-      batchData.airline_name,
-      batchData.flight_date,
-      batchData.flight_time,
-      batchData.buying_price,
-      batchData.quantity,
-      batchData.agent_name,
-      batchData.agent_contact,
-      batchData.agent_address,
-      batchData.remarks,
-      batchData.document_url,
-      batchData.created_by,
-      now,
-    );
+      const stmt = db.prepare(`
+        INSERT INTO ticket_batches (id, country_code, airline_name, flight_date, flight_time, buying_price, quantity, agent_name, agent_contact, agent_address, remarks, document_url, created_by, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
 
-    return this.findById(id)!;
+      const result = stmt.run(
+        id,
+        batchData.country_code,
+        batchData.airline_name,
+        batchData.flight_date,
+        batchData.flight_time,
+        batchData.buying_price,
+        batchData.quantity,
+        batchData.agent_name,
+        batchData.agent_contact || null,
+        batchData.agent_address || null,
+        batchData.remarks || null,
+        batchData.document_url || null,
+        batchData.created_by,
+        now,
+      );
+
+      console.log("Ticket batch insert result:", result);
+
+      const createdBatch = this.findById(id);
+      if (!createdBatch) {
+        throw new Error("Failed to retrieve created ticket batch");
+      }
+
+      return createdBatch;
+    } catch (error) {
+      console.error("Error in TicketBatchRepository.create:", error);
+      console.error("Batch data:", batchData);
+      throw error;
+    }
   }
 
   static getStatsByCountry(): Array<{
@@ -327,34 +352,55 @@ export class TicketRepository {
   static create(
     ticketData: Omit<Ticket, "id" | "created_at" | "updated_at">,
   ): Ticket {
-    const id = uuidv4();
-    const now = new Date().toISOString();
+    try {
+      const id = uuidv4();
+      const now = new Date().toISOString();
 
-    const stmt = db.prepare(`
-      INSERT INTO tickets (id, batch_id, flight_number, status, selling_price, aircraft, terminal, arrival_time, duration, available_seats, total_seats, locked_until, sold_by, sold_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+      console.log("Creating ticket with data:", {
+        id,
+        batch_id: ticketData.batch_id,
+        flight_number: ticketData.flight_number,
+        status: ticketData.status,
+        selling_price: ticketData.selling_price,
+      });
 
-    stmt.run(
-      id,
-      ticketData.batch_id,
-      ticketData.flight_number,
-      ticketData.status,
-      ticketData.selling_price,
-      ticketData.aircraft,
-      ticketData.terminal,
-      ticketData.arrival_time,
-      ticketData.duration,
-      ticketData.available_seats,
-      ticketData.total_seats,
-      ticketData.locked_until,
-      ticketData.sold_by,
-      ticketData.sold_at,
-      now,
-      now,
-    );
+      const stmt = db.prepare(`
+        INSERT INTO tickets (id, batch_id, flight_number, status, selling_price, aircraft, terminal, arrival_time, duration, available_seats, total_seats, locked_until, sold_by, sold_at, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
 
-    return db.prepare("SELECT * FROM tickets WHERE id = ?").get(id) as Ticket;
+      const result = stmt.run(
+        id,
+        ticketData.batch_id,
+        ticketData.flight_number,
+        ticketData.status,
+        ticketData.selling_price,
+        ticketData.aircraft || null,
+        ticketData.terminal || null,
+        ticketData.arrival_time || null,
+        ticketData.duration || null,
+        ticketData.available_seats,
+        ticketData.total_seats,
+        ticketData.locked_until || null,
+        ticketData.sold_by || null,
+        ticketData.sold_at || null,
+        now,
+        now,
+      );
+
+      console.log("Ticket insert result:", result);
+
+      const createdTicket = db.prepare("SELECT * FROM tickets WHERE id = ?").get(id) as Ticket;
+      if (!createdTicket) {
+        throw new Error("Failed to retrieve created ticket");
+      }
+
+      return createdTicket;
+    } catch (error) {
+      console.error("Error in TicketRepository.create:", error);
+      console.error("Ticket data:", ticketData);
+      throw error;
+    }
   }
 
   static updateStatus(
@@ -752,29 +798,51 @@ export interface ActivityLog {
 
 export class ActivityLogRepository {
   static create(logData: Omit<ActivityLog, "id" | "created_at">): ActivityLog {
-    const id = uuidv4();
-    const now = new Date().toISOString();
+    try {
+      const id = uuidv4();
+      const now = new Date().toISOString();
 
-    const stmt = db.prepare(`
-      INSERT INTO activity_logs (id, user_id, action, entity_type, entity_id, details, ip_address, user_agent, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+      console.log("Creating activity log:", {
+        id,
+        user_id: logData.user_id,
+        action: logData.action,
+        entity_type: logData.entity_type,
+        entity_id: logData.entity_id,
+      });
 
-    stmt.run(
-      id,
-      logData.user_id,
-      logData.action,
-      logData.entity_type,
-      logData.entity_id,
-      logData.details,
-      logData.ip_address,
-      logData.user_agent,
-      now,
-    );
+      const stmt = db.prepare(`
+        INSERT INTO activity_logs (id, user_id, action, entity_type, entity_id, details, ip_address, user_agent, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
 
-    return db
-      .prepare("SELECT * FROM activity_logs WHERE id = ?")
-      .get(id) as ActivityLog;
+      const result = stmt.run(
+        id,
+        logData.user_id,
+        logData.action,
+        logData.entity_type,
+        logData.entity_id || null,
+        logData.details || null,
+        logData.ip_address || null,
+        logData.user_agent || null,
+        now,
+      );
+
+      console.log("Activity log insert result:", result);
+
+      const createdLog = db
+        .prepare("SELECT * FROM activity_logs WHERE id = ?")
+        .get(id) as ActivityLog;
+
+      if (!createdLog) {
+        throw new Error("Failed to retrieve created activity log");
+      }
+
+      return createdLog;
+    } catch (error) {
+      console.error("Error in ActivityLogRepository.create:", error);
+      console.error("Log data:", logData);
+      throw error;
+    }
   }
 
   static findByUser(userId: string, limit: number = 50): ActivityLog[] {

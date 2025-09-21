@@ -384,29 +384,35 @@ export function calculateOptimalSellingPrice(
   buyingPrice: number,
   countryCode: string,
 ): number {
-  // Get average selling price for this country
-  const countryAvg = db
-    .prepare(
-      `
-    SELECT AVG(selling_price) as avg_price
-    FROM bookings b
-    JOIN tickets t ON b.ticket_id = t.id
-    JOIN ticket_batches tb ON t.batch_id = tb.id
-    WHERE tb.country_code = ? AND b.status = 'confirmed'
-  `,
-    )
-    .get(countryCode) as { avg_price: number } | undefined;
+  try {
+    // Get average selling price for this country
+    const countryAvg = db
+      .prepare(
+        `
+      SELECT AVG(selling_price) as avg_price
+      FROM bookings b
+      JOIN tickets t ON b.ticket_id = t.id
+      JOIN ticket_batches tb ON t.batch_id = tb.id
+      WHERE tb.country_code = ? AND b.status = 'confirmed'
+    `,
+      )
+      .get(countryCode) as { avg_price: number } | undefined;
 
-  // If no historical data, use a standard markup (30%)
-  if (!countryAvg?.avg_price) {
+    // If no historical data, use a standard markup (30%)
+    if (!countryAvg?.avg_price) {
+      return Math.round(buyingPrice * 1.3);
+    }
+
+    // Use historical average, but ensure minimum 20% profit
+    const minSellingPrice = Math.round(buyingPrice * 1.2);
+    const historicalPrice = Math.round(countryAvg.avg_price);
+
+    return Math.max(minSellingPrice, historicalPrice);
+  } catch (error) {
+    console.warn("Error calculating optimal selling price:", error);
+    // Fallback to standard 30% markup if database query fails
     return Math.round(buyingPrice * 1.3);
   }
-
-  // Use historical average, but ensure minimum 20% profit
-  const minSellingPrice = Math.round(buyingPrice * 1.2);
-  const historicalPrice = Math.round(countryAvg.avg_price);
-
-  return Math.max(minSellingPrice, historicalPrice);
 }
 
 /**
